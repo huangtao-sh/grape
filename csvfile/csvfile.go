@@ -46,7 +46,7 @@ func NewReader(filename string, encoding string) (reader *CsvReader, err error) 
 		return
 	}
 	if encoding == "GBK" {
-		r = gbk.Reader(f)
+		r = gbk.NewReader(f)
 	} else {
 		r = f
 	}

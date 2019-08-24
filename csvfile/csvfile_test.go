@@ -17,7 +17,7 @@ func createTmp() (filename string, err error) {
 		return
 	}
 	defer f.Close()
-	w := csv.NewWriter(gbk.Writer(f))
+	w := csv.NewWriter(gbk.NewWriter(f))
 	for i := 0; i < 3; i++ {
 		w.Write([]string{"张三", "b"})
 	}
