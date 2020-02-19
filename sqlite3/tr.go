@@ -2,7 +2,6 @@ package sqlite3
 
 import "database/sql"
 
-
 // 单条语句命令
 type execOne struct {
 	sql  string
@@ -30,14 +29,14 @@ func (many execMany) exec(tx *sql.Tx) (err error) {
 	defer stmt.Close() // 清理准备语句
 	data := many.r
 	for {
-		values, err := data.Read()  // 切换到下一行，并读取数据
+		values, err := data.Read() // 切换到下一行，并读取数据
 		if err == nil {
 			_, err = stmt.Exec(values...) // 读取成功则执行
 		} else if err.Error() == "EOF" {
-			return nil   //数据读取完毕，正常返回
+			return nil //数据读取完毕，正常返回
 		}
 		if err != nil {
-			return err   //遇到错误，则返回错误
+			return err //遇到错误，则返回错误
 		}
 	}
 }
