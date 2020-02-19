@@ -1,22 +1,22 @@
 package xyk
 
 import (
+	"fmt"
 	"grape/sqlite3"
 	"path/filepath"
-	"fmt"
 )
 
-func Open()(db sqlite3.DB){
+func Open() (db sqlite3.DB) {
 	var err error
-	path:=filepath.Join(Home,"xyk.db")
-	db,err=sqlite3.Open(path)
-	if err!=nil{
+	path := filepath.Join(Home, "xyk.db")
+	db, err = sqlite3.Open(path)
+	if err != nil {
 		panic("打开数据库失败")
 	}
 	return
 }
 
-var CreateSql string =`
+var CreateSql string = `
 create table if not exists qsb(
 	rq 		text    primary key,	-- 日期
 	jybs	int,					-- 交易笔数
@@ -35,21 +35,21 @@ create table if not exists qsb(
 );	
 `
 
-func CreateDB()(err error){
-	db:=Open()
+func CreateDB() (err error) {
+	db := Open()
 	defer db.Close()
-	_,err= db.Exec(CreateSql)
-	if err!=nil{
+	_, err = db.Exec(CreateSql)
+	if err != nil {
 		fmt.Println(err)
 	}
 	return
 }
 
-func Query(sql string){
-	db:=Open()
+func Query(sql string) {
+	db := Open()
 	defer db.Close()
 	rd, err := db.Fetch(sql)
-	if err!=nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 	defer rd.Close()

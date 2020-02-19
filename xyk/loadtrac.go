@@ -35,7 +35,7 @@ func (r *Reader) LoadRd1002(tx *sql.Tx) {
 			}
 		} else if len(fields) == 11 && fields[0] == "总" {
 			_, err := tx.Exec("update qsb set jybs=?,jyjejf=?,jyjedf=?,jhfjf=?,jhfdf=?,qsfjf=?,qsfdf=?,qsjejf=?,qsjedf=? where rq=?",
-				 Atoi(fields[2]), Atoi(fields[3]), Atoi(fields[4]), Atoi(fields[5]), Atoi(fields[6]), Atoi(fields[7]), Atoi(fields[8]), Atoi(fields[9]), Atoi(fields[10]),r.date)
+				Atoi(fields[2]), Atoi(fields[3]), Atoi(fields[4]), Atoi(fields[5]), Atoi(fields[6]), Atoi(fields[7]), Atoi(fields[8]), Atoi(fields[9]), Atoi(fields[10]), r.date)
 			if err != nil {
 				fmt.Println(err)
 			}

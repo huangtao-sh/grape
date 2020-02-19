@@ -2,13 +2,13 @@ package xyk
 
 import (
 	"archive/zip"
+	"compress/gzip"
 	"fmt"
+	"grape/gbk"
+	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
-	"grape/gbk"
-	"compress/gzip"
-	"io/ioutil"
-	"io"
 )
 
 var Home string //程序根目录
@@ -28,17 +28,19 @@ type Reader struct {
 	indfiles []*zip.File // 银联明细文件
 }
 
-func ReadAll(file *zip.File)(data []byte,err error){
+func ReadAll(file *zip.File) (data []byte, err error) {
 	var reader io.Reader
-	f,err:=file.Open()
-	if err!=nil{return}
-	defer f.Close()
-	if filepath.Ext(file.Name)==".gz"{
-		reader,_=gzip.NewReader(f)
-	}else{
-		reader=f
+	f, err := file.Open()
+	if err != nil {
+		return
 	}
-	reader=gbk.NewReader(reader)
+	defer f.Close()
+	if filepath.Ext(file.Name) == ".gz" {
+		reader, _ = gzip.NewReader(f)
+	} else {
+		reader = f
+	}
+	reader = gbk.NewReader(reader)
 	return ioutil.ReadAll(reader)
 }
 
@@ -99,16 +101,16 @@ func loadzip(path string) (err error) {
 	}
 	defer reader.Close()
 
-	db:=Open()
+	db := Open()
 	defer db.Close()
-	
-	tx,_:=db.Begin()
+
+	tx, _ := db.Begin()
 	defer tx.Rollback()
-	
+
 	reader.Check()
 	reader.LoadTrac(tx)
 	reader.LoadRd1002(tx)
-	
+
 	tx.Commit()
 	return
 }
