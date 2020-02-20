@@ -11,13 +11,16 @@ import (
 	"path/filepath"
 )
 
-var Home string //程序根目录
+// Home 本程序的家目录
+var Home string
 
+// 初始化根目录
 func init() {
 	home, _ := os.UserHomeDir()
 	Home = filepath.Join(home, "信用卡对账")
 }
 
+// Reader  zip 文件读取
 type Reader struct {
 	reader   *zip.ReadCloser
 	date     string      // 日期
@@ -28,7 +31,8 @@ type Reader struct {
 	indfiles []*zip.File // 银联明细文件
 }
 
-func ReadAll(file *zip.File) (data []byte, err error) {
+// ReadAll 读取压缩包内文件
+func ReadAll(file *zip.File, isGbk bool) (data []byte, err error) {
 	var reader io.Reader
 	f, err := file.Open()
 	if err != nil {
@@ -40,10 +44,13 @@ func ReadAll(file *zip.File) (data []byte, err error) {
 	} else {
 		reader = f
 	}
-	reader = gbk.NewReader(reader)
+	if isGbk {
+		reader = gbk.NewReader(reader)
+	}
 	return ioutil.ReadAll(reader)
 }
 
+// OpenReader 打开压缩包
 func OpenReader(path string) (reader *Reader, err error) {
 	date := "20" + filepath.Base(path)[:6]
 	zreader, err := zip.OpenReader(path)
@@ -69,7 +76,8 @@ func OpenReader(path string) (reader *Reader, err error) {
 	return
 }
 
-func (r *Reader) Check() (result bool) {
+// CheckFileList 检查文件列表是否齐全
+func (r *Reader) CheckFileList() (result bool) {
 	fmt.Println("日期：", r.date)
 	if r.trac == nil {
 		fmt.Println("缺失 TRAC 文件")
@@ -90,34 +98,39 @@ func (r *Reader) Check() (result bool) {
 	return
 }
 
+// Close 关闭压缩包
 func (r *Reader) Close() error {
 	return r.reader.Close()
 }
 
+// loadzip 打开 zip 文件
 func loadzip(path string) (err error) {
 	reader, err := OpenReader(path)
 	if err != nil {
 		return
 	}
 	defer reader.Close()
-
-	db := Open()
+	if reader.CheckFileList() { // 检查文件列表
+		panic("文件不全")
+	}
+	db := Open() // 打开数据库连接
 	defer db.Close()
-
-	tx, _ := db.Begin()
+	tx, _ := db.Begin() // 开启事务
 	defer tx.Rollback()
 
-	reader.Check()
-	reader.LoadTrac(tx)
-	reader.LoadRd1002(tx)
-
+	//reader.LoadTrac(tx)
+	//reader.LoadRd1002(tx)
+	//reader.LoadJorj(tx)
+	//reader.LoadEve(tx)
+	reader.LoadInds(tx)
 	tx.Commit()
 	return
 }
 
+// Load 导入文件
 func Load() {
-	data_dir := filepath.Join(Home, "数据")
-	pathes, _ := filepath.Glob(filepath.Join(data_dir, "??????.zip"))
+	dataDir := filepath.Join(Home, "数据")
+	pathes, _ := filepath.Glob(filepath.Join(dataDir, "??????.zip"))
 	for _, path := range pathes {
 		loadzip(path)
 	}
