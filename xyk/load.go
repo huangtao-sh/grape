@@ -118,11 +118,12 @@ func loadzip(path string) (err error) {
 	tx, _ := db.Begin() // 开启事务
 	defer tx.Rollback()
 
-	//reader.LoadTrac(tx)
-	//reader.LoadRd1002(tx)
-	//reader.LoadJorj(tx)
-	//reader.LoadEve(tx)
+	reader.LoadTrac(tx)
+	reader.LoadRd1002(tx)
+	reader.LoadJorj(tx)
+	reader.LoadEve(tx)
 	reader.LoadInds(tx)
+	reader.ChongZheng(tx)
 	tx.Commit()
 	return
 }

@@ -34,3 +34,13 @@ func PrevDay(date string) string {
 func NextDay(date string) string {
 	return DateAdd(date, 1)
 }
+
+// SplitData 拆分数据
+func SplitData(bytes []byte, offsets []int, columns []int) (result []string) {
+	for _, index := range columns {
+		start := offsets[index]
+		end := offsets[index+1] 
+		result = append(result, strings.TrimSpace(string(bytes[start:end])))
+	}
+	return
+}

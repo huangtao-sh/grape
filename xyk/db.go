@@ -86,9 +86,8 @@ create table if not exists yl(
 	jylx	text,	-- 交易类型
 	oldseq	text,	-- 原交易流水
 	olddt	text,	-- 原交易时间
-	jdbz	text,	-- 借贷标志
-	bz		text,	-- 标志
-	cz		text	-- 冲正
+	bz		text,	-- 备注
+	zt		text	-- 状态  C-贷记,D-借记,Z-冲正，N-被冲正
 );
 `
 
@@ -121,6 +120,7 @@ func Query(sql string) {
 type Execer interface {
 	Exec(string, ...interface{}) (sql.Result, error)
 	Prepare(string) (*sql.Stmt, error)
+	Query(string, ...interface{}) (*sql.Rows, error)
 }
 
 // Scanner 扫描器
@@ -133,7 +133,7 @@ type Scanner interface {
 func Exec(e Execer, sql string, args ...interface{}) {
 	_, err := e.Exec(sql, args...)
 	if err != nil {
-		panic("执行sql语句失败")
+		panic(err.Error())
 	}
 }
 
