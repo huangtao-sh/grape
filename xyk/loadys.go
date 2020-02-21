@@ -28,14 +28,11 @@ func (r *Reader) LoadJorj(tx Execer) {
 	scanner := bufio.NewScanner(buf)
 	stmt, err := tx.Prepare("insert into jorj values(?,?,?,?,?)")
 	defer stmt.Close()
-	if err != nil {
-		panic("准备sql 语句失败")
-	}
+	CheckErr(err)
 	Exec(tx, "delete from jorj where rq=?", r.date) // 删除已导入的数据
 	for scanner.Scan() {
 		fields := strings.Fields(scanner.Text())
 		if len(fields) == 7 && fields[2] == "440001" {
-			//fmt.Println(fields)
 			stmt.Exec(r.date, fields[0], fields[1], Atoi(fields[5]), Atoi(fields[6]))
 		}
 	}
@@ -51,9 +48,7 @@ func (r *Reader) LoadEve(tx Execer) {
 	scanner := bufio.NewScanner(buf)
 	Exec(tx, "delete from eve where rq=?", r.date) // 删除已导入的数据
 	stmt, err := tx.Prepare("insert into eve values(?,?,?,?,?,?,?,?)")
-	if err != nil {
-		panic("准备sql 语句失败")
-	}
+	CheckErr(err)
 	today := r.date[4:]
 	prevday := PrevDay(r.date)
 	for scanner.Scan() {

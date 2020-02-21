@@ -53,14 +53,11 @@ func (r *Reader) ChongZheng(tx Execer) {
 	rq := r.date
 	var seqno, cendt string
 	rows, err := tx.Query("select oldseq,olddt from yl where rq=? and bwlx='0420' ", rq)
-	if err != nil {
-		panic("执行查询失败")
-	}
+	CheckErr(err)
 	for rows.Next() {
 		rows.Scan(&seqno, &cendt)
 		Exec(tx, "update yl set zt='N' where rq=? and seqno=? and cendt=?  ", rq, seqno, cendt)
 	}
-
 }
 
 // LoadAFCP 导入 AFCP 文件
@@ -75,9 +72,7 @@ func (r *Reader) LoadAFCP(path *zip.File, tx Execer) {
 
 	Exec(tx, "delete from yl where lx=? and rq=?", "AFCP", r.date)
 	stmt, err := tx.Prepare("insert into yl(rq,lx,seqno,cendt,kh,je,bwlx,jylx,oldseq,olddt,zt)values(?,?,?,?,?,?,?,?,?,?,?)")
-	if err != nil {
-		panic("准备 SQL 语句失败")
-	}
+	CheckErr(err)
 	for scanner.Scan() {
 		s := SplitData(scanner.Bytes(), offsets, columns)
 		data := []interface{}{r.date, "AFCP"}
@@ -118,16 +113,13 @@ func (r *Reader) LoadACOMA(path *zip.File, tx Execer) {
 	scanner := bufio.NewScanner(buf)
 	Exec(tx, "delete from yl where lx=? and rq=?", "ACOMA", r.date)
 	stmt, err := tx.Prepare("insert into yl(rq,lx,seqno,cendt,kh,je,bwlx,jylx,oldseq,olddt,zt)values(?,?,?,?,?,?,?,?,?,?,'C')")
-	if err != nil {
-		panic("准备 SQL 语句失败")
-	}
+	CheckErr(err)
 	for scanner.Scan() {
 		s := Split(scanner.Bytes(), COMA)
 		data := []interface{}{r.date, "ACOMA"}
 		for _, i := range COMAR {
 			data = append(data, s[i])
 		}
-		//fmt.Println(data...)
 		stmt.Exec(data...)
 	}
 }
@@ -140,9 +132,7 @@ func (r *Reader) LoadICOMN(path *zip.File, tx Execer) {
 	scanner := bufio.NewScanner(buf)
 	Exec(tx, "delete from yl where lx=? and rq=?", "ICOMN", r.date)
 	stmt, err := tx.Prepare("insert into yl(rq,lx,seqno,cendt,kh,je,bwlx,jylx,oldseq,olddt,zt)values(?,?,?,?,?,?,?,?,?,?,?)")
-	if err != nil {
-		panic("准备 SQL 语句失败")
-	}
+	CheckErr(err)
 	for scanner.Scan() {
 		s := Split(scanner.Bytes(), COMA[:30])
 		data := []interface{}{r.date, "ICOMN"}
@@ -157,7 +147,6 @@ func (r *Reader) LoadICOMN(path *zip.File, tx Execer) {
 		}
 		data = append(data, zt)
 		stmt.Exec(data...)
-		//fmt.Println(data...)
 	}
 	fmt.Println("导入 ICOMN 文件完成 ")
 }
@@ -171,12 +160,9 @@ func (r *Reader) LoadIERR(path *zip.File, tx Execer) {
 	data, _ := ReadAll(path, false)
 	buf := bytes.NewBuffer(data)
 	scanner := bufio.NewScanner(buf)
-
 	Exec(tx, "delete from yl where lx=? and rq=?", "IERR", r.date)
 	stmt, err := tx.Prepare("insert into yl(rq,lx,bz,seqno,cendt,kh,je,bwlx,jylx,oldseq,olddt,zt)values(?,?,?,?,?,?,?,?,?,?,?,?)")
-	if err != nil {
-		panic("准备 SQL 语句失败")
-	}
+	CheckErr(err)
 	for scanner.Scan() {
 		s := SplitData(scanner.Bytes(), offsets, columns)
 		data := []interface{}{r.date, "IERR"}
@@ -191,7 +177,6 @@ func (r *Reader) LoadIERR(path *zip.File, tx Execer) {
 		}
 		data = append(data, zt)
 		stmt.Exec(data...)
-		//fmt.Println(data...)
 	}
 	fmt.Println("导入 IEER 文件完成 ")
 }
@@ -205,12 +190,9 @@ func (r *Reader) LoadITFL(path *zip.File, tx Execer) {
 	data, _ := ReadAll(path, false)
 	buf := bytes.NewBuffer(data)
 	scanner := bufio.NewScanner(buf)
-
 	Exec(tx, "delete from yl where lx=? and rq=?", "ITFL", r.date)
 	stmt, err := tx.Prepare("insert into yl(rq,lx,seqno,cendt,kh,je,bwlx,jylx,oldseq,olddt,zt)values(?,?,?,?,?,?,?,?,?,?,?)")
-	if err != nil {
-		panic("准备 SQL 语句失败")
-	}
+	CheckErr(err)
 	for scanner.Scan() {
 		s := SplitData(scanner.Bytes(), offsets, columns)
 		data := []interface{}{r.date, "ITFL"}

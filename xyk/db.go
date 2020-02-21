@@ -12,9 +12,7 @@ func Open() (db sqlite3.DB) {
 	var err error
 	path := filepath.Join(Home, "xyk.db")
 	db, err = sqlite3.Open(path)
-	if err != nil {
-		panic("打开数据库失败")
-	}
+	CheckErr(err)
 	return
 }
 
@@ -96,9 +94,7 @@ func CreateDB() (err error) {
 	db := Open()
 	defer db.Close()
 	_, err = db.Exec(CreateSQL)
-	if err != nil {
-		fmt.Println(err)
-	}
+	CheckErr(err)
 	return
 }
 
@@ -107,8 +103,9 @@ func Query(sql string) {
 	db := Open()
 	defer db.Close()
 	rd, err := db.Fetch(sql)
-	if err != nil {
-		fmt.Println(err)
+	if err!=nil{
+		fmt.Println(err.Error())
+		return
 	}
 	defer rd.Close()
 	for rd.Next() {
@@ -132,22 +129,16 @@ type Scanner interface {
 // Exec 执行一条 SQL 语句
 func Exec(e Execer, sql string, args ...interface{}) {
 	_, err := e.Exec(sql, args...)
-	if err != nil {
-		panic(err.Error())
-	}
+	CheckErr(err)
 }
 
 // ExecMany 执行多条语句
 func ExecMany(e Execer, sql string, scanner Scanner) {
 	stmt, err := e.Prepare(sql)
-	if err != nil {
-		panic("准备sql语句出错")
-	}
+	CheckErr(err)
 	defer stmt.Close()
 	for scanner.Scan() {
 		_, err := stmt.Exec(scanner.Read())
-		if err != nil {
-			panic("准备sql语句出错")
-		}
+		CheckErr(err)
 	}
 }

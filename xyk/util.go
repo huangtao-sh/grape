@@ -12,9 +12,7 @@ func Atoi(s string) (result int) {
 	s = strings.Replace(s, ".", "", 1)
 	s = strings.Replace(s, "+", "", 1)
 	result, err := strconv.Atoi(s)
-	if err != nil {
-		panic("转换数字失败")
-	}
+	CheckErr(err)
 	return
 }
 
@@ -39,8 +37,15 @@ func NextDay(date string) string {
 func SplitData(bytes []byte, offsets []int, columns []int) (result []string) {
 	for _, index := range columns {
 		start := offsets[index]
-		end := offsets[index+1] 
+		end := offsets[index+1]
 		result = append(result, strings.TrimSpace(string(bytes[start:end])))
 	}
 	return
+}
+
+// CheckErr 检查错误，如有错误直接 panic
+func CheckErr(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
 }
