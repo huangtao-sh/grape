@@ -2,7 +2,7 @@ package xyk
 
 import (
 	"database/sql"
-	"fmt"
+	"grape/sqlite"
 	"grape/sqlite3"
 	"path/filepath"
 )
@@ -100,17 +100,11 @@ func CreateDB() (err error) {
 
 // Query 执行SQL查询，并输出
 func Query(sql string) {
-	db := Open()
+	path := filepath.Join(Home, "xyk.db")
+	db, err := sqlite.Open(path)
+	CheckErr(err)
 	defer db.Close()
-	rd, err := db.Fetch(sql)
-	if err!=nil{
-		fmt.Println(err.Error())
-		return
-	}
-	defer rd.Close()
-	for rd.Next() {
-		fmt.Println(rd.Read()...)
-	}
+	sqlite.ExecQuery(db, sql)
 }
 
 // Execer 可以执行语句
