@@ -4,8 +4,19 @@ import (
 	"testing"
 )
 
+func TestNewDate(t *testing.T) {
+	d := NewDate("2020-3-1")
+	if d.Year() != 2020 || d.Month() != 3 || d.Day() != 1 {
+		t.Error("日期不正确")
+	}
+
+	d = NewDate("20200301")
+	if d.Year() != 2020 || d.Month() != 3 || d.Day() != 1 {
+		t.Error("日期不正确")
+	}
+}
 func TestToday(t *testing.T) {
-	d := Today()
+	d := NewDate("2020-02-29")
 	if d.String() != "2020-02-29" {
 		t.Error("测试失败")
 	}

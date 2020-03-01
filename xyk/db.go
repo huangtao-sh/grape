@@ -7,6 +7,12 @@ import (
 	"path/filepath"
 )
 
+func init() {
+	// 配置连接数据库
+	path := filepath.Join(Home, "xyk.db")
+	sqlite.Config(path)
+}
+
 // Open 打开数据库连接
 func Open() (db sqlite3.DB) {
 	var err error
@@ -100,11 +106,10 @@ func CreateDB() (err error) {
 
 // Query 执行SQL查询，并输出
 func Query(sql string) {
-	path := filepath.Join(Home, "xyk.db")
-	db, err := sqlite.Open(path)
+	db, err := sqlite.Open()
 	CheckErr(err)
 	defer db.Close()
-	sqlite.ExecQuery(db, sql)
+	db.ExecQuery(sql)
 }
 
 // Execer 可以执行语句

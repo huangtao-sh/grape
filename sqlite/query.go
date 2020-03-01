@@ -32,8 +32,8 @@ func (r *Reader) Scan(addr ...interface{}) error {
 	return r.Rows.Scan(addr...)
 }
 
-// Query 执行查询，返回多条记录
-func Query(db DB, query string, args ...interface{}) (reader *Reader, err error) {
+// Fetch 执行查询，返回多条记录
+func (db *DB) Fetch(query string, args ...interface{}) (reader *Reader, err error) {
 	rows, err := db.Query(query, args...)
 	if err != nil {
 		return
@@ -53,8 +53,8 @@ func Query(db DB, query string, args ...interface{}) (reader *Reader, err error)
 }
 
 // ExecQuery 执行查询，并输出
-func ExecQuery(db DB, sql string, args ...interface{}) {
-	r, err := Query(db, sql, args...)
+func (db *DB) ExecQuery(sql string, args ...interface{}) {
+	r, err := db.Fetch(sql, args...)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

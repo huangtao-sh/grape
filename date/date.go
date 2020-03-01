@@ -3,6 +3,7 @@ package date
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -22,15 +23,27 @@ func Today() Date {
 
 // NewDate 构造日期
 func NewDate(s string) (date Date) {
-	var parts [3]string
-	if regexp.MustCompile(`\d{4}\d{2}\d{2}`).MatchString(s) {
-		parts[0] = s[:4]
-		parts[1] = s[4:6]
-		parts[2] = s[6:]
-	} else if regexp.MustCompile(`\d{4}-\d{1,2}-\d{1,2}`).MatchString(s) {
-
+	patterns := [](*regexp.Regexp){
+		regexp.MustCompile(`(\d{4})(\d{2})(\d{2})`),
+		regexp.MustCompile(`(\d{4})[-/](\d{1,2})[-/](\d{1,2})`),
 	}
-	return
+	for _, r := range patterns {
+		if r.MatchString(s) {
+			result := r.FindStringSubmatch(s)
+			var a [4]int
+			var err error
+			for i, v := range result[1:] {
+				a[i], err = strconv.Atoi(v)
+				if err != nil {
+					panic("日期格式错")
+				}
+			}
+			d := time.Date(a[0], time.Month(a[1]), a[2], 0, 0, 0, 0, time.Local)
+			date = Date{d}
+			return
+		}
+	}
+	panic("日期不正确")
 }
 
 // Format 格式化日期
@@ -51,8 +64,12 @@ func (d Date) Format(format string) (s string) {
 			r = fmt.Sprintf("%02d", d.Year()%100)
 		case "%M":
 			r = fmt.Sprintf("%02d", d.Month())
+		case "%m":
+			r = fmt.Sprintf("%2d", d.Month())
 		case "%D":
 			r = fmt.Sprintf("%02d", d.Day())
+		case "%d":
+			r = fmt.Sprintf("%2d", d.Day())
 		case "%Q":
 			r = fmt.Sprintf("%1d", d.Quater())
 		case "%F":
@@ -69,20 +86,20 @@ func (d Date) Format(format string) (s string) {
 	return
 }
 
-// Add 增加
+// Add 增加 years,months,days
 func (d Date) Add(years, months, days int) (date Date) {
 	date = Date{d.AddDate(years, months, days)}
 	return
 }
 
-// Quater 季度
+// Quater 返回日期的季度
 func (d Date) Quater() int {
 	return (int(d.Month()) + 2) / 3
 }
 
 // String 返回字符串
 func (d Date) String() string {
-	return fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
+	return d.Format("%F")
 }
 
 // NextDay 下一日
