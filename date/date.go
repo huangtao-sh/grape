@@ -70,12 +70,18 @@ func (d Date) Format(format string) (s string) {
 			r = fmt.Sprintf("%02d", d.Day())
 		case "%d":
 			r = fmt.Sprintf("%2d", d.Day())
-		case "%Q":
+		case "%q":
 			r = fmt.Sprintf("%1d", d.Quater())
+		case "%Q":
+			r = fmt.Sprintf("%1d季度", d.Quater())
 		case "%F":
 			r = fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
+		case "%f":
+			r = fmt.Sprintf("%04d%02d%02d", d.Year(), d.Month(), d.Day())
 		case "%W":
 			r = Weekdays[d.Weekday()]
+		case "%w":
+			r = fmt.Sprintf("%1d", d.Weekday())
 		default:
 			panic("Wrong Format")
 		}
