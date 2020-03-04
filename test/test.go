@@ -2,10 +2,21 @@ package main
 
 import (
 	"fmt"
-	"grape/date"
+	"sync"
+	"time"
 )
 
+func test(wg *sync.WaitGroup) {
+	fmt.Println("Hello world")
+	time.Sleep(1000)
+	fmt.Println("ok2")
+	wg.Done()
+}
 func main() {
-	d := date.Today()
-	fmt.Println(d.Format("%F   %y%M%D %Y年%Q   %W %w \n%f"))
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+	go test(&wg)
+	go test(&wg)
+	wg.Wait()
+	fmt.Println("Proce terminated")
 }
