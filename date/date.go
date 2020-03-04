@@ -11,6 +11,34 @@ import (
 var Weekdays [7]string = [7]string{
 	"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"}
 
+// IsLeapYear 判断指定的年份是否为润年
+func IsLeapYear(year int) bool {
+	return year%400 == 0 || year%4 == 0 && year%100 != 0
+}
+
+// GetMonthDays 获取指定月份的天数
+func GetMonthDays(year, month int) (days int) {
+	var monthDays = map[int]int{
+		1:  31,
+		2:  28,
+		3:  31,
+		4:  30,
+		5:  31,
+		6:  30,
+		7:  31,
+		8:  31,
+		9:  30,
+		10: 31,
+		11: 30,
+		12: 31,
+	}
+	days = monthDays[month]
+	if month == 2 && IsLeapYear(year) {
+		days = days + 1
+	}
+	return
+}
+
 // Date Basic type
 type Date struct {
 	time.Time
@@ -94,7 +122,15 @@ func (d Date) Format(format string) (s string) {
 
 // Add 增加 years,months,days
 func (d Date) Add(years, months, days int) (date Date) {
-	date = Date{d.AddDate(years, months, days)}
+	months = (d.Year()+years)*12 + int(d.Month()) + months - 1
+	year := months / 12
+	month := months%12 + 1
+	day := GetMonthDays(year, month)
+	if d.Day() < day {
+		day = d.Day()
+	}
+	dat := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.Local)
+	date = Date{dat.AddDate(0, 0, days)}
 	return
 }
 
