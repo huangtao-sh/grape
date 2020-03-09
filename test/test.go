@@ -2,21 +2,26 @@ package main
 
 import (
 	"fmt"
-	"sync"
-	"time"
+	"grape/path"
+	"grape/sqlite"
 )
 
-func test(wg *sync.WaitGroup) {
-	fmt.Println("Hello world")
-	time.Sleep(1000)
-	fmt.Println("ok2")
-	wg.Done()
+func init() {
+	sqlite.Config("test.db")
 }
+
 func main() {
-	wg := sync.WaitGroup{}
-	wg.Add(2)
-	go test(&wg)
-	go test(&wg)
-	wg.Wait()
-	fmt.Println("Proce terminated")
+	db, err := sqlite.Open()
+	if err != nil {
+		fmt.Println("Fatal")
+		return
+	}
+	defer db.Close()
+	db.Exec("create table if not exists abc(a,b)")
+	fmt.Println("Hellow")
+	abc := path.NewPath("~")
+	d, _ := abc.Glob("/Music/*")
+	for _,k :=range d{
+		fmt.Println(k)
+	}
 }

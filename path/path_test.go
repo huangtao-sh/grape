@@ -26,3 +26,9 @@ func TestTempDir(t *testing.T) {
 		t.Errorf("Test TempDir Failed")
 	}
 }
+func TestExist(t *testing.T) {
+	Home:=NewPath("C:\\Users\\huangtao")
+	if !Home.IsExist() {
+		t.Error(Home)
+	}
+}
