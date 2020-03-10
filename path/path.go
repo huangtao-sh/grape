@@ -5,18 +5,25 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
-
-
 )
 
-var HomeDir, TempDir string
+// HomeDir 用户家目录
+var HomeDir string
+
+// TempDir 临时目录
+var TempDir string
+
+// Home 家目录
+var Home *Path
 
 func init() {
 	ur, _ := user.Current()
 	HomeDir = ur.HomeDir
 	TempDir = os.TempDir()
+	Home = NewPath("~")
 }
 
+// Expand 扩展路径
 func Expand(p string) (path string) {
 	parts := strings.Split(filepath.ToSlash(p), "/")
 	if len(parts) >= 1 {
@@ -29,32 +36,86 @@ func Expand(p string) (path string) {
 		} else if matched, _ := filepath.Match("%*%", base); matched {
 			parts[0] = "$" + strings.Replace(base, "%", "", -1)
 		}
+		if len(base) == 2 && base[1] == ':' {
+			parts[0] = base + "/"
+		}
 	}
 	p = filepath.Join(parts...)
 	path = os.ExpandEnv(p)
 	return
 }
 
-
+// Path 目录
 type Path struct {
 	Raw, path string
 }
 
+// NewPath 目录构造函数
 func NewPath(path string) (p *Path) {
 	return &Path{path, Expand(path)}
 }
 
-// 删除文件
+// Remove 删除文件
 func (p *Path) Remove() error {
 	return os.Remove(p.path)
 }
 
-// 打开文件
+// Open 打开文件
 func (p *Path) Open() (*os.File, error) {
 	return os.Open(p.path)
 }
 
-// 转换成字符串
+// String 转换成字符串
 func (p *Path) String() string {
 	return p.path
+}
+
+// IsExist 判断目录是否存在
+func (p *Path) IsExist() bool {
+	_, err := os.Stat(p.path)
+	return err == nil || os.IsExist(err)
+}
+
+// MakeDir 创建目录
+func (p *Path) MakeDir() error {
+	return os.Mkdir(p.path, os.ModeDir)
+}
+
+// MakeDirAll 创建目录
+func (p *Path) MakeDirAll() error {
+	return os.MkdirAll(p.path, os.ModeDir)
+}
+
+// Ensure 确保目录存在
+func (p *Path) Ensure() error {
+	if !p.IsExist() {
+		return p.MakeDirAll()
+	}
+	return nil
+}
+
+// Dir 目录
+func (p *Path) Dir() string {
+	return filepath.Dir(p.path)
+}
+
+// Ext 扩展名
+func (p *Path) Ext() string {
+	return filepath.Ext(p.path)
+}
+
+// Base 文件名
+func (p *Path) Base() string {
+	return filepath.Base(p.path)
+}
+
+// Join 连接目录
+func (p *Path) Join(elem ...string) (path *Path) {
+	pa := filepath.Join(p.path, filepath.Join(elem...))
+	return NewPath(pa)
+}
+
+// Glob 查找文件
+func (p *Path) Glob(pattern string) ([]string, error) {
+	return filepath.Glob(filepath.Join(p.path, pattern))
 }

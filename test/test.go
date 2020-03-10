@@ -2,10 +2,26 @@ package main
 
 import (
 	"fmt"
-	"grape/date"
+	"grape/path"
+	"grape/sqlite"
 )
 
+func init() {
+	sqlite.Config("test.db")
+}
+
 func main() {
-	d := date.Today()
-	fmt.Println(d.Format("%F   %y%M%D %Y年%Q   %W %w \n%f"))
+	db, err := sqlite.Open()
+	if err != nil {
+		fmt.Println("Fatal")
+		return
+	}
+	defer db.Close()
+	db.Exec("create table if not exists abc(a,b)")
+	fmt.Println("Hellow")
+	abc := path.NewPath("~")
+	d, _ := abc.Glob("/Music/*")
+	for _,k :=range d{
+		fmt.Println(k)
+	}
 }

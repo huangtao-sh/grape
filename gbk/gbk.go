@@ -1,4 +1,6 @@
-// GBK 转码包
+// Package gbk  GBK转码包
+// Writer : Huang Tao 2020/03/01
+// 支持将 GBK 编码的二进制解码为字符串，或将字符串使用 GBK 编码成二进制
 package gbk
 
 import (
@@ -9,32 +11,33 @@ import (
 	"golang.org/x/text/transform"
 )
 
-var (
-	Encoder *encoding.Encoder
-	Decoder *encoding.Decoder
-)
+// Encoder GBK 编码器
+var Encoder *encoding.Encoder
+
+// Decoder GBK 解码器
+var Decoder *encoding.Decoder
 
 func init() {
 	Encoder = simplifiedchinese.GBK.NewEncoder()
 	Decoder = simplifiedchinese.GBK.NewDecoder()
 }
 
-// 新建一个 GBK 编码的 Reader
+// NewReader 新建一个 GBK 编码的 Reader
 func NewReader(r io.Reader) *transform.Reader {
 	return transform.NewReader(r, Decoder)
 }
 
-// 新建一个 GBK 编码的 Writer
+// NewWriter 新建一个 GBK 编码的 Writer
 func NewWriter(w io.Writer) *transform.Writer {
 	return transform.NewWriter(w, Encoder)
 }
 
-// 将 UTF8 字符串转换成 GBK 编码的 bytes
+// Encode 将 UTF8 字符串转换成 GBK 编码的 bytes
 func Encode(s string) ([]byte, error) {
 	return Encoder.Bytes([]byte(s))
 }
 
-//将 GBK 编码的 bytes 转换成 UTF8 字符串
+// Decode 将 GBK 编码的 bytes 转换成 UTF8 字符串
 func Decode(b []byte) (string, error) {
 	return Decoder.String(string(b))
 }
