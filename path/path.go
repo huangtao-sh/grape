@@ -1,6 +1,7 @@
 package path
 
 import (
+	"grape/util"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -116,6 +117,15 @@ func (p *Path) Join(elem ...string) (path *Path) {
 }
 
 // Glob 查找文件
-func (p *Path) Glob(pattern string) ([]string, error) {
-	return filepath.Glob(filepath.Join(p.path, pattern))
+func (p *Path) Glob(pattern string) (matches []string) {
+	matches, err := filepath.Glob(filepath.Join(p.path, pattern))
+	util.CheckFatal(err)
+	return
+}
+
+// Match 判断是否匹配
+func (p *Path) Match(pattern string) (matched bool) {
+	matched, err := filepath.Match(pattern, p.path)
+	util.CheckFatal(err)
+	return
 }
