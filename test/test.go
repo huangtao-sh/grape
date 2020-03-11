@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"grape/path"
 	"grape/sqlite"
+	"os"
+	"runtime"
+	"path/filepath"
 )
 
 func init() {
@@ -21,7 +24,11 @@ func main() {
 	fmt.Println("Hellow")
 	abc := path.NewPath("~")
 	d, _ := abc.Glob("/Music/*")
-	for _,k :=range d{
+	for _, k := range d {
 		fmt.Println(k)
 	}
+	s := "$USERPROFILE/abc\\list"
+	fmt.Println(filepath.Clean(os.ExpandEnv(s)))
+	fmt.Println(runtime.GOOS)
+	fmt.Println(runtime.GOARCH)
 }

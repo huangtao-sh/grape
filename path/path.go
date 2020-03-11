@@ -115,6 +115,11 @@ func (p *Path) Join(elem ...string) (path *Path) {
 	return NewPath(pa)
 }
 
+// Clean 整理文件
+func (p *Path) Clean() string {
+	return filepath.Clean(p.path)
+}
+
 // Glob 查找文件
 func (p *Path) Glob(pattern string) ([]string, error) {
 	return filepath.Glob(filepath.Join(p.path, pattern))
