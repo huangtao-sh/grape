@@ -27,8 +27,11 @@ func TestTempDir(t *testing.T) {
 	}
 }
 func TestExist(t *testing.T) {
-	Home:=NewPath("C:\\Users\\huangtao")
+	Home := NewPath("C:\\Users\\huangtao")
 	if !Home.IsExist() {
 		t.Error(Home)
+	}
+	if !Home.Match("*\\hu*") {
+		t.Error("Match test failed")
 	}
 }
