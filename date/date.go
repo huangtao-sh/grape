@@ -29,6 +29,8 @@ func GetMonthDays(year, month int) (days int) {
 		} else {
 			days = 28
 		}
+	default:
+		panic("Wrong month")
 	}
 	return
 }
