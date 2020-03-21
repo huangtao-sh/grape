@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -14,10 +13,10 @@ func CheckErr(err error, exitCode int) {
 	}
 }
 
-// CheckFatal 检查致命错误
-func CheckFatal(err error) {
+// CheckPanic 检查致命错误
+func CheckPanic(err error) {
 	if err != nil {
-		log.Fatal(err.Error())
+		panic(err.Error())
 	}
 }
 
