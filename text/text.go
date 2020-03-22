@@ -5,15 +5,6 @@ import (
 	"io"
 )
 
-// Slice 将字符串切片转换成空接口切片
-func Slice(strs []string) []interface{} {
-	result := make([]interface{}, len(strs))
-	for i, s := range strs {
-		result[i] = s
-	}
-	return result
-}
-
 // BasicReader 读取文本的基础实例
 type BasicReader struct {
 	bufio.Scanner

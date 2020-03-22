@@ -1,16 +1,18 @@
 package main
 
 import (
-	"bytes"
+	"fmt"
 	"grape/text"
-	"grape/util"
 )
 
+func add(x interface{}) interface{} {
+	return x.(int) + 10
+}
+
 func main() {
-	s := `abcddef
-testsfd
-hwerwer`
-	b := bytes.NewBufferString(s)
-	csv := text.NewFixedReader(b, []int{0, 4, 7})
-	util.Println(csv)
+	s := []interface{}{0, 1, 2, 3, 4}
+	includer := text.NewIncluder(1, 3)
+	converter := text.NewConverter(map[int]text.Convert{1:add,3:add})
+	fmt.Println(includer.Convert(s)...)
+	fmt.Println(converter.Convert(s)...)
 }

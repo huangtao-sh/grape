@@ -2,7 +2,6 @@ package text
 
 import (
 	"encoding/csv"
-	"grape/util"
 	"io"
 )
 
@@ -18,14 +17,17 @@ func NewCsvReader(r io.Reader) *CsvReader {
 }
 
 // Next 判断是否还有数据
-func (r *CsvReader) Next() bool {
+func (r *CsvReader) Next() (exists bool) {
 	rec, err := r.Reader.Read()
-	if err == io.EOF {
-		return false
+	if err != nil {
+		r.record = Slice(rec)
+		exists = true
+	} else if err == io.EOF {
+		exists = false
+	} else {
+		panic(err.Error())
 	}
-	util.CheckFatal(err)
-	r.record = Slice(rec)
-	return true
+	return
 }
 
 // Read 读取一行记录
