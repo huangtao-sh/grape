@@ -13,8 +13,8 @@ func CheckErr(err error, exitCode int) {
 	}
 }
 
-// CheckPanic 检查致命错误
-func CheckPanic(err error) {
+// CheckFatal 检查致命错误
+func CheckFatal(err error) {
 	if err != nil {
 		panic(err.Error())
 	}
