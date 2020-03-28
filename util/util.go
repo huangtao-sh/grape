@@ -43,3 +43,50 @@ func Printf(format string, data Dater) {
 		fmt.Printf(format, row...)
 	}
 }
+
+// Waiter 协和控制
+type Waiter struct {
+	done chan int
+}
+
+// NewWaiter Waiter 构造函数
+func NewWaiter() *Waiter {
+	done := make(chan int)
+	return &Waiter{done}
+}
+
+// Done 任务完成
+func (w *Waiter) Done() {
+	close(w.done)
+}
+
+// Wait 等待协程完成
+func (w *Waiter) Wait() {
+	<-w.done
+}
+
+// DataCh 数据通道
+type DataCh struct {
+	ch chan []interface{}
+}
+
+// NewDataCh DataCh 构造函数
+func NewDataCh() *DataCh {
+	ch := make(chan []interface{})
+	return &DataCh{ch}
+}
+
+// Read 读取通道
+func (d *DataCh) Read() <-chan []interface{} {
+	return d.ch
+}
+
+// Write 写入通道
+func (d *DataCh) Write() chan<- []interface{} {
+	return d.ch
+}
+
+// Close 关闭通道
+func (d *DataCh) Close() {
+	close(d.ch)
+}

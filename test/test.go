@@ -2,17 +2,29 @@ package main
 
 import (
 	"fmt"
-	"grape/text"
+	"grape/util"
 )
 
-func add(x interface{}) interface{} {
-	return x.(int) + 10
+// Print 打印
+func Print(data *util.DataCh, w *util.Waiter) {
+	defer w.Done()
+	for row := range data.Read() {
+		fmt.Println(row...)
+	}
 }
 
+// Send 发送数据
+func Send(data *util.DataCh) {
+	defer data.Close()
+	for i := 0; i < 10; i++ {
+		data.Write() <- []interface{}{i, i + 10}
+	}
+}
 func main() {
-	s := []interface{}{0, 1, 2, 3, 4}
-	includer := text.NewIncluder(1, 3)
-	converter := text.NewConverter(map[int]text.Convert{1:add,3:add})
-	fmt.Println(includer.Convert(s)...)
-	fmt.Println(converter.Convert(s)...)
+	waiter := util.NewWaiter()
+	defer waiter.Wait()
+	data := util.NewDataCh()
+	go Print(data, waiter)
+	go Send(data)
+
 }
