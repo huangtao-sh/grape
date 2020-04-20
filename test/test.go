@@ -2,29 +2,18 @@ package main
 
 import (
 	"fmt"
+	"grape/sqlite"
 	"grape/util"
 )
 
-// Print 打印
-func Print(data *util.DataCh, w *util.Waiter) {
-	defer w.Done()
-	for row := range data.Read() {
-		fmt.Println(row...)
-	}
-}
-
-// Send 发送数据
-func Send(data *util.DataCh) {
-	defer data.Close()
-	for i := 0; i < 10; i++ {
-		data.Write() <- []interface{}{i, i + 10}
-	}
-}
 func main() {
-	waiter := util.NewWaiter()
-	defer waiter.Wait()
-	data := util.NewDataCh()
-	go Print(data, waiter)
-	go Send(data)
-
+	sqlite.Config(":memory:")
+	db, _ := sqlite.Open()
+	defer db.Close()
+	data := util.NewData()
+	defer data.Wait()
+	go util.PrintfCh("%s\t%02d\n", data)
+	go sqlite.FetchCh(db, data, "select 'abc',12 ")
+	a := sqlite.FetchValue(db, "select 'abc'")
+	fmt.Println(a.(string))
 }

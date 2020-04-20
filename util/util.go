@@ -90,3 +90,30 @@ func (d *DataCh) Write() chan<- []interface{} {
 func (d *DataCh) Close() {
 	close(d.ch)
 }
+
+// Data 数据通道，提供
+type Data struct {
+	DataCh
+	Waiter
+}
+
+// NewData Data 构造函数
+func NewData() *Data {
+	return &Data{*NewDataCh(), *NewWaiter()}
+}
+
+// PrintlnCh 异步打印
+func PrintlnCh(data *Data) {
+	defer data.Done()
+	for row := range data.Read() {
+		fmt.Println(row...)
+	}
+}
+
+// PrintfCh 异步格式化打印
+func PrintfCh(format string, data *Data) {
+	defer data.Done()
+	for row := range data.Read() {
+		fmt.Printf(format, row...)
+	}
+}

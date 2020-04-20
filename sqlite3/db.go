@@ -2,33 +2,47 @@ package sqlite3
 
 import (
 	"database/sql"
+	"grape/path"
+	"grape/util"
 
+	// 引用 go-sqlite3 进行初始化
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// 数据库
-type DB struct {
-	db *sql.DB
+var dataSourceName string
+var db *sql.DB
+
+// Config  配置数据库文件
+// 配置完成之后，可以直接调用 Open 打开
+func Config(pathName string) {
+	if (pathName != ":memory:") && (path.NewPath(pathName).Dir() == ".") { // path 如果不是 :memory:，无目录的指定默认目录
+		dataHome := path.Home.Join(".data")
+		dataHome.Ensure() // 目录不存在则自动创建
+		pathName = (dataHome.Join(pathName)).String()
+	}
+	dataSourceName = pathName
 }
 
-// 打开数据库
-func Open(dataSourceName string) (db DB, err error) {
-	db_, err := sql.Open("sqlite3", dataSourceName)
-	db = DB{db_}
-	return
+// NewDB 打开数据库
+func NewDB() *sql.DB {
+	if db == nil {
+		var err error
+		db, err = sql.Open("sqlite3", dataSourceName)
+		util.CheckFatal(err)
+	}
+	return db
 }
 
-// 关闭数据库
-func (db DB) Close() error {
-	return db.db.Close()
+// Close 关闭数据库
+func Close() {
+	if db != nil {
+		db.Close()
+		db = nil
+	}
 }
 
-// 开启事务
-func (db DB) Begin() (*sql.Tx, error) {
-	return db.db.Begin()
-}
-
-// 执行 SQL 语句
-func (db DB) Exec(statment string, args ...interface{}) (sql.Result, error) {
-	return db.db.Exec(statment, args...)
+// ExecScripts 执行脚本，支持多条语句，用于执行 DDL 语句
+func ExecScripts(sql string) {
+	_, err := NewDB().Exec(sql)
+	util.CheckFatal(err)
 }
