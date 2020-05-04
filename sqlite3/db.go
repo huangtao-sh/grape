@@ -41,8 +41,8 @@ func Close() {
 	}
 }
 
-// ExecScripts 执行脚本，支持多条语句，用于执行 DDL 语句
-func ExecScripts(sql string) {
+// ExecScript 执行脚本，支持多条语句，用于执行 DDL 语句
+func ExecScript(sql string) {
 	_, err := NewDB().Exec(sql)
 	util.CheckFatal(err)
 }

@@ -2,6 +2,7 @@ package sqlite3
 
 import (
 	"database/sql"
+	"fmt"
 	"grape/util"
 	"reflect"
 )
@@ -70,6 +71,22 @@ func Fetch(sql string, args ...interface{}) (reader *RowReader) {
 // FetchValue 执行查询，并返回值
 func FetchValue(sql string, args ...interface{}) interface{} {
 	return fetchValue(NewDB(), sql, args...)
+}
+
+// Println 执行查询，并打印查询结果
+func Println(sql string, args ...interface{}) {
+	rows := Fetch(sql, args...)
+	for rows.Next() {
+		fmt.Println(rows.Read()...)
+	}
+}
+
+// Printf 执行查询，并打印查询结果
+func Printf(format string, sql string, args ...interface{}) {
+	rows := Fetch(sql, args...)
+	for rows.Next() {
+		fmt.Printf(format, rows.Read()...)
+	}
 }
 
 // StructAddr 获取 Struct 的地址列表

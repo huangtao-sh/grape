@@ -1,7 +1,6 @@
 package sqlite3
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -14,7 +13,7 @@ func TestOpen(t *testing.T) {
 func TestExecMany(t *testing.T) {
 	Config(":memory:")
 	defer Close()
-	ExecScripts(`create table if not exists abc(
+	ExecScript(`create table if not exists abc(
 		a		text    primary key,
 		b 		text 	not null); --test
 		insert into abc values(1,2);
@@ -24,8 +23,5 @@ func TestExecMany(t *testing.T) {
 	if val.(string) != "2" {
 		t.Fatal("test FetchValue failed")
 	}
-	r := Fetch("select * from abc")
-	for r.Next() {
-		fmt.Println(r.Read()...)
-	}
+	Println("select * from abc")
 }
