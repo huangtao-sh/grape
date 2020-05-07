@@ -30,3 +30,8 @@ func (tx *Tx) ExecCh(sql string, d *data.Data) {
 		util.CheckFatal(err)
 	}
 }
+
+// FetchValue 查询值
+func (tx *Tx) FetchValue(sql string, args ...interface{}) interface{} {
+	return fetchValue(tx, sql, args...)
+}
