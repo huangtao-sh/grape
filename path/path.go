@@ -134,3 +134,19 @@ func (p *Path) Match(pattern string) (matched bool) {
 	util.CheckFatal(err)
 	return
 }
+
+// Find 在目录中查找记录
+func (p *Path) Find(pattern string) (path string) {
+	matches := p.Glob(pattern)
+	if len(matches) > 0 {
+		path = matches[len(matches)-1]
+	}
+	return
+}
+
+// FileInfo 获取文件信息
+func (p *Path) FileInfo() (info os.FileInfo) {
+	info, err := os.Stat(p.String())
+	util.CheckFatal(err)
+	return
+}
