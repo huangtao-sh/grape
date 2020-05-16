@@ -23,5 +23,12 @@ func TestExecMany(t *testing.T) {
 	if val.(string) != "2" {
 		t.Fatal("test FetchValue failed")
 	}
+	ExecTx(
+		NewTr("insert into abc values(?,?)", 10, 20),
+	)
+	val = FetchValue("select b from abc where a=?", 10)
+	if val.(string) != "20" {
+		t.Fatal("test NewTr failed")
+	}
 	Println("select * from abc")
 }
