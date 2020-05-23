@@ -2,6 +2,7 @@ package path
 
 import (
 	"grape/util"
+	"io"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -62,7 +63,7 @@ func (p *Path) Remove() error {
 }
 
 // Open 打开文件
-func (p *Path) Open() (*os.File, error) {
+func (p *Path) Open() (io.ReadCloser, error) {
 	return os.Open(p.path)
 }
 

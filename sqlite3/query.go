@@ -3,8 +3,11 @@ package sqlite3
 import (
 	"database/sql"
 	"fmt"
+	"grape/data/xls"
 	"grape/util"
 	"reflect"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 // RowReader 查询接口
@@ -32,6 +35,16 @@ func (reader *RowReader) Read() []interface{} {
 // Scan 读取下一条记录
 func (reader *RowReader) Scan(addr ...interface{}) error {
 	return reader.rows.Scan(addr...)
+}
+
+// Export 读取下一条记录
+func (reader *RowReader) Export(book *excelize.File, sheet string, axis string)  {
+	col, row, err := excelize.CellNameToCoordinates(axis)
+	util.CheckFatal(err)
+	for ; reader.Next(); row++ {
+		data := reader.Read()
+		book.SetSheetRow(sheet, xls.Cell(col, row), &data)
+	}
 }
 
 type querier interface {
@@ -71,6 +84,11 @@ func Fetch(sql string, args ...interface{}) (reader *RowReader) {
 // FetchValue 执行查询，并返回值
 func FetchValue(sql string, args ...interface{}) interface{} {
 	return fetchValue(NewDB(), sql, args...)
+}
+
+// QueryRow 执行查询，返回一行数据
+func QueryRow(query string, args ...interface{}) *sql.Row {
+	return NewDB().QueryRow(query, args...)
 }
 
 // Println 执行查询，并打印查询结果

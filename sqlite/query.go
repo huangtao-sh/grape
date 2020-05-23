@@ -54,21 +54,8 @@ func (db *DB) Fetch(query string, args ...interface{}) (reader *Reader, err erro
 
 // ExecQuery 执行查询，并输出
 func (db *DB) ExecQuery(sql string, args ...interface{}) {
-	db.Println(sql, args...)
-}
-
-// Println 执行查询，并按行打印
-func (db *DB) Println(sql string, args ...interface{}) {
 	r, err := db.Fetch(sql, args...)
 	util.CheckErr(err, 1)
 	defer r.Close()
 	util.Println(r)
-}
-
-// Printf 执行查询，并按指定的格式打印
-func (db *DB) Printf(format, sql string, args ...interface{}) {
-	r, err := db.Fetch(sql, args...)
-	util.CheckErr(err, 1)
-	defer r.Close()
-	util.Printf(format, r)
 }

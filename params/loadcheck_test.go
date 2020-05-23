@@ -1,6 +1,7 @@
 package params
 
 import (
+	"grape/path"
 	"grape/sqlite3"
 	"testing"
 )
@@ -8,7 +9,7 @@ import (
 func test() (err error) {
 	tx := sqlite3.NewTx()
 	defer tx.Rollback()
-	path := "C:/Users/huangtao/test.xlsx"
+	path := path.NewPath("~/test.xlsx")
 	err = LoadCheck(tx, "test", path, "1.0")
 	tx.Commit()
 	sqlite3.Println("select * from LoadFile")
