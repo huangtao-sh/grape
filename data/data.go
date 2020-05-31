@@ -8,29 +8,14 @@ import (
 
 // Data 数据传输
 type Data struct {
-	wg *sync.WaitGroup    // 进程控制
-	ch chan []interface{} // 数据通道
+	*sync.WaitGroup                    // 进程控制
+	ch              chan []interface{} // 数据通道
 }
 
 // NewData 构造函数
 func NewData() *Data {
 	ch := make(chan []interface{})
 	return &Data{&sync.WaitGroup{}, ch}
-}
-
-// Done 执行完成
-func (d *Data) Done() {
-	d.wg.Done()
-}
-
-// Add 增加计数
-func (d *Data) Add(count int) {
-	d.wg.Add(count)
-}
-
-// Wait 阻塞进程，等待协程运行结束
-func (d *Data) Wait() {
-	d.wg.Wait()
 }
 
 // Close 关闭数据通道

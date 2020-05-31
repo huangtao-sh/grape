@@ -2,18 +2,14 @@ package main
 
 import (
 	"archive/tar"
-	"archive/zip"
+	"bytes"
 	"compress/gzip"
 	"fmt"
-	"grape/params/km"
-	"grape/path"
-	"grape/sqlite"
 	"grape/sqlite3"
+	"grape/text"
 	"grape/util"
 	"io"
 	"os"
-	"sync"
-	"time"
 )
 
 func MMain() {
@@ -45,60 +41,14 @@ func MMain() {
 	sqlite3.Println("select modtime,name from test")
 }
 
-func Zip() {
-	sqlite.Config(":memory:")
-	db, _ := sqlite.Open()
-	defer db.Close()
-	db.Exec("create table if not exists test(name text,modtime text)")
-	f, err := zip.OpenReader("E:/OneDrive/工作/参数备份/运营参数2020-03.zip")
-	util.CheckFatal(err)
-	defer f.Close()
-	stmt, err := db.Prepare("insert into test values(?,datetime(?))")
-	for _, file := range f.File {
-		info := file.FileInfo()
-		stmt.Exec(info.Name(), info.ModTime())
-	}
-	db.ExecQuery("select modtime,name from test")
-}
-
-func insert(db *sqlite.DB, t time.Time) {
-	tx, err := db.Begin()
-	util.CheckFatal(err)
-	defer tx.Rollback()
-	tx.Exec("insert into test values(?,?)", "Hello", t)
-	tx.Commit()
-}
-func Load() {
-	sqlite.Config(":memory:")
-	db, err := sqlite.Open()
-	util.CheckFatal(err)
-	defer db.Close()
-	db.Exec(`
-	create table if not exists test(
-		name text	primary key,
-		mtime	datetime
-	)
-	`)
-	t := time.Now()
-	insert(db, t)
-	row := db.QueryRow("select name from test where datetime(mtime)>=datetime(?,'1 minutes')", t)
-	var s string
-	err = row.Scan(&s)
-	fmt.Println(err, s, s == "")
-}
-
 func main() {
-	//sqlite3.Config(":memory:")
-	//file := path.NewPath("E:/OneDrive/工作/参数备份/交易菜单").Find("menu*.xml")
-	file := path.NewPath(path.NewPath("E:/OneDrive/工作/参数备份/运营参数2020-04").Find("YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.*"))
-	fmt.Println(file)
-	loader := km.NewNbzhmbLoader(file)
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	err := loader.Load(wg)
-	if err != nil {
-		fmt.Println(err)
+	bf := `1,2,"3",4
+"5","6",7,8
+"9","10",11,12`
+	b := bytes.NewReader([]byte(bf))
+	r := text.NewReader(b, true, text.NewSepSpliter(","), text.UnQuote, text.Include(0, 1))
+	for r.Next() {
+		fmt.Println(r.Read()...)
 	}
-	wg.Wait()
-	sqlite3.Println("select * from nbzhmb where km=? and xh=?", "511024", 1)
+
 }

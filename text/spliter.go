@@ -1,6 +1,9 @@
 package text
 
-import "strings"
+import (
+	"bufio"
+	"strings"
+)
 
 // OffsetSpliter 定位分割
 type OffsetSpliter struct {
@@ -24,17 +27,10 @@ func (s *OffsetSpliter) Split(bytes []byte) (record []interface{}) {
 	return
 }
 
-// SepSpliter 按指定分割符拆分
-type SepSpliter struct {
-	sep string
-}
+// NewSepSpliter 创建拆分器
+func NewSepSpliter(sep string) SplitFunc {
+	return func(s *bufio.Scanner) []string {
+		return strings.Split(s.Text(), sep)
+	}
 
-// NewSepSpliter 根据分割符拆分
-func NewSepSpliter(sep string) *SepSpliter {
-	return &SepSpliter{sep}
-}
-
-// Split 拆分
-func (s *SepSpliter) Split(bytes []byte) []interface{} {
-	return Slice(strings.Split(string(bytes), s.sep))
 }

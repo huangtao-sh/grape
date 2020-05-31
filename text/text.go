@@ -11,8 +11,8 @@ type BasicReader struct {
 	record []interface{}
 }
 
-// NewReader 创建 Reader
-func NewReader(r io.Reader) BasicReader {
+// NewTestReader 创建 Reader
+func NewTestReader(r io.Reader) BasicReader {
 	scanner := bufio.NewScanner(r)
 	return BasicReader{Scanner: *scanner}
 }
@@ -40,7 +40,7 @@ type FixedReader struct {
 
 // NewFixedReader 创建固定偏移量的文本读取
 func NewFixedReader(r io.Reader, offsets []int) *FixedReader {
-	return &FixedReader{NewReader(r), offsets}
+	return &FixedReader{NewTestReader(r), offsets}
 }
 
 // Next 读取下一行数据
@@ -55,4 +55,38 @@ func (r *FixedReader) Next() bool {
 		return true
 	}
 	return false
+}
+
+// Reader 读取数据模块
+type Reader struct {
+	*bufio.Scanner
+	Split     SplitFunc
+	converter []ConvertFunc
+}
+
+// NewReader 数据模块构造函数
+func NewReader(r io.Reader, skipHeader bool, split SplitFunc, converters ...ConvertFunc) *Reader {
+	scanner := bufio.NewScanner(r)
+	if skipHeader {
+		scanner.Scan()
+	}
+	return &Reader{scanner, split, converters}
+}
+
+// Next 是否有下一条数据
+func (r *Reader) Next() bool {
+	return r.Scan()
+}
+
+// Read 读取当前数据
+func (r *Reader) Read() []interface{} {
+	var row []string
+	row = r.Split(r.Scanner)
+	for _, convert := range r.converter {
+		row = convert(row)
+		if row == nil {
+			return nil
+		}
+	}
+	return Slice(row)
 }
