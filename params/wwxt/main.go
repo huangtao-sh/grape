@@ -1,12 +1,14 @@
-package main
+package wwxt
 
 import (
 	"flag"
 	"fmt"
 	"grape/path"
 	"grape/sqlite3"
+	"runtime"
 )
 
+// Root 参数根目录
 var Root *path.Path
 
 func init() {
@@ -16,9 +18,11 @@ func init() {
 // Version 打印版本信息
 func Version() {
 	fmt.Println("外围系统参数程序 Ver 0.1")
+	fmt.Printf("Compiled by %s\n", runtime.Version())
 }
 
-func main() {
+// Main 主程序
+func Main() {
 	defer sqlite3.Close() // 关闭数据库，释放资源
 	load := flag.Bool("l", false, "导入数据")
 	export := flag.Bool("e", false, "导出数据")

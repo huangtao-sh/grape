@@ -1,4 +1,4 @@
-package main
+package wwxt
 
 import (
 	"fmt"
@@ -36,7 +36,7 @@ func ConvDate(d string) string {
 	return d
 }
 
-// LoadFile
+// LoadFile 导入数据文件
 func LoadFile(filename string) {
 	file := path.NewPath(filename)
 	err := sqlite3.ExecTx(
@@ -61,15 +61,18 @@ func Load() {
 	}
 }
 
+// File 导入文件结构
 type File struct {
 	data.Data
 	file string
 }
 
+// NewFile  构造函数
 func NewFile(file string) *File {
 	return &File{*data.NewData(), file}
 }
 
+// Read 读取数据
 func (f *File) Read() {
 	defer f.Close()
 	xls, err := excelize.OpenFile(f.file)
@@ -88,6 +91,8 @@ func (f *File) Read() {
 		}
 	}
 }
+
+// Exec 执行SQL语句
 func (f *File) Exec(tx *sqlite3.Tx) error {
 	tx.Exec("delete from wwxt") // 清空现有数据
 	f.Add(1)

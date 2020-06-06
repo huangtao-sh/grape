@@ -1,4 +1,4 @@
-package main
+package wwxt
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Add 新增外围系统名称
 func Add(names *string) {
 	var No, value int
 	err := sqlite3.QueryRow("select max(id) from wwxt").Scan(&No)
