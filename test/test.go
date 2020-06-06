@@ -2,16 +2,16 @@ package main
 
 import (
 	"archive/tar"
-	"bytes"
 	"compress/gzip"
 	"fmt"
 	"grape/sqlite3"
-	"grape/text"
 	"grape/util"
 	"io"
 	"os"
+	"runtime"
 )
 
+// MMain Test
 func MMain() {
 	sqlite3.Config(":memory:")
 	var t *tar.Reader
@@ -42,13 +42,5 @@ func MMain() {
 }
 
 func main() {
-	bf := `1,2,"3",4
-"5","6",7,8
-"9","10",11,12`
-	b := bytes.NewReader([]byte(bf))
-	r := text.NewReader(b, true, text.NewSepSpliter(","), text.UnQuote, text.Include(0, 1))
-	for r.Next() {
-		fmt.Println(r.Read()...)
-	}
-
+	fmt.Println(runtime.Version())
 }

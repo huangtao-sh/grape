@@ -2,6 +2,7 @@ package text
 
 import (
 	"bufio"
+	"grape/data"
 	"io"
 )
 
@@ -60,8 +61,8 @@ func (r *FixedReader) Next() bool {
 // Reader 读取数据模块
 type Reader struct {
 	*bufio.Scanner
-	Split     SplitFunc
-	converter []ConvertFunc
+	Split     SplitFunc     // 拆分行函数
+	converter []ConvertFunc // 转换函数
 }
 
 // NewReader 数据模块构造函数
@@ -89,4 +90,16 @@ func (r *Reader) Read() []interface{} {
 		}
 	}
 	return Slice(row)
+}
+
+// ReadAll 读取全部数据
+func (r *Reader) ReadAll(d data.Data) {
+	var row []interface{}
+	defer d.Close()
+	for r.Scan() {
+		row = r.Read()
+		if row != nil {
+			d.Write(row...)
+		}
+	}
 }

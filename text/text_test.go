@@ -11,7 +11,7 @@ func testConverter(t *testing.T) {
 5,6,7,8
 9,10,11,12`
 	b := bytes.NewReader([]byte(bf))
-	r := NewReader(b, NewSepSpliter(","))
+	r := NewReader(b, false, NewSepSpliter(","))
 	for r.Next() {
 		fmt.Println(r.Read()...)
 	}

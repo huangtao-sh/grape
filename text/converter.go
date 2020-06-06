@@ -4,7 +4,7 @@ import (
 	"strconv"
 )
 
-// Include ConvertFunc 包含指定的列
+// Include ConvertFunc 仅包含指定的列
 func Include(columns ...int) ConvertFunc {
 	return func(s []string) (d []string) {
 		d = make([]string, len(columns))
@@ -15,7 +15,7 @@ func Include(columns ...int) ConvertFunc {
 	}
 }
 
-// Exclude ConvertFunc 排除指定的列
+// Exclude ConvertFunc 剔除指定的列
 func Exclude(columns ...int) ConvertFunc {
 	Columns := make(map[int]bool)
 	for _, i := range columns {
@@ -40,7 +40,6 @@ func UnQuote(s []string) (d []string) {
 		if err != nil {
 			d[i] = s[i]
 		}
-
 	}
 	return
 }
