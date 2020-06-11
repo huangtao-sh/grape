@@ -56,17 +56,5 @@ func (d *Data) Printf(format string) {
 
 // Exec 执行 SQL 语句
 func (d *Data) Exec(tx *sqlite3.Tx, sql string) (err error) {
-	defer d.Done()
-	stmt, err := tx.Prepare(sql)
-	if err != nil {
-		return
-	}
-	defer stmt.Close()
-	for row := range d.ReadCh() {
-		_, err = stmt.Exec(row...)
-		if err != nil {
-			return
-		}
-	}
-	return
+	return tx.ExecCh(sql, d)
 }

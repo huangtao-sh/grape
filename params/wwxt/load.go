@@ -63,13 +63,13 @@ func Load() {
 
 // File 导入文件结构
 type File struct {
-	data.Data
+	*data.Data
 	file string
 }
 
 // NewFile  构造函数
 func NewFile(file string) *File {
-	return &File{*data.NewData(), file}
+	return &File{data.NewData(), file}
 }
 
 // Read 读取数据
@@ -79,7 +79,6 @@ func (f *File) Read() {
 	util.CheckFatal(err)
 	rows, err := xls.Rows("历史")
 	util.CheckFatal(err)
-	ch := f.WriteCh()
 	for rows.Next() {
 		row, _ := rows.Columns()
 		id, err := strconv.Atoi(row[0])
@@ -87,7 +86,7 @@ func (f *File) Read() {
 			row = append(row, "")
 		}
 		if err == nil {
-			ch <- []interface{}{id, row[1], row[2], row[3], ConvDate(row[4])}
+			f.Write(id, row[1], row[2], row[3], ConvDate(row[4]))
 		}
 	}
 }
