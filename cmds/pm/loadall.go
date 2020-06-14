@@ -32,6 +32,7 @@ type LoadFunc func(text.File, string)
 var fileList = map[string]LoadFunc{
 	"YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del":    ggjgm.Load,
 	"YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.del": km.Load,
+	"YUNGUAN_MONTH_STG_ZSRUN_GGKMZD.del":   km.LoadKm,
 }
 
 // LoadZip 导入 zip 压缩包
