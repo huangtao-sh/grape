@@ -39,7 +39,7 @@ func LoadZip(wg *sync.WaitGroup) {
 	defer wg.Done()
 	zipFile := ROOT.Find("运营参数*.zip")
 	ver := path.NewPath(zipFile).Base()[12:19]
-	fmt.Println(ver)
+	fmt.Printf("导入数据版本号：%s\n", ver)
 	f, err := zip.OpenReader(zipFile)
 	util.CheckFatal(err)
 	defer f.Close()
