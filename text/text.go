@@ -2,7 +2,6 @@ package text
 
 import (
 	"bufio"
-	"grape/data"
 	"io"
 )
 
@@ -74,32 +73,24 @@ func NewReader(r io.Reader, skipHeader bool, split SplitFunc, converters ...Conv
 	return &Reader{scanner, split, converters}
 }
 
-// Next 是否有下一条数据
-func (r *Reader) Next() bool {
-	return r.Scan()
-}
-
-// Read 读取当前数据
-func (r *Reader) Read() []interface{} {
-	var row []string
-	row = r.Split(r.Scanner)
-	for _, convert := range r.converter {
-		row = convert(row)
-		if row == nil {
-			return nil
-		}
-	}
-	return Slice(row)
+// Data Data Channel
+type Data interface {
+	Close()
+	Write(...interface{})
 }
 
 // ReadAll 读取全部数据
-func (r *Reader) ReadAll(d data.Data) {
-	var row []interface{}
+func (r *Reader) ReadAll(d Data) {
 	defer d.Close()
+	var row []string
 	for r.Scan() {
-		row = r.Read()
-		if row != nil {
-			d.Write(row...)
+		row = r.Split(r.Scanner)
+		for _, convert := range r.converter {
+			row = convert(row)
+			if row == nil {
+				continue
+			}
 		}
+		d.Write(Slice(row)...)
 	}
 }

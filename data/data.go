@@ -14,7 +14,7 @@ type Data struct {
 
 // NewData 构造函数
 func NewData() *Data {
-	ch := make(chan []interface{})
+	ch := make(chan []interface{}, 10)
 	return &Data{&sync.WaitGroup{}, ch}
 }
 

@@ -9,7 +9,11 @@ func Include(columns ...int) ConvertFunc {
 	return func(s []string) (d []string) {
 		d = make([]string, len(columns))
 		for i, idx := range columns {
-			d[i] = s[idx]
+			if idx < 0 {
+				d[i] = s[idx+len(s)]
+			} else {
+				d[i] = s[idx]
+			}
 		}
 		return
 	}

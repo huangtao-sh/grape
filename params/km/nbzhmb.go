@@ -1,8 +1,10 @@
 package km
 
 import (
+	"fmt"
 	"grape/params"
 	"grape/sqlite3"
+	"grape/text"
 )
 
 func initDb() {
@@ -23,8 +25,16 @@ func initDb() {
 	`)
 }
 
-func NewNbzhmbLoader(path params.File, ver string) *params.Loader {
+// Load 导入内部账户模板参数
+func Load(path text.File, ver string) {
 	initDb()
-	return params.NewLoader(path, "nbzhmb", ver,
+	loader := params.NewLoader(path, "nbzhmb", ver,
 		"insert into nbzhmb values(?,date(?),?,?,?,?,?,?,?,?)")
+	err := sqlite3.ExecTx(loader)
+	if err == nil {
+		fmt.Printf("导入 %s 完成 \n", path.FileInfo().Name())
+	} else {
+		fmt.Println(err)
+	}
+	return
 }

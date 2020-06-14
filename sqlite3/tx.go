@@ -2,6 +2,7 @@ package sqlite3
 
 import (
 	"database/sql"
+	"errors"
 	"grape/util"
 )
 
@@ -61,6 +62,8 @@ func ExecTx(txers ...interface{}) (err error) {
 			err = execer(tx)
 		case Txer:
 			err = execer.Exec(tx)
+		default:
+			return errors.New("执行错误")
 		}
 		if err != nil {
 			return
@@ -74,31 +77,6 @@ func ExecTx(txers ...interface{}) (err error) {
 func NewTr(sql string, params ...interface{}) ExecFunc {
 	return func(tx *Tx) (err error) {
 		_, err = tx.Exec(sql, params...)
-		return
-	}
-}
-
-// Reader data reader interface
-type Reader interface {
-	Next() bool
-	Read() []interface{}
-}
-
-// NewReader 新建一个执行
-func NewReader(sql string, r Reader) ExecFunc {
-	return func(tx *Tx) (err error) {
-		stmt, err := tx.Prepare(sql)
-		util.CheckFatal(err)
-		defer stmt.Close()
-		for r.Next() {
-			row := r.Read()
-			if row != nil {
-				_, err = stmt.Exec(row...)
-				if err != nil {
-					return
-				}
-			}
-		}
 		return
 	}
 }

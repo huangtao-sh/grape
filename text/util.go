@@ -6,6 +6,7 @@ import (
 	"grape/gbk"
 	"grape/util"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -35,4 +36,10 @@ func Decode(r io.Reader, isGz bool, isGbk bool) io.Reader {
 		r = gbk.NewReader(r)
 	}
 	return r
+}
+
+// File tar、zip 压缩包获取文
+type File interface {
+	FileInfo() os.FileInfo
+	Open() (io.ReadCloser, error)
 }

@@ -3,12 +3,12 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
+	"grape/data"
 	"grape/sqlite3"
+	"grape/text"
 	"grape/util"
 	"io"
 	"os"
-	"runtime"
 )
 
 // MMain Test
@@ -42,5 +42,15 @@ func MMain() {
 }
 
 func main() {
-	fmt.Println(runtime.Version())
+	file := `C:\Users\huangtao\OneDrive\工作\参数备份\运营参数2020-02\YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del`
+	r, err := os.Open(file)
+	util.CheckFatal(err)
+	defer r.Close()
+	reader := text.NewReader(text.Decode(r, false, true), false, text.NewSepSpliter(","),
+		text.Include(0, 1, 3-43, 7-43, 15-43, 16-43, 17-43))
+	d := data.NewData()
+	d.Add(1)
+	go d.Println()
+	go reader.ReadAll(d)
+	d.Wait()
 }
