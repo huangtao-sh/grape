@@ -28,3 +28,8 @@ func LoadKm(file text.File, ver string) {
 	loader := load.NewLoader("kmzd", file, ver, reader, initKmSQL, loadKmSQL)
 	loader.Load()
 }
+
+// Main 科目主函数
+func Main() {
+
+}

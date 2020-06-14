@@ -61,7 +61,7 @@ type Loader struct {
 }
 
 // NewLoader 构造函数
-func NewLoader(name string, file File, ver string, txt *text.Reader, initSQL string, loadSQL string) *Loader {
+func NewLoader(name string, file File, ver string, txt Reader, initSQL string, loadSQL string) *Loader {
 	return &Loader{name, file, ver, txt, initSQL, loadSQL}
 }
 
