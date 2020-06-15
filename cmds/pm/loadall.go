@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"grape/params/ggjgm"
 	"grape/params/km"
+	"grape/params/teller"
 	"grape/path"
 	"grape/text"
 	"grape/util"
@@ -33,6 +34,7 @@ var fileList = map[string]LoadFunc{
 	"YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del":    ggjgm.Load,
 	"YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.del": km.Load,
 	"YUNGUAN_MONTH_STG_ZSRUN_GGKMZD.del":   km.LoadKm,
+	"users_output.csv":                     teller.Load,
 }
 
 // LoadZip 导入 zip 压缩包

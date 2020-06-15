@@ -3,7 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"grape/params/lzbg"
+	"grape/params/teller"
 	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
@@ -42,7 +42,6 @@ func MMain() {
 }
 
 func main() {
-	file := path.NewPath(`C:\Users\huangtao\Downloads\营业主管信息.xlsx`)
-	lzbg.LoadYyzg(file, "")
-	sqlite3.Println("select * from yyzg")
+	file := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\运营参数2020-02\users_output.csv`)
+	teller.Load(file, "")
 }
