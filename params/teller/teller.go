@@ -63,11 +63,5 @@ func Load(file text.File, ver string) {
 		convert)
 	loader := load.NewLoader("teller", file, ver, reader, initSQL, loadSQL)
 	loader.Load()
-	/*
-			d := data.NewData()
-			d.Add(1)
-			go reader.ReadAll(d)
-			go d.Println()
-		    d.Wait()
-	*/
+	//loader.Test()
 }

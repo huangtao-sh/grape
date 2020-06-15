@@ -88,3 +88,12 @@ func (l *Loader) Exec(tx *sqlite3.Tx) (err error) {
 	d.Wait()
 	return
 }
+
+// Test 执行测试
+func (l *Loader) Test() {
+	d := data.NewData()
+	d.Add(1)
+	go l.reader.ReadAll(d)
+	go d.Println()
+	d.Wait()
+}
