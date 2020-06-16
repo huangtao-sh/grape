@@ -44,13 +44,14 @@ func convert(s []string) (d []string) {
 	for i := range s {
 		s[i] = strings.TrimSpace(s[i])
 	}
+	length := len(s)
 	copy(d[:3], s[:3])
 	copy(d[3:7], s[4:8])
-	d[7] = strings.Join(s[8:60-25], ",")
-	d[8] = s[60-25]
-	copy(d[9:12], s[60-23:60-20])
-	copy(d[12:19], s[60-10:60-3])
-	copy(d[19:], s[60-2:])
+	d[7] = strings.Join(s[8:length-25], ",")
+	d[8] = s[length-25]
+	copy(d[9:12], s[length-23:length-20])
+	copy(d[12:19], s[length-10:length-3])
+	copy(d[19:], s[length-2:])
 	return
 }
 
