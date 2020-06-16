@@ -60,7 +60,7 @@ func Load(file text.File, ver string) {
 	util.CheckFatal(err)
 	defer r.Close()
 	reader := text.NewReader(text.Decode(r, false, true), false, text.NewSepSpliter(","),
-		convert)
+		text.UnQuote, convert)
 	loader := load.NewLoader("teller", file, ver, reader, initSQL, loadSQL)
 	loader.Load()
 	//loader.Test()
