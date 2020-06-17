@@ -61,7 +61,7 @@ jxbz char 2 N.N 计息标志
 	tzed real,  -- 透支额度
 	memo text   -- 备注
 );
-drop view nbzhhz;
+-- drop view nbzhhz;
 create view nbzhhz as 
 select b.jglx,a.bz,a.km,cast(substr(a.zh,19,3)as int) as xh,a.hm,sum(abs(a.ye)), 
 max(a.sbfsr) from nbzh a 
