@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"grape/params/ggjgm"
 	"grape/params/km"
+	"grape/params/nbzh"
 	"grape/params/teller"
 	"grape/path"
 	"grape/text"
@@ -21,6 +22,10 @@ func init() {
 
 // Load 导入参数
 func Load() {
+	file := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\科目说明`).Find("会计科目说明*")
+	if file != "" {
+		nbzh.LoadKemu(path.NewPath(file))
+	}
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go LoadZip(wg)
@@ -35,6 +40,7 @@ var fileList = map[string]LoadFunc{
 	"YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.del": km.Load,
 	"YUNGUAN_MONTH_STG_ZSRUN_GGKMZD.del":   km.LoadKm,
 	"users_output.csv":                     teller.Load,
+	"YUNGUAN_MONTH_STG_ZSRUN_FHNBHZZ.del":  nbzh.Load,
 }
 
 // LoadZip 导入 zip 压缩包

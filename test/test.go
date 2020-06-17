@@ -3,7 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"grape/params/teller"
+	"fmt"
 	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
@@ -42,6 +42,7 @@ func MMain() {
 }
 
 func main() {
-	file := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\运营参数2020-02\users_output.csv`)
-	teller.Load(file, "")
+	path := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\科目说明`)
+	f := path.Find("会计科目说明*")
+	fmt.Println(f)
 }
