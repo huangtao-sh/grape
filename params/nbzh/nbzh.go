@@ -60,7 +60,15 @@ jxbz char 2 N.N 计息标志
 	fxzh text,  --  付息账号
 	tzed real,  -- 透支额度
 	memo text   -- 备注
-);`
+);
+drop view nbzhhz;
+create view nbzhhz as 
+select b.jglx,a.bz,a.km,cast(substr(a.zh,19,3)as int) as xh,a.hm,sum(abs(a.ye)), 
+max(a.sbfsr) from nbzh a 
+left join ggjgm b on a.jgm=b.jgm 
+where a.zhzt like "0%" 
+group by b.jglx,a.km,a.bz,xh;
+`
 
 var loadNbzhSQL = `
 insert into nbzh values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,date(?),date(?),date(?),date(?),?,?,?,?,?,?,?)
@@ -80,18 +88,6 @@ func Load(file text.File, ver string) {
 	loader.Load()
 	//loader.Test()
 }
-
-/*
-create table if not exists nbzhhz (
-	jglx    text,   -- 机构类型
-	bz      text,   -- 币种
-	km      text,   -- 科目
-	xh      int,    -- 序号
-	hm      text,   -- 户名
-	ye      real,   -- 总余额
-	sbfsr   text    -- 最近的上笔发生额
-);
-*/
 
 var initKemuSQL = `
 create table if not exists kemu(
@@ -137,7 +133,8 @@ func (r *KemuReader) ReadAll(d text.Data) {
 
 // LoadKemu 导入科目
 func LoadKemu(file text.File) {
-	ver := file.FileInfo().Name()[6:12]
+	Ver := regexp.MustCompile(`\d{6}`)
+	ver := Ver.FindString(file.FileInfo().Name())
 	r, err := file.Open()
 	util.CheckFatal(err)
 	defer r.Close()
