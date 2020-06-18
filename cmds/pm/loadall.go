@@ -22,7 +22,7 @@ func init() {
 
 // Load 导入参数
 func Load() {
-	file := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\科目说明`).Find("会计科目说明*")
+	file := path.NewPath(`~\OneDrive\工作\参数备份\科目说明`).Find("会计科目说明*")
 	if file != "" {
 		nbzh.LoadKemu(path.NewPath(file))
 	}
