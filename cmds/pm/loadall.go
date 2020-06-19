@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"grape/params/ggjgm"
 	"grape/params/km"
+	"grape/params/lzbg"
 	"grape/params/nbzh"
 	"grape/params/teller"
 	"grape/path"
@@ -20,15 +21,25 @@ func init() {
 	ROOT = path.NewPath("~/OneDrive/工作/参数备份")
 }
 
+// loadFunc 导入函数原型
+type ldFunc func(*path.Path)
+
 // Load 导入参数
 func Load() {
-	file := path.NewPath(`~\OneDrive\工作\参数备份\科目说明`).Find("会计科目说明*")
-	if file != "" {
-		nbzh.LoadKemu(path.NewPath(file))
-	}
+	var fileList = map[string]ldFunc{}
+	fileList[path.NewPath(`~\OneDrive\工作\参数备份\科目说明`).Find("会计科目说明*")] = nbzh.LoadKemu
+	fileList[ROOT.Find("运营参数*.zip")] = LoadZip
+	fileList[path.NewPath("~/Downloads").Find("营业主管信息*")] = lzbg.LoadYyzg
 	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	go LoadZip(wg)
+	for file, f := range fileList {
+		if file != "" {
+			wg.Add(1)
+			go func(file string, f ldFunc, wg *sync.WaitGroup) {
+				defer wg.Done()
+				f(path.NewPath(file))
+			}(file, f, wg)
+		}
+	}
 	wg.Wait()
 }
 
@@ -44,12 +55,10 @@ var fileList = map[string]LoadFunc{
 }
 
 // LoadZip 导入 zip 压缩包
-func LoadZip(wg *sync.WaitGroup) {
-	defer wg.Done()
-	zipFile := ROOT.Find("运营参数*.zip")
-	ver := path.NewPath(zipFile).Base()[12:19]
-	fmt.Printf("导入数据版本号：%s\n", ver)
-	f, err := zip.OpenReader(zipFile)
+func LoadZip(file *path.Path) {
+	ver := file.Base()[12:19]
+	fmt.Printf("导入 Zip 参数表，版本号：%s\n", ver)
+	f, err := zip.OpenReader(file.String())
 	util.CheckFatal(err)
 	defer f.Close()
 	wwg := &sync.WaitGroup{}
@@ -65,4 +74,5 @@ func LoadZip(wg *sync.WaitGroup) {
 		}
 	}
 	wwg.Wait()
+	fmt.Printf("文件 %s 已导入\n", file.Base())
 }

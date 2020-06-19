@@ -3,6 +3,7 @@ package nbzh
 import (
 	"bufio"
 	"grape/params/load"
+	"grape/path"
 	"grape/text"
 	"grape/util"
 	"regexp"
@@ -62,7 +63,7 @@ jxbz char 2 N.N 计息标志
 	memo text   -- 备注
 );
 -- drop view nbzhhz;
-create view nbzhhz as 
+create view if not exists nbzhhz as 
 select b.jglx,a.bz,a.km,cast(substr(a.zh,19,3)as int) as xh,a.hm,sum(abs(a.ye)), 
 max(a.sbfsr) from nbzh a 
 left join ggjgm b on a.jgm=b.jgm 
@@ -132,7 +133,7 @@ func (r *KemuReader) ReadAll(d text.Data) {
 }
 
 // LoadKemu 导入科目
-func LoadKemu(file text.File) {
+func LoadKemu(file *path.Path) {
 	Ver := regexp.MustCompile(`\d{6}`)
 	ver := Ver.FindString(file.FileInfo().Name())
 	r, err := file.Open()

@@ -2,6 +2,7 @@ package lzbg
 
 import (
 	"grape/params/load"
+	"grape/path"
 	"grape/text"
 	"grape/util"
 	"strconv"
@@ -57,7 +58,9 @@ func NewReader(file load.File) *Reader {
 var loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 
 // LoadYyzg 导入营业主管信息
-func LoadYyzg(path load.File, ver string) {
+func LoadYyzg(file *path.Path) {
+	var path load.File = file
+	ver := path.FileInfo().Name()[18:24]
 	reader := NewReader(path)
 	loader := load.NewLoader("yyzg", path, ver, reader, initSQL, loadSQL)
 	loader.Load()

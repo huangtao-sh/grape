@@ -20,17 +20,19 @@ func Main() {
 	if len(args) == 0 {
 		ShowVersion()
 	} else {
+		format := "%9s  %-40s  %-10s  %12s  %2s  %10s  %9s\n"
 		params.PrintVer("nbzhmb")
+		fmt.Println("  机构码   机构名称                                  简称        行号        类型    开立日期  分行")
 		for _, arg := range args {
 			if matched, _ := regexp.MatchString("316\\d{1,9}", arg); matched {
 				arg = fmt.Sprintf("%s%%", arg)
-				sqlite3.Println("select * from ggjgm where zfhh like ?", arg)
+				sqlite3.Printf(format, "select * from ggjgm where zfhh like ?", arg)
 			} else if matched, _ := regexp.MatchString("\\d{1,9}", arg); matched {
 				arg = fmt.Sprintf("%s%%", arg)
-				sqlite3.Println("select * from ggjgm where jgm like ?", arg)
+				sqlite3.Printf(format, "select * from ggjgm where jgm like ?", arg)
 			} else {
 				arg = fmt.Sprintf("%%%s%%", arg)
-				sqlite3.Println("select * from ggjgm where mc like ? ", arg, arg, arg)
+				sqlite3.Printf(format, "select * from ggjgm where mc like ? ", arg, arg, arg)
 			}
 		}
 	}

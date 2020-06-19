@@ -38,7 +38,7 @@ func (reader *RowReader) Scan(addr ...interface{}) error {
 }
 
 // Export 读取下一条记录
-func (reader *RowReader) Export(book *excelize.File, sheet string, axis string)  {
+func (reader *RowReader) Export(book *excelize.File, sheet string, axis string) {
 	col, row, err := excelize.CellNameToCoordinates(axis)
 	util.CheckFatal(err)
 	for ; reader.Next(); row++ {
@@ -103,7 +103,8 @@ func Println(sql string, args ...interface{}) {
 func Printf(format string, sql string, args ...interface{}) {
 	rows := Fetch(sql, args...)
 	for rows.Next() {
-		fmt.Printf(format, rows.Read()...)
+		//fmt.Printf(format, rows.Read()...)
+		fmt.Printf("%s", util.Sprintf(format, rows.Read()...))
 	}
 }
 

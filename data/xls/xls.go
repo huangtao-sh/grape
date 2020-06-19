@@ -21,7 +21,7 @@ func Cell(col interface{}, row int) (cell string) {
 	return
 }
 
-// write 向 Excel 写入数据
+// Write 向 Excel 写入数据
 func Write(book *excelize.File, sheet string, axis string, data util.Dater) {
 	col, row, err := excelize.CellNameToCoordinates(axis)
 	util.CheckFatal(err)

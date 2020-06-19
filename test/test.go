@@ -4,7 +4,6 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"fmt"
-	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
 	"io"
@@ -42,7 +41,6 @@ func MMain() {
 }
 
 func main() {
-	path := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\科目说明`)
-	f := path.Find("会计科目说明*")
-	fmt.Println(f)
+	d := util.Sprintf("%-10s|", "黄涛12345678")
+	fmt.Println(d)
 }

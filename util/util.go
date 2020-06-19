@@ -3,6 +3,9 @@ package util
 import (
 	"fmt"
 	"os"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
 // CheckErr 检查是否有错误，并退出操作系统
@@ -42,4 +45,48 @@ func Printf(format string, data Dater) {
 		row = data.Read()
 		fmt.Printf(format, row...)
 	}
+}
+
+// Wlen 统计字符串的长度，汉字按2计算
+func Wlen(s string) (length int) {
+	runes := []rune(s)
+	length = len(runes)
+	for _, r := range runes {
+		if r >= 0x80 {
+			length++
+		}
+	}
+	return
+}
+
+// Sprintf format string
+func Sprintf(format string, a ...interface{}) string {
+	i := 0
+	Pattern := regexp.MustCompile(`%.*?[sdf%]`)
+	StrPattern := regexp.MustCompile(`%(-)?(\d+)?s`)
+	replFunc := func(s string) (d string) {
+		if s == "%%" {
+			return "%"
+		} else if StrPattern.MatchString(s) {
+			k := StrPattern.FindStringSubmatch(s)
+			d = a[i].(string)
+			if k[2] != "" {
+				l, _ := strconv.Atoi(k[2])
+				l -= Wlen(d)
+				if l > 0 {
+					space := strings.Repeat(" ", l)
+					if k[1] == "-" {
+						d += space
+					} else {
+						d = space + d
+					}
+				}
+			}
+		} else {
+			d = fmt.Sprintf(s, a[i])
+		}
+		i++
+		return
+	}
+	return Pattern.ReplaceAllStringFunc(format, replFunc)
 }
