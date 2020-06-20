@@ -4,6 +4,8 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"fmt"
+	"grape/params/lzbg"
+	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
 	"io"
@@ -41,6 +43,8 @@ func MMain() {
 }
 
 func main() {
-	d := util.Sprintf("%-10s|", "黄涛12345678")
-	fmt.Println(d)
+	ROOT := path.NewPath("~/OneDrive/工作/参数备份")
+	file := ROOT.Find("分行表/分行顺序表*")
+	fmt.Println(file)
+	lzbg.LoadFhsxb(path.NewPath(file))
 }

@@ -23,10 +23,8 @@ func init() {
 }
 
 // LoadCheck 检查文件是否已导入数据库
-func LoadCheck(name string, path File, ver string) sqlite3.ExecFunc {
-	var info os.FileInfo
+func LoadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 	var count int
-	info = path.FileInfo()
 	filename := info.Name()
 	mtime := info.ModTime()
 	return func(tx *sqlite3.Tx) (err error) {
@@ -53,29 +51,29 @@ type Reader interface {
 
 // Loader 数据导入模型
 type Loader struct {
-	Name string
-	File
+	Name             string
+	FileInfo         os.FileInfo
 	ver              string
 	reader           Reader
 	initSQL, loadSQL string
 }
 
 // NewLoader 构造函数
-func NewLoader(name string, file File, ver string, txt Reader, initSQL string, loadSQL string) *Loader {
-	return &Loader{name, file, ver, txt, initSQL, loadSQL}
+func NewLoader(name string, fileInfo os.FileInfo, ver string, txt Reader, initSQL string, loadSQL string) *Loader {
+	return &Loader{name, fileInfo, ver, txt, initSQL, loadSQL}
 }
 
 // Load 导入数据
 func (l *Loader) Load() {
 	sqlite3.ExecScript(l.initSQL) // 初始化数据库
 	err := sqlite3.ExecTx(
-		LoadCheck(l.Name, l.File, l.ver),
+		LoadCheck(l.Name, l.FileInfo, l.ver),
 		sqlite3.NewTr(fmt.Sprintf("delete from %s", l.Name)),
 		l)
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Printf("导入文件 %s 完成！\n", l.File.FileInfo().Name())
+		fmt.Printf("导入文件 %s 完成！\n", l.FileInfo.Name())
 	}
 }
 

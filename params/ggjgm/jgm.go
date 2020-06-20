@@ -3,7 +3,8 @@ package ggjgm
 import (
 	"grape/params/load"
 	"grape/text"
-	"grape/util"
+	"io"
+	"os"
 )
 
 var initSQL = `
@@ -21,12 +22,9 @@ create table if not exists ggjgm (
 var loadSQL = "insert or replace into ggjgm values(?,?,?,?,?,date(?),?)"
 
 // Load 导入文件
-func Load(file text.File, ver string) {
-	r, err := file.Open()
-	util.CheckFatal(err)
-	defer r.Close()
-	reader := text.NewReader(text.Decode(r, false, true), false, text.NewSepSpliter(","),
+func Load(info os.FileInfo, r io.Reader, ver string) {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","),
 		text.Include(0, 1, 3-43, 7-43, 15-43, 16-43, 17-43))
-	loader := load.NewLoader("ggjgm", file, ver, reader, initSQL, loadSQL)
+	loader := load.NewLoader("ggjgm", info, ver, reader, initSQL, loadSQL)
 	loader.Load()
 }

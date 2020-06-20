@@ -1,13 +1,11 @@
 package lzbg
 
 import (
+	"grape/data/xls"
 	"grape/params/load"
 	"grape/path"
 	"grape/text"
 	"grape/util"
-	"strconv"
-
-	"github.com/Luxurioust/excelize"
 )
 
 var initSQL = `
@@ -26,42 +24,34 @@ create table if not exists yyzg(
 )
 `
 
-// Reader 营业主管履职报告
-type Reader struct {
-	file load.File
-}
-
-// ReadAll 读取所有数据
-func (r *Reader) ReadAll(d text.Data) {
-	defer d.Close()
-	re, err := r.file.Open()
-	util.CheckFatal(err)
-	defer re.Close()
-	xls, err := excelize.OpenReader(re)
-	util.CheckFatal(err)
-	rows, err := xls.Rows("Sheet1")
-	util.CheckFatal(err)
-	for rows.Next() {
-		row, _ := rows.Columns()
-		_, err := strconv.Atoi(row[0])
-		if err == nil {
-			d.Write(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[9], row[11], row[10])
-		}
-	}
-}
-
-// NewReader 构造函数
-func NewReader(file load.File) *Reader {
-	return &Reader{file}
-}
-
 var loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 
 // LoadYyzg 导入营业主管信息
 func LoadYyzg(file *path.Path) {
-	var path load.File = file
-	ver := path.FileInfo().Name()[18:24]
-	reader := NewReader(path)
-	loader := load.NewLoader("yyzg", path, ver, reader, initSQL, loadSQL)
+	ver := file.FileInfo().Name()[18:24]
+	r, err := file.Open()
+	util.CheckFatal(err)
+	reader := xls.NewXlsReader(r, "Sheet1", 1, text.Include(0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 10))
+	loader := load.NewLoader("yyzg", file.FileInfo(), ver, reader, initSQL, loadSQL)
 	loader.Load()
+}
+
+var initSXB = `
+create table if not exists fhsxb(
+	br		text primary key,  -- 分行
+	[order]	int					-- 顺序
+)
+`
+
+var loadSXB = `insert into fhsxb Values(?,?)`
+
+// LoadFhsxb 导入分行顺序表
+func LoadFhsxb(file *path.Path) {
+	ver := ""
+	r, err := file.Open()
+	util.CheckFatal(err)
+	reader := xls.NewXlsReader(r, "分行顺序表", 1, text.Include(0, 1))
+	loader := load.NewLoader("fhsxb", file.FileInfo(), ver, reader, initSXB, loadSXB)
+	loader.Load()
+	//loader.Test()
 }

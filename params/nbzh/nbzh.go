@@ -6,6 +6,8 @@ import (
 	"grape/path"
 	"grape/text"
 	"grape/util"
+	"io"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -80,12 +82,9 @@ func convert(s []string) []string {
 }
 
 // Load 导入文件
-func Load(file text.File, ver string) {
-	r, err := file.Open()
-	util.CheckFatal(err)
-	defer r.Close()
-	reader := text.NewReader(text.Decode(r, false, true), false, text.NewSepSpliter(","), convert)
-	loader := load.NewLoader("nbzh", file, ver, reader, initNbzhSQL, loadNbzhSQL)
+func Load(info os.FileInfo, r io.Reader, ver string) {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","), convert)
+	loader := load.NewLoader("nbzh", info, ver, reader, initNbzhSQL, loadNbzhSQL)
 	loader.Load()
 	//loader.Test()
 }
@@ -141,7 +140,7 @@ func LoadKemu(file *path.Path) {
 	defer r.Close()
 	r1 := text.Decode(r, false, true)
 	reader := &KemuReader{bufio.NewScanner(r1)}
-	loader := load.NewLoader("kemu", file, ver, reader, initKemuSQL, loadKemuSQL)
+	loader := load.NewLoader("kemu", file.FileInfo(), ver, reader, initKemuSQL, loadKemuSQL)
 	loader.Load()
 	//loader.Test()
 }

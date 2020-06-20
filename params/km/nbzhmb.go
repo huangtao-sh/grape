@@ -3,7 +3,8 @@ package km
 import (
 	"grape/params/load"
 	"grape/text"
-	"grape/util"
+	"io"
+	"os"
 )
 
 var initSQL = `
@@ -23,11 +24,8 @@ create table if not exists nbzhmb(
 var loadSQL = "insert into nbzhmb values(?,date(?),?,?,?,?,?,?,?,?)"
 
 // Load 导入内部账户模板参数
-func Load(file text.File, ver string) {
-	r, err := file.Open()
-	util.CheckFatal(err)
-	defer r.Close()
-	reader := text.NewReader(text.Decode(r, false, true), false, text.NewSepSpliter(","))
-	loader := load.NewLoader("nbzhmb", file, ver, reader, initSQL, loadSQL)
+func Load(info os.FileInfo, r io.Reader, ver string) {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","))
+	loader := load.NewLoader("nbzhmb", info, ver, reader, initSQL, loadSQL)
 	loader.Load()
 }

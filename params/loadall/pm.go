@@ -1,13 +1,13 @@
-package main
+package loadall
 
 import (
 	"flag"
 	"fmt"
-	_ "grape/params"
 	"grape/sqlite3"
 )
 
-func main() {
+// Main pm 程序主函数
+func Main() {
 	execSQL := flag.String("e", "", "执行 SQL 语句")
 	querySQL := flag.String("q", "", "执行查询")
 	load := flag.Bool("l", false, "执行数据导入")

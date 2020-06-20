@@ -3,7 +3,8 @@ package teller
 import (
 	"grape/params/load"
 	"grape/text"
-	"grape/util"
+	"io"
+	"os"
 	"strings"
 )
 
@@ -56,13 +57,10 @@ func convert(s []string) (d []string) {
 }
 
 // Load 导入文件
-func Load(file text.File, ver string) {
-	r, err := file.Open()
-	util.CheckFatal(err)
-	defer r.Close()
-	reader := text.NewReader(text.Decode(r, false, true), false, text.NewSepSpliter(","),
+func Load(info os.FileInfo, r io.Reader, ver string) {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","),
 		text.UnQuote, convert)
-	loader := load.NewLoader("teller", file, ver, reader, initSQL, loadSQL)
+	loader := load.NewLoader("teller", info, ver, reader, initSQL, loadSQL)
 	loader.Load()
 	//loader.Test()
 }

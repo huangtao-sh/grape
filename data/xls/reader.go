@@ -5,7 +5,7 @@ import (
 	"grape/util"
 	"io"
 
-	"github.com/Luxurioust/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 // Reader Excel
@@ -20,6 +20,7 @@ func NewRowReader(xls *excelize.File, sheet string, skip int, converters ...text
 	util.CheckFatal(err)
 	for i := 0; i < skip; i++ {
 		rows.Next()
+		rows.Columns()
 	}
 	return &Reader{rows, converters}
 }
