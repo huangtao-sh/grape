@@ -3,6 +3,7 @@ package loadall
 import (
 	"archive/zip"
 	"fmt"
+	"grape/gbk"
 	"grape/params/ggjgm"
 	"grape/params/km"
 	"grape/params/lzbg"
@@ -10,7 +11,6 @@ import (
 	"grape/params/teller"
 	"grape/params/xxbm"
 	"grape/path"
-	"grape/text"
 	"grape/util"
 	"io"
 	"os"
@@ -77,7 +77,7 @@ func LoadZip(file *path.Path) {
 				r, err := file.Open()
 				util.CheckFatal(err)
 				defer r.Close()
-				loadfunc(file.FileInfo(), text.Decode(r, false, true), ver)
+				loadfunc(file.FileInfo(), gbk.NewReader(r), ver)
 			}(file, ver, wg)
 		}
 	}

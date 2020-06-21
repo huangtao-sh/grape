@@ -3,6 +3,7 @@ package data
 import (
 	"fmt"
 	"grape/sqlite3"
+	"grape/util"
 	"sync"
 )
 
@@ -14,7 +15,7 @@ type Data struct {
 
 // NewData 构造函数
 func NewData() *Data {
-	ch := make(chan []interface{}, 10)
+	ch := make(chan []interface{}, 32)
 	return &Data{&sync.WaitGroup{}, ch}
 }
 
@@ -50,7 +51,7 @@ func (d *Data) Println() {
 func (d *Data) Printf(format string) {
 	defer d.Done()
 	for row := range d.ch {
-		fmt.Printf(format, row...)
+		fmt.Printf("%s", util.Sprintf(format, row...))
 	}
 }
 

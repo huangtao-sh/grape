@@ -2,6 +2,7 @@ package nbzh
 
 import (
 	"bufio"
+	"grape/gbk"
 	"grape/params/load"
 	"grape/path"
 	"grape/text"
@@ -122,8 +123,8 @@ func (r *KemuReader) ReadAll(d text.Data) {
 				d.Write(km, name, strings.Join(sm, "\n"))
 				sm = nil
 			}
-			s := KEMU.FindAllStringSubmatch(line, -1)
-			km, name = s[0][1], s[0][2]
+			s := KEMU.FindStringSubmatch(line)
+			km, name = s[1], s[2]
 		} else {
 			sm = append(sm, line)
 		}
@@ -138,8 +139,7 @@ func LoadKemu(file *path.Path) {
 	r, err := file.Open()
 	util.CheckFatal(err)
 	defer r.Close()
-	r1 := text.Decode(r, false, true)
-	reader := &KemuReader{bufio.NewScanner(r1)}
+	reader := &KemuReader{bufio.NewScanner(gbk.NewReader(r))}
 	loader := load.NewLoader("kemu", file.FileInfo(), ver, reader, initKemuSQL, loadKemuSQL)
 	loader.Load()
 	//loader.Test()

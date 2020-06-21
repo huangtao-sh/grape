@@ -59,7 +59,8 @@ func Wlen(s string) (length int) {
 	return
 }
 
-// Sprintf format string
+// Sprintf 格式化字符串，对 GBK 汉字进行扩展
+// 一个汉字按两个字节计算，以便对齐
 func Sprintf(format string, a ...interface{}) string {
 	i := 0
 	Pattern := regexp.MustCompile(`%.*?[sdf%]`)
