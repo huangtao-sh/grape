@@ -43,51 +43,95 @@ func Printf(format string, data Dater) {
 	var row []interface{}
 	for data.Next() {
 		row = data.Read()
-		fmt.Printf(format, row...)
+		fmt.Print(Sprintf(format, row...))
 	}
 }
 
-// Wlen 统计字符串的长度，汉字按2计算
+// Wlen 统计字符串的打印宽度， ASCII 为 1，汉字为 2
 func Wlen(s string) (length int) {
-	runes := []rune(s)
-	length = len(runes)
+	runes := []rune(s)  // 先转换成 Unicode 字
+	length = len(runes) // 统计长度
 	for _, r := range runes {
 		if r >= 0x80 {
-			length++
+			length++ // 每个汉字再额外加 1
 		}
 	}
 	return
 }
 
-// Sprintf 格式化字符串，对 GBK 汉字进行扩展
-// 一个汉字按两个字节计算，以便对齐
-func Sprintf(format string, a ...interface{}) string {
+// Reverse 对 byte Slice 进行反转
+func Reverse(s []byte) []byte {
+	for i, l := 0, len(s)-1; i < l; {
+		s[i], s[l] = s[l], s[i]
+		l--
+		i++
+	}
+	return s
+}
+
+// formatInt 对整数进行格式化，增加千分节
+func formatInt(k string) string {
+	var d []byte
+	s := []byte(strings.TrimSpace(k))
+	flag := false // 是否为负数
+	if s[0] == '-' {
+		s = s[1:]
+		flag = true
+	}
+	s = Reverse(s)
+	for i, c := range s {
+		if i%3 == 0 && i > 0 {
+			d = append(d, ',')
+		}
+		d = append(d, c)
+	}
+	if flag {
+		d = append(d, '-')
+	}
+	return string(Reverse(d))
+}
+
+// Sprintf 字符串格式化，解决汉字宽度及数字无千分节问题
+func Sprintf(format string, args ...interface{}) (d string) {
+	StrPattern := regexp.MustCompile(`%(-)?(\d+)s`)
+	IntPattern := regexp.MustCompile(`%(\d+),d`)
+	FloatPattern := regexp.MustCompile(`%(\d+),\.(\d+)f`)
+	Pattern := regexp.MustCompile(`%.*?[sdfv%]`)
 	i := 0
-	Pattern := regexp.MustCompile(`%.*?[sdf%]`)
-	StrPattern := regexp.MustCompile(`%(-)?(\d+)?s`)
 	replFunc := func(s string) (d string) {
 		if s == "%%" {
 			return "%"
-		} else if StrPattern.MatchString(s) {
-			k := StrPattern.FindStringSubmatch(s)
-			d = a[i].(string)
-			if k[2] != "" {
-				l, _ := strconv.Atoi(k[2])
-				l -= Wlen(d)
-				if l > 0 {
-					space := strings.Repeat(" ", l)
-					if k[1] == "-" {
-						d += space
-					} else {
-						d = space + d
-					}
+		} else if k := StrPattern.FindStringSubmatch(s); k != nil {
+			d = args[i].(string)
+			l, _ := strconv.Atoi(k[2])
+			if l-Wlen(d) > 0 {
+				space := strings.Repeat(" ", l-Wlen(d))
+				if k[1] == "-" {
+					d = d + space
+				} else {
+					d = space + d
 				}
 			}
+		} else if k := IntPattern.FindStringSubmatch(s); k != nil {
+			l, _ := strconv.Atoi(k[1])
+			d = string(formatInt(fmt.Sprintf("%d", args[i])))
+			space := strings.Repeat(" ", l-len(d))
+			d = space + d
+		} else if k := FloatPattern.FindStringSubmatch(s); k != nil {
+			l, _ := strconv.Atoi(k[1])
+			s, _ := strconv.Atoi(k[2])
+			d = fmt.Sprintf(fmt.Sprintf("%%.%df", s), args[i])
+			a := strings.Split(d, ".")
+			a[0] = formatInt(a[0])
+			d = strings.Join(a, ".")
+			space := strings.Repeat(" ", l-len(d))
+			d = space + d
 		} else {
-			d = fmt.Sprintf(s, a[i])
+			d = fmt.Sprintf(s, args[i])
 		}
 		i++
 		return
 	}
-	return Pattern.ReplaceAllStringFunc(format, replFunc)
+	d = Pattern.ReplaceAllStringFunc(format, replFunc)
+	return
 }

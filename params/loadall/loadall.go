@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"grape/gbk"
 	"grape/params/ggjgm"
+	"grape/params/jym"
 	"grape/params/km"
 	"grape/params/lzbg"
 	"grape/params/nbzh"
@@ -34,6 +35,7 @@ func Load() {
 	fileList[ROOT.Find("运营参数*.zip")] = LoadZip
 	fileList[ROOT.Find("营业主管/营业主管信息*")] = lzbg.LoadYyzg
 	fileList[ROOT.Find("分行表/分行顺序表*")] = lzbg.LoadFhsxb
+	fileList[ROOT.Find("交易菜单/menu*")] = jym.LoadMenu
 	wg := &sync.WaitGroup{}
 	for file, f := range fileList {
 		if file != "" {

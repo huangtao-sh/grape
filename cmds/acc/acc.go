@@ -18,8 +18,8 @@ func main() {
 			km, xh = kk[0], kk[1]
 		} else if len(ac) == 6 {
 			fmt.Printf("科目：%s\n", ac)
-			fmt.Println("维护日期     机构   科目  序号  币种         透支额度   状态  计息  户名")
-			sqlite3.Printf("%-10s  %4s  %6s  %03d  %4s  %17.2f  %4s  %4s  %s\n", 
+			fmt.Println("维护日期     机构   科目  序号  币种           透支额度   状态  计息  户名")
+			sqlite3.Printf("%-10s  %4s  %6s  %03d  %4s  %19,.2f  %4s  %4s  %s\n",
 				"select whrq,jglx,km,xh,bz,tzed,cszt,jxbz,hm from nbzhmb where km=? order by km,xh,jglx,bz", ac)
 			return
 		} else if len(ac) == 9 {
@@ -29,8 +29,8 @@ func main() {
 			return
 		}
 		fmt.Printf("科目：%s  序号：%s\n", km, xh)
-		fmt.Println("维护日期     机构   科目  序号  币种         透支额度   状态  计息  户名")
-		sqlite3.Printf("%-10s  %4s  %6s  %03d  %4s  %17.2f  %4s  %4s  %s\n",
+		fmt.Println("维护日期     机构   科目  序号  币种           透支额度   状态  计息  户名")
+		sqlite3.Printf("%-10s  %4s  %6s  %03d  %4s  %19,.2f  %4s  %4s  %s\n",
 			"select whrq,jglx,km,xh,bz,tzed,cszt,jxbz,hm from nbzhmb where km=? and xh=?", km, xh)
 	}
 }
