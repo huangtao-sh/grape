@@ -91,6 +91,8 @@ func (r *Reader) ReadAll(d Data) {
 				continue
 			}
 		}
-		d.Write(Slice(row)...)
+		if row !=nil{
+			d.Write(Slice(row)...)
+		}
 	}
 }

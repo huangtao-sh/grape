@@ -3,6 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	"grape/data"
 	"grape/gbk"
 	"grape/path"
@@ -43,15 +44,28 @@ func MMain() {
 	sqlite3.Println("select modtime,name from test")
 }
 
+func convCdjy(s []string) (d []string) {
+	if s[1] == "8" {
+		d = append(d, s[0])
+	} else {
+		d = nil
+	}
+	return
+}
 func main() {
-	file := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\运营参数2020-02\transactions_output.csv`)
+	file := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\运营参数2020-02\YUNGUAN_MONTH_STG_TELLER_TRANSCONTROLS.del`)
 	r, _ := file.Open()
 	reader := gbk.NewReader(r)
 	defer r.Close()
-	re := text.NewReader(reader, false, text.NewSepSpliter(","))
+	re := text.NewReader(reader, false, text.NewSepSpliter(","), convCdjy)
 	d := data.NewData()
 	d.Add(1)
 	go re.ReadAll(d)
-	go d.Println()
+	go func(d *data.Data) {
+		defer d.Done()
+		for row := range d.ReadCh() {
+			fmt.Println(len(row), row)
+		}
+	}(d)
 	d.Wait()
 }

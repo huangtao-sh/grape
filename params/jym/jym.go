@@ -61,7 +61,7 @@ var loadShbs = `insert or replace into shbs values(?)`
 
 // LoadShbs 导入交易码文件
 func LoadShbs(info os.FileInfo, r io.Reader, ver string) {
-	reader := text.NewReader(r, false, text.NewSepSpliter(","))
+	reader := text.NewReader(r, false, text.NewSepSpliter(","), text.Include(0))
 	loader := load.NewLoader("shbs", info, ver, reader, initShbs, loadShbs)
 	loader.Load()
 	//loader.Test()
@@ -86,7 +86,7 @@ func convCdjy(s []string) (d []string) {
 // LoadCdjy 导入交易码文件
 func LoadCdjy(info os.FileInfo, r io.Reader, ver string) {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","), convCdjy)
-	loader := load.NewLoader("cdjy", info, ver, reader, initShbs, loadShbs)
+	loader := load.NewLoader("cdjy", info, ver, reader, initCdjy, loadCdjy)
 	loader.Load()
 	//loader.Test()
 }
