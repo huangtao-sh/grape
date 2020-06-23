@@ -53,12 +53,15 @@ func Load() {
 type LoadFunc func(os.FileInfo, io.Reader, string)
 
 var fileList = map[string]LoadFunc{
-	"YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del":     ggjgm.Load,
-	"YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.del":  km.Load,
-	"YUNGUAN_MONTH_STG_ZSRUN_GGKMZD.del":    km.LoadKm,
-	"users_output.csv":                      teller.Load,
-	"YUNGUAN_MONTH_STG_ZSRUN_FHNBHZZ.del":   nbzh.Load,
-	"YUNGUAN_MONTH_STG_ZSRUN_GGXXBMDZB.del": xxbm.Load,
+	"YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del":          ggjgm.Load,
+	"YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.del":       km.Load,
+	"YUNGUAN_MONTH_STG_ZSRUN_GGKMZD.del":         km.LoadKm,
+	"users_output.csv":                           teller.Load,
+	"YUNGUAN_MONTH_STG_ZSRUN_FHNBHZZ.del":        nbzh.Load,
+	"YUNGUAN_MONTH_STG_ZSRUN_GGXXBMDZB.del":      xxbm.Load,
+	"transactions_output.csv":                    jym.LoadJym,
+	"YUNGUAN_MONTH_STG_TELLER_SCANVOUCHER.del":   jym.LoadShbs,
+	"YUNGUAN_MONTH_STG_TELLER_TRANSCONTROLS.del": jym.LoadCdjy,
 }
 
 // LoadZip 导入 zip 压缩包

@@ -1,9 +1,16 @@
 package jym
 
+import (
+	"grape/params/load"
+	"grape/text"
+	"io"
+	"os"
+)
+
 var initJymSQL = `
 CREATE TABLE IF NOT EXISTS jym(
     jym     text primary key,   --交易码
-    jymc    text,   --交易名称
+    jymc    text,   -- 交易名称
     jyz     text,   --交易组
     yxj     text,   --优先级
     wdsqjb  text,   --网点授权级别
@@ -28,4 +35,58 @@ CREATE TABLE IF NOT EXISTS jym(
     --cdjy    text default "FALSE"   --磁道校验
 );`
 
-var loadJymSQL = ``
+var loadJymSQL = `insert or replace into jym values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+
+func convert(s []string) []string {
+	if len(s) < 22 {
+		s = append(s, "")
+	}
+	return s
+}
+
+// LoadJym 导入交易码文件
+func LoadJym(info os.FileInfo, r io.Reader, ver string) {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","), convert)
+	loader := load.NewLoader("jym", info, ver, reader, initJymSQL, loadJymSQL)
+	loader.Load()
+	//loader.Test()
+}
+
+var initShbs = `
+create table if not exists shbs (
+    jym     primary key
+)
+`
+var loadShbs = `insert or replace into shbs values(?)`
+
+// LoadShbs 导入交易码文件
+func LoadShbs(info os.FileInfo, r io.Reader, ver string) {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","))
+	loader := load.NewLoader("shbs", info, ver, reader, initShbs, loadShbs)
+	loader.Load()
+	//loader.Test()
+}
+
+var initCdjy = `
+create table if not exists cdjy (
+    jym     primary key
+)
+`
+var loadCdjy = `insert or replace into cdjy values(?)`
+
+func convCdjy(s []string) (d []string) {
+	if s[1] == "8" {
+		d = append(d, s[0])
+	} else {
+		d = nil
+	}
+	return
+}
+
+// LoadCdjy 导入交易码文件
+func LoadCdjy(info os.FileInfo, r io.Reader, ver string) {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","), convCdjy)
+	loader := load.NewLoader("cdjy", info, ver, reader, initShbs, loadShbs)
+	loader.Load()
+	//loader.Test()
+}

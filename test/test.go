@@ -3,8 +3,11 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
+	"grape/data"
+	"grape/gbk"
+	"grape/path"
 	"grape/sqlite3"
+	"grape/text"
 	"grape/util"
 	"io"
 	"os"
@@ -41,5 +44,14 @@ func MMain() {
 }
 
 func main() {
-	fmt.Print(util.Sprintf("%19,.2f\n", 123324.234))
+	file := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\运营参数2020-02\transactions_output.csv`)
+	r, _ := file.Open()
+	reader := gbk.NewReader(r)
+	defer r.Close()
+	re := text.NewReader(reader, false, text.NewSepSpliter(","))
+	d := data.NewData()
+	d.Add(1)
+	go re.ReadAll(d)
+	go d.Println()
+	d.Wait()
 }
