@@ -45,11 +45,9 @@ func convert(s []string) []string {
 }
 
 // LoadJym 导入交易码文件
-func LoadJym(info os.FileInfo, r io.Reader, ver string) {
+func LoadJym(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","), convert)
-	loader := load.NewLoader("jym", info, ver, reader, initJymSQL, loadJymSQL)
-	loader.Load()
-	//loader.Test()
+	return load.NewLoader("jym", info, ver, reader, initJymSQL, loadJymSQL)
 }
 
 var initShbs = `
@@ -60,11 +58,9 @@ create table if not exists shbs (
 var loadShbs = `insert or replace into shbs values(?)`
 
 // LoadShbs 导入交易码文件
-func LoadShbs(info os.FileInfo, r io.Reader, ver string) {
+func LoadShbs(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","), text.Include(0))
-	loader := load.NewLoader("shbs", info, ver, reader, initShbs, loadShbs)
-	loader.Load()
-	//loader.Test()
+	return load.NewLoader("shbs", info, ver, reader, initShbs, loadShbs)
 }
 
 var initCdjy = `
@@ -84,9 +80,7 @@ func convCdjy(s []string) (d []string) {
 }
 
 // LoadCdjy 导入交易码文件
-func LoadCdjy(info os.FileInfo, r io.Reader, ver string) {
+func LoadCdjy(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","), convCdjy)
-	loader := load.NewLoader("cdjy", info, ver, reader, initCdjy, loadCdjy)
-	loader.Load()
-	//loader.Test()
+	return load.NewLoader("cdjy", info, ver, reader, initCdjy, loadCdjy)
 }

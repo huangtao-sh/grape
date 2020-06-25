@@ -42,16 +42,4 @@ func Decode(b []byte) (string, error) {
 	return Decoder.String(string(b))
 }
 
-// FixedReader 修正
-type FixedReader struct {
-	r             io.Reader
-	buff          []byte
-	pointer, size int
-}
-
-// NewFixedReader
-func NewFixedReader(r io.Reader) *FixedReader {
-	buff := make([]byte, 256)
-	return &FixedReader{r, buff, 0, 0}
-}
 

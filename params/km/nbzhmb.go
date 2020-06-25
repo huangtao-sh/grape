@@ -24,8 +24,7 @@ create table if not exists nbzhmb(
 var loadSQL = "insert into nbzhmb values(?,date(?),?,?,?,?,?,?,?,?)"
 
 // Load 导入内部账户模板参数
-func Load(info os.FileInfo, r io.Reader, ver string) {
+func Load(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","))
-	loader := load.NewLoader("nbzhmb", info, ver, reader, initSQL, loadSQL)
-	loader.Load()
+	return load.NewLoader("nbzhmb", info, ver, reader, initSQL, loadSQL)
 }

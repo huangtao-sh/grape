@@ -83,11 +83,9 @@ func convert(s []string) []string {
 }
 
 // Load 导入文件
-func Load(info os.FileInfo, r io.Reader, ver string) {
+func Load(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","), convert)
-	loader := load.NewLoader("nbzh", info, ver, reader, initNbzhSQL, loadNbzhSQL)
-	loader.Load()
-	//loader.Test()
+	return load.NewLoader("nbzh", info, ver, reader, initNbzhSQL, loadNbzhSQL)
 }
 
 var initKemuSQL = `

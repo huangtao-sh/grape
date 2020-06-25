@@ -20,9 +20,8 @@ create table if not exists kmzd(
 var loadKmSQL = "insert or replace into kmzd values(?,?,?,?,?,?,?)"
 
 // LoadKm 导入科目字典
-func LoadKm(info os.FileInfo, r io.Reader, ver string) {
+func LoadKm(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","),
 		text.Include(2, 1, 3, 4, 5, 6, 7))
-	loader := load.NewLoader("kmzd", info, ver, reader, initKmSQL, loadKmSQL)
-	loader.Load()
+	return load.NewLoader("kmzd", info, ver, reader, initKmSQL, loadKmSQL)
 }

@@ -22,9 +22,8 @@ create table if not exists ggjgm (
 var loadSQL = "insert or replace into ggjgm values(?,?,?,?,?,date(?),?)"
 
 // Load 导入文件
-func Load(info os.FileInfo, r io.Reader, ver string) {
+func Load(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","),
 		text.Include(0, 1, 3-43, 7-43, 15-43, 16-43, 17-43))
-	loader := load.NewLoader("ggjgm", info, ver, reader, initSQL, loadSQL)
-	loader.Load()
+	return load.NewLoader("ggjgm", info, ver, reader, initSQL, loadSQL)
 }

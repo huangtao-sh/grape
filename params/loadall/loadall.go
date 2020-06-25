@@ -7,6 +7,7 @@ import (
 	"grape/params/ggjgm"
 	"grape/params/jym"
 	"grape/params/km"
+	"grape/params/load"
 	"grape/params/lzbg"
 	"grape/params/nbzh"
 	"grape/params/teller"
@@ -36,6 +37,7 @@ func Load() {
 	fileList[ROOT.Find("营业主管/营业主管信息*")] = lzbg.LoadYyzg
 	fileList[ROOT.Find("分行表/分行顺序表*")] = lzbg.LoadFhsxb
 	fileList[ROOT.Find("交易菜单/menu*")] = jym.LoadMenu
+	//fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = tsnbh.LoadTsnbh
 	wg := &sync.WaitGroup{}
 	for file, f := range fileList {
 		if file != "" {
@@ -50,7 +52,7 @@ func Load() {
 }
 
 // LoadFunc 导入函数类型
-type LoadFunc func(os.FileInfo, io.Reader, string)
+type LoadFunc func(os.FileInfo, io.Reader, string) *load.Loader
 
 var fileList = map[string]LoadFunc{
 	"YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del":          ggjgm.Load,
@@ -82,7 +84,8 @@ func LoadZip(file *path.Path) {
 				r, err := file.Open()
 				util.CheckFatal(err)
 				defer r.Close()
-				loadfunc(file.FileInfo(), gbk.NewReader(r), ver)
+				loader := loadfunc(file.FileInfo(), gbk.NewReader(r), ver)
+				loader.Load()
 			}(file, ver, wg)
 		}
 	}

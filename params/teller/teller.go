@@ -57,10 +57,8 @@ func convert(s []string) (d []string) {
 }
 
 // Load 导入文件
-func Load(info os.FileInfo, r io.Reader, ver string) {
+func Load(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","),
 		text.UnQuote, convert)
-	loader := load.NewLoader("teller", info, ver, reader, initSQL, loadSQL)
-	loader.Load()
-	//loader.Test()
+	return load.NewLoader("teller", info, ver, reader, initSQL, loadSQL)
 }

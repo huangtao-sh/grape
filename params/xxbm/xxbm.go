@@ -17,9 +17,8 @@ create table if not exists xxbm(
 var loadSQL = `insert into xxbm values(?,?,?)`
 
 // Load 导入文件
-func Load(info os.FileInfo, r io.Reader, ver string) {
+func Load(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","),
 		text.Include(0, 1, 2))
-	loader := load.NewLoader("xxbm", info, ver, reader, initSQL, loadSQL)
-	loader.Load()
+	return load.NewLoader("xxbm", info, ver, reader, initSQL, loadSQL)
 }
