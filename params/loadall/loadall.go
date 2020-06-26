@@ -33,12 +33,13 @@ type LoadFunc func(os.FileInfo, io.Reader, string) *load.Loader
 func Load() {
 	Ver := regexp.MustCompile(`\d{6,8}`)
 	var fileList = map[string]LoadFunc{}
-	fileList[ROOT.Find("科目说明/会计科目说明*")] = km.LoadKemu
-	fileList[ROOT.Find("营业主管/营业主管信息*")] = lzbg.LoadYyzg
-	fileList[ROOT.Find("分行表/分行顺序表*")] = lzbg.LoadFhsxb
-	fileList[ROOT.Find("交易菜单/menu*")] = jym.LoadMenu
-	fileList[ROOT.Find("通讯录/通讯录*")] = lzbg.LoadTxl
-	fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = km.LoadTsnbh
+	fileList[ROOT.Find("科目说明/会计科目说明*")] = km.LoadKemu         // 会计科目说明
+	fileList[ROOT.Find("营业主管/营业主管信息*")] = lzbg.LoadYyzg       // 营业主管
+	fileList[ROOT.Find("分行表/分行顺序表*")] = lzbg.LoadFhsxb        // 分行顺序表
+	fileList[ROOT.Find("交易菜单/menu*")] = jym.LoadMenu          // 交易菜单
+	fileList[ROOT.Find("通讯录/通讯录*")] = lzbg.LoadTxl            // 通讯录
+	fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = km.LoadTsnbh // 特殊内部账户参数
+	fileList[ROOT.Find("岗位与交易组/岗位及组*")] = jym.LoadJyz         // 交易组
 	wg := &sync.WaitGroup{}
 	zipfile := ROOT.Find("运营参数*.zip")
 	if zipfile != "" {
@@ -65,15 +66,15 @@ func Load() {
 }
 
 var fileList = map[string]LoadFunc{
-	"YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del":          ggjgm.Load,
-	"YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.del":       km.LoadNbzhmb,
-	"YUNGUAN_MONTH_STG_ZSRUN_GGKMZD.del":         km.LoadKm,
-	"users_output.csv":                           teller.Load,
-	"YUNGUAN_MONTH_STG_ZSRUN_FHNBHZZ.del":        km.LoadNbzh,
-	"YUNGUAN_MONTH_STG_ZSRUN_GGXXBMDZB.del":      xxbm.Load,
-	"transactions_output.csv":                    jym.LoadJym,
-	"YUNGUAN_MONTH_STG_TELLER_SCANVOUCHER.del":   jym.LoadShbs,
-	"YUNGUAN_MONTH_STG_TELLER_TRANSCONTROLS.del": jym.LoadCdjy,
+	"YUNGUAN_MONTH_STG_ZSRUN_GGJGM.del":          ggjgm.Load,    // 机构码
+	"YUNGUAN_MONTH_STG_ZSRUN_GGNBZHMB.del":       km.LoadNbzhmb, // 内部账户模板
+	"YUNGUAN_MONTH_STG_ZSRUN_GGKMZD.del":         km.LoadKm,     // 公共科目字典
+	"users_output.csv":                           teller.Load,   // 柜员表
+	"YUNGUAN_MONTH_STG_ZSRUN_FHNBHZZ.del":        km.LoadNbzh,   // 内部账户
+	"YUNGUAN_MONTH_STG_ZSRUN_GGXXBMDZB.del":      xxbm.Load,     // 公共信息编码
+	"transactions_output.csv":                    jym.LoadJym,   // 交易码参数表
+	"YUNGUAN_MONTH_STG_TELLER_SCANVOUCHER.del":   jym.LoadShbs,  // 交易码事后补扫
+	"YUNGUAN_MONTH_STG_TELLER_TRANSCONTROLS.del": jym.LoadCdjy,  // 交易码磁道校验
 }
 
 // LoadZip 导入 zip 压缩包
