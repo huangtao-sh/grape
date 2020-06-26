@@ -8,22 +8,25 @@ import (
 	"grape/util"
 	"io"
 	"os"
+	"sync"
 )
 
-func init() {
-	sqlite3.Config("params.db")
-	sqlite3.ExecScript(`
-	create table if not exists LoadFile(
-		name	text 	primary key,  -- 类型
-		path	text,	              -- 文件名
-		mtime	text,                 -- 文件修改时间
-		ver		text		          -- 文件版本
-	)
-	`)
-}
+var initLoadfile = sync.Once{}
+var createLoadfile = `
+create table if not exists LoadFile(
+	name	text 	primary key,  -- 类型
+	path	text,	              -- 文件名
+	mtime	text,                 -- 文件修改时间
+	ver		text		          -- 文件版本
+)
+`
 
 // LoadCheck 检查文件是否已导入数据库
 func LoadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
+	initLoadfile.Do( // 仅在调用 LoadCheck 时运行一次建表
+		func() {
+			sqlite3.ExecScript(createLoadfile)
+		})
 	var count int
 	filename := info.Name()
 	mtime := info.ModTime()
