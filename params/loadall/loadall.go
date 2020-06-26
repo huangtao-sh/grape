@@ -37,7 +37,8 @@ func Load() {
 	fileList[ROOT.Find("营业主管/营业主管信息*")] = lzbg.LoadYyzg
 	fileList[ROOT.Find("分行表/分行顺序表*")] = lzbg.LoadFhsxb
 	fileList[ROOT.Find("交易菜单/menu*")] = jym.LoadMenu
-	//fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = tsnbh.LoadTsnbh
+	fileList[ROOT.Find("通讯录/通讯录*")] = lzbg.LoadTxl
+	fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = km.LoadTsnbh
 	wg := &sync.WaitGroup{}
 	zipfile := ROOT.Find("运营参数*.zip")
 	if zipfile != "" {
@@ -55,7 +56,8 @@ func Load() {
 				r, err := p.Open()
 				util.CheckFatal(err)
 				defer r.Close()
-				f(info, r, ver)
+				loader := f(info, r, ver)
+				loader.Load()
 			}(file, f, wg)
 		}
 	}

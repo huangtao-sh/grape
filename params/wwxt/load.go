@@ -3,7 +3,7 @@ package wwxt
 import (
 	"fmt"
 	"grape/data"
-	"grape/params"
+	"grape/params/load"
 	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
@@ -40,7 +40,7 @@ func ConvDate(d string) string {
 func LoadFile(filename string) {
 	file := path.NewPath(filename)
 	err := sqlite3.ExecTx(
-		params.NewChecker("wwxt", file, file.Base()),
+		load.LoadCheck("wwxt", file.FileInfo(), "1.0"),
 		NewFile(filename),
 	)
 	if err != nil {
