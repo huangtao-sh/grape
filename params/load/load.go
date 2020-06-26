@@ -65,7 +65,9 @@ func NewLoader(name string, fileInfo os.FileInfo, ver string, txt Reader, initSQ
 
 // Load 导入数据
 func (l *Loader) Load() {
-	sqlite3.ExecScript(l.initSQL) // 初始化数据库
+	if l.initSQL != "" {
+		sqlite3.ExecScript(l.initSQL) // 初始化数据库
+	}
 	err := sqlite3.ExecTx(
 		LoadCheck(l.Name, l.FileInfo, l.ver),
 		sqlite3.NewTr(fmt.Sprintf("delete from %s", l.Name)),

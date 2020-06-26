@@ -3,9 +3,9 @@ package lzbg
 import (
 	"grape/data/xls"
 	"grape/params/load"
-	"grape/path"
 	"grape/text"
-	"grape/util"
+	"io"
+	"os"
 )
 
 var initSQL = `
@@ -27,13 +27,9 @@ create table if not exists yyzg(
 var loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 
 // LoadYyzg 导入营业主管信息
-func LoadYyzg(file *path.Path) {
-	ver := file.FileInfo().Name()[18:24]
-	r, err := file.Open()
-	util.CheckFatal(err)
+func LoadYyzg(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := xls.NewXlsReader(r, "Sheet1", 1, text.Include(0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 10))
-	loader := load.NewLoader("yyzg", file.FileInfo(), ver, reader, initSQL, loadSQL)
-	loader.Load()
+	return load.NewLoader("yyzg", info, ver, reader, initSQL, loadSQL)
 }
 
 var initSXB = `
@@ -46,12 +42,7 @@ create table if not exists fhsxb(
 var loadSXB = `insert into fhsxb Values(?,?)`
 
 // LoadFhsxb 导入分行顺序表
-func LoadFhsxb(file *path.Path) {
-	ver := ""
-	r, err := file.Open()
-	util.CheckFatal(err)
+func LoadFhsxb(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := xls.NewXlsReader(r, "分行顺序表", 1, text.Include(0, 1))
-	loader := load.NewLoader("fhsxb", file.FileInfo(), ver, reader, initSXB, loadSXB)
-	loader.Load()
-	//loader.Test()
+	return load.NewLoader("fhsxb", info, ver, reader, initSXB, loadSXB)
 }

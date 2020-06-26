@@ -5,11 +5,9 @@ import (
 	"errors"
 	"grape/gbk"
 	"grape/params/load"
-	"grape/path"
 	"grape/text"
-	"grape/util"
 	"io"
-	"regexp"
+	"os"
 )
 
 func read(charset string, r io.Reader) (result io.Reader, err error) {
@@ -42,16 +40,9 @@ create table if not exists menu(
 var loadSQL = `insert or replace into menu values(?,?,?,?)`
 
 // LoadMenu 导入科目
-func LoadMenu(file *path.Path) {
-	Ver := regexp.MustCompile(`\d{8}`)
-	ver := Ver.FindString(file.FileInfo().Name())
-	r, err := file.Open()
-	util.CheckFatal(err)
-	defer r.Close()
+func LoadMenu(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := &MenuReader{r}
-	loader := load.NewLoader("menu", file.FileInfo(), ver, reader, initSQL, loadSQL)
-	loader.Load()
-	//loader.Test()
+	return load.NewLoader("menu", info, ver, reader, initSQL, loadSQL)
 }
 
 // MenuReader 读取菜单文件

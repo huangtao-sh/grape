@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var initSQL = `
+var initMbSQL = `
 create table if not exists nbzhmb(
 	jglx	text,    	-- 机构类型 
 	whrq	text,	 	-- 维护日期	
@@ -21,10 +21,10 @@ create table if not exists nbzhmb(
 	jxbz	text,		-- 计息标志
 	primary key(jglx,km,bz,xh)
 )`
-var loadSQL = "insert into nbzhmb values(?,date(?),?,?,?,?,?,?,?,?)"
+var loadMbSQL = "insert into nbzhmb values(?,date(?),?,?,?,?,?,?,?,?)"
 
-// Load 导入内部账户模板参数
-func Load(info os.FileInfo, r io.Reader, ver string) *load.Loader {
+// LoadNbzhmb 导入内部账户模板参数
+func LoadNbzhmb(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","))
-	return load.NewLoader("nbzhmb", info, ver, reader, initSQL, loadSQL)
+	return load.NewLoader("nbzhmb", info, ver, reader, initMbSQL, loadMbSQL)
 }
