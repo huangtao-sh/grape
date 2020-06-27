@@ -27,7 +27,9 @@ func Main() {
 			if matched, _ := regexp.MatchString("316\\d{1,9}", arg); matched {
 				arg = fmt.Sprintf("%s%%", arg)
 				sqlite3.Printf(format, "select * from ggjgm where zfhh like ?", arg)
-			} else if matched, _ := regexp.MatchString("\\d{1,9}", arg); matched {
+			} else if matched, _ := regexp.MatchString(`^\d{2}$`, arg); matched {
+				sqlite3.Printf(format, "select * from ggjgm where jglx = ?", arg)
+			} else if matched, _ := regexp.MatchString(`\d{3,9}`, arg); matched {
 				arg = fmt.Sprintf("%s%%", arg)
 				sqlite3.Printf(format, "select * from ggjgm where jgm like ?", arg)
 			} else {
