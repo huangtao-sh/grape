@@ -6,7 +6,6 @@ import (
 	"grape/sqlite3"
 	"grape/text"
 	"grape/util"
-	"io"
 	"os"
 	"sync"
 )
@@ -22,7 +21,7 @@ create table if not exists LoadFile(
 `
 
 // LoadCheck 检查文件是否已导入数据库
-func LoadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
+func loadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 	initLoadfile.Do( // 仅在调用 LoadCheck 时运行一次建表
 		func() {
 			sqlite3.ExecScript(createLoadfile)
@@ -39,12 +38,6 @@ func LoadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 		tx.Exec("insert or replace into LoadFile values(?,?,datetime(?),?)", name, filename, mtime, ver)
 		return
 	}
-}
-
-// File tar、zip 压缩包获取文
-type File interface {
-	FileInfo() os.FileInfo
-	Open() (io.ReadCloser, error)
 }
 
 // Reader 读取数据
@@ -72,7 +65,7 @@ func (l *Loader) Load() {
 		sqlite3.ExecScript(l.initSQL) // 初始化数据库
 	}
 	err := sqlite3.ExecTx(
-		LoadCheck(l.Name, l.FileInfo, l.ver),
+		loadCheck(l.Name, l.FileInfo, l.ver),
 		sqlite3.NewTr(fmt.Sprintf("delete from %s", l.Name)),
 		l)
 	if err != nil {

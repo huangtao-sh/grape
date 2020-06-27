@@ -39,7 +39,7 @@ func conv(row []string) []string {
 // LoadWwxt 导入外围系统
 func LoadWwxt(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := xls.NewXlsReader(r, "历史", 1, conv)
-	return load.NewLoader("jyz", info, ver, reader, initWwxt, loadWwxt)
+	return load.NewLoader("wwxt", info, ver, reader, initWwxt, loadWwxt)
 }
 
 // ConvDate 转换日期，把 05-16-20 格式的日期转换成 2020-05-16 格式，无法转换则返回原数据
