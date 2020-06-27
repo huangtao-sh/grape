@@ -1,12 +1,23 @@
 package xls
 
 import (
+	"fmt"
 	"grape/text"
 	"grape/util"
 	"io"
+	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
+
+// ConvertDate 转换日期，把 05-16-20 格式的日期转换成 2020-05-16 格式，无法转换则返回原数据
+func ConvertDate(d string) string {
+	if len(d) == 8 {
+		s := strings.Split(d, "-")
+		return fmt.Sprintf("20%s-%s-%s", s[2], s[0], s[1])
+	}
+	return d
+}
 
 // Reader Excel
 type Reader struct {

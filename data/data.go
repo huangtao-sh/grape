@@ -51,7 +51,7 @@ func (d *Data) Println() {
 func (d *Data) Printf(format string) {
 	defer d.Done()
 	for row := range d.ch {
-		fmt.Printf("%s", util.Sprintf(format, row...))
+		fmt.Print(util.Sprintf(format, row...))
 	}
 }
 

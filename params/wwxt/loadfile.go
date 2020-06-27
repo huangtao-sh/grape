@@ -9,7 +9,6 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"strings"
 )
 
 var initWwxt = `
@@ -29,7 +28,7 @@ func conv(row []string) []string {
 		row = append(row, "")
 	}
 	if err == nil {
-		row[4] = ConvDate(row[4])
+		row[4] = xls.ConvertDate(row[4])
 	} else {
 		row = nil
 	}
@@ -40,15 +39,6 @@ func conv(row []string) []string {
 func LoadWwxt(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := xls.NewXlsReader(r, "历史", 1, conv)
 	return load.NewLoader("wwxt", info, ver, reader, initWwxt, loadWwxt)
-}
-
-// ConvDate 转换日期，把 05-16-20 格式的日期转换成 2020-05-16 格式，无法转换则返回原数据
-func ConvDate(d string) string {
-	if len(d) == 8 {
-		s := strings.Split(d, "-")
-		return fmt.Sprintf("20%s-%s-%s", s[2], s[0], s[1])
-	}
-	return d
 }
 
 // Load 导入数据主程序

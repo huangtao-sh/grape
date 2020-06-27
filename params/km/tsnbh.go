@@ -3,7 +3,6 @@ package km
 import (
 	"grape/data/xls"
 	"grape/params/load"
-	"grape/params/wwxt"
 	"grape/text"
 	"io"
 	"os"
@@ -22,7 +21,7 @@ create table if not exists tsnbh(
 var loadTsnbh = `insert or replace into tsnbh values(?,?,?,?,?,?)`
 
 func conv(s []string) []string {
-	s[5] = wwxt.ConvDate(s[5])
+	s[5] = xls.ConvertDate(s[5])
 	return s
 }
 

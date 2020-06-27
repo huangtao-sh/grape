@@ -104,7 +104,7 @@ func Printf(format string, sql string, args ...interface{}) {
 	rows := Fetch(sql, args...)
 	for rows.Next() {
 		//fmt.Printf(format, rows.Read()...)
-		fmt.Printf("%s", util.Sprintf(format, rows.Read()...))
+		fmt.Print(util.Sprintf(format, rows.Read()...))
 	}
 }
 
