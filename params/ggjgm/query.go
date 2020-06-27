@@ -15,6 +15,7 @@ func Main() {
 	flag.Parse()
 	if *showVer {
 		ShowVersion()
+		return
 	}
 	args := flag.Args()
 	if len(args) == 0 {
@@ -24,12 +25,12 @@ func Main() {
 		params.PrintVer("nbzhmb")
 		fmt.Println("  机构码   机构名称                                  简称        行号        类型    开立日期  分行")
 		for _, arg := range args {
-			if matched, _ := regexp.MatchString("316\\d{1,9}", arg); matched {
+			if matched, _ := regexp.MatchString("^316\\d{1,9}", arg); matched {
 				arg = fmt.Sprintf("%s%%", arg)
 				sqlite3.Printf(format, "select * from ggjgm where zfhh like ?", arg)
 			} else if matched, _ := regexp.MatchString(`^\d{2}$`, arg); matched {
 				sqlite3.Printf(format, "select * from ggjgm where jglx = ?", arg)
-			} else if matched, _ := regexp.MatchString(`\d{3,9}`, arg); matched {
+			} else if matched, _ := regexp.MatchString(`^\d{3,9}`, arg); matched {
 				arg = fmt.Sprintf("%s%%", arg)
 				sqlite3.Printf(format, "select * from ggjgm where jgm like ?", arg)
 			} else {
@@ -43,4 +44,5 @@ func Main() {
 // ShowVersion 显示程序版本
 func ShowVersion() {
 	fmt.Printf("Compiled by %s\n", runtime.Version())
+	params.PrintVer("nbzhmb")
 }
