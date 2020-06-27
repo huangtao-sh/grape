@@ -2,21 +2,17 @@ package wwxt
 
 import (
 	"fmt"
-	"grape/data"
+	"grape/data/xls"
 	"grape/params/load"
 	"grape/path"
-	"grape/sqlite3"
 	"grape/util"
+	"io"
+	"os"
 	"strconv"
 	"strings"
-
-	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-// Init 初始化数据库
-func Init() {
-	sqlite3.ExecScript(`
--- drop table if exists wwxt;
+var initWwxt = `
 create table if not exists wwxt(
 	id 	int primary key,
 	name	text,
@@ -24,7 +20,26 @@ create table if not exists wwxt(
 	jgh		text  default '999999999',
 	date	text  
 )
-	`)
+`
+var loadWwxt = `insert into wwxt values(?,?,?,?,?)`
+
+func conv(row []string) []string {
+	_, err := strconv.Atoi(row[0])
+	if len(row) < 5 {
+		row = append(row, "")
+	}
+	if err == nil {
+		row[4] = ConvDate(row[4])
+	} else {
+		row = nil
+	}
+	return row
+}
+
+// LoadWwxt 导入外围系统
+func LoadWwxt(info os.FileInfo, r io.Reader, ver string) *load.Loader {
+	reader := xls.NewXlsReader(r, "历史", 1, conv)
+	return load.NewLoader("jyz", info, ver, reader, initWwxt, loadWwxt)
 }
 
 // ConvDate 转换日期，把 05-16-20 格式的日期转换成 2020-05-16 格式，无法转换则返回原数据
@@ -36,68 +51,17 @@ func ConvDate(d string) string {
 	return d
 }
 
-// LoadFile 导入数据文件
-func LoadFile(filename string) {
-	file := path.NewPath(filename)
-	err := sqlite3.ExecTx(
-		load.LoadCheck("wwxt", file.FileInfo(), "1.0"),
-		NewFile(filename),
-	)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(file.Base(), "导入完成")
-	}
-}
-
 // Load 导入数据主程序
 func Load() {
-	Init()                                        // 初始化数据库
-	files := Root.Glob("新增外围系统列表????-??-??.xlsx") // 查找数据文件
-	if len(files) > 0 {
-		LoadFile(files[len(files)-1]) // 找到文件，并执行导入操作
+	file := Root.Find("新增外围系统列表????-??-??.xlsx")
+	if file != "" {
+		p := path.NewPath(file)
+		r, err := p.Open()
+		ver := p.FileInfo().Name()[24:34]
+		util.CheckFatal(err)
+		loader := LoadWwxt(p.FileInfo(), r, ver)
+		loader.Load()
 	} else {
 		fmt.Print("未发现文件")
 	}
-}
-
-// File 导入文件结构
-type File struct {
-	*data.Data
-	file string
-}
-
-// NewFile  构造函数
-func NewFile(file string) *File {
-	return &File{data.NewData(), file}
-}
-
-// Read 读取数据
-func (f *File) Read() {
-	defer f.Close()
-	xls, err := excelize.OpenFile(f.file)
-	util.CheckFatal(err)
-	rows, err := xls.Rows("历史")
-	util.CheckFatal(err)
-	for rows.Next() {
-		row, _ := rows.Columns()
-		id, err := strconv.Atoi(row[0])
-		if len(row) < 5 {
-			row = append(row, "")
-		}
-		if err == nil {
-			f.Write(id, row[1], row[2], row[3], ConvDate(row[4]))
-		}
-	}
-}
-
-// Exec 执行SQL语句
-func (f *File) Exec(tx *sqlite3.Tx) error {
-	tx.Exec("delete from wwxt") // 清空现有数据
-	f.Add(1)
-	go f.Data.Exec(tx, "insert or replace into wwxt values(?,?,?,?,?)")
-	//go tx.ExecCh("insert or replace into wwxt values(?,?,?,?,?)", &f.Data)
-	go f.Read()
-	f.Wait()
-	return nil
 }
