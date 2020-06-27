@@ -43,5 +43,4 @@ func Main() {
 // ShowVersion 显示程序版本
 func ShowVersion() {
 	fmt.Printf("Compiled by %s\n", runtime.Version())
-	params.PrintVer("nbzhmb")
 }
