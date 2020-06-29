@@ -23,6 +23,13 @@ func CheckFatal(err error) {
 	}
 }
 
+// Recover 检查错误，并打印
+func Recover() {
+	if r := recover(); r != nil {
+		fmt.Println("错误：", r)
+	}
+}
+
 // Dater 数据接口
 type Dater interface {
 	Next() bool
