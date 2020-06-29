@@ -14,6 +14,11 @@ func Main() {
 	listTable := flag.Bool("list", false, "查询数据库表")
 	showTable := flag.String("show", "", "显示数据库表的 SQL 语句")
 	reloadTable := flag.String("reload", "", "重新导入参数表")
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("错误：", r)
+		}
+	}()
 	flag.Parse()
 	if *querySQL != "" {
 		sqlite3.Println(*querySQL)

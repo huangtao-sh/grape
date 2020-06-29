@@ -40,6 +40,7 @@ func Load() {
 	fileList[ROOT.Find("通讯录/通讯录*")] = lzbg.LoadTxl            // 通讯录
 	fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = km.LoadTsnbh // 特殊内部账户参数
 	fileList[ROOT.Find("岗位与交易组/岗位及组*")] = jym.LoadJyz         // 交易组
+	fileList[ROOT.Find("手续费项目/手续费项目参数*")] = km.LoadSxfxm      // 手续费项目
 	wg := &sync.WaitGroup{}
 	zipfile := ROOT.Find("运营参数*.zip")
 	if zipfile != "" {
@@ -51,6 +52,11 @@ func Load() {
 			wg.Add(1)
 			go func(file string, f LoadFunc, wg *sync.WaitGroup) {
 				defer wg.Done()
+				defer func() {
+					if r := recover(); r != nil {
+						fmt.Printf("捕获到的错误：文件：%s 错误：%s\n", file, r)
+					}
+				}()
 				p := path.NewPath(file)
 				info := p.FileInfo()
 				ver := Ver.FindString(info.Name())
@@ -81,7 +87,7 @@ var fileList = map[string]LoadFunc{
 func LoadZip(file *path.Path, wwg *sync.WaitGroup) {
 	defer wwg.Done()
 	ver := file.Base()[12:19]
-	fmt.Printf("导入 Zip 参数表，版本号：%s\n", ver)
+	fmt.Printf("导入 %s ，版本号：%s\n", file, ver)
 	f, err := zip.OpenReader(file.String())
 	util.CheckFatal(err)
 	defer f.Close()
@@ -93,6 +99,11 @@ func LoadZip(file *path.Path, wwg *sync.WaitGroup) {
 			wg.Add(1)
 			go func(file *zip.File, ver string, w *sync.WaitGroup) {
 				defer w.Done()
+				defer func() {
+					if r := recover(); r != nil {
+						fmt.Printf("捕获到的错误：文件：%s 错误：%s\n", file.FileInfo().Name(), r)
+					}
+				}()
 				r, err := file.Open()
 				util.CheckFatal(err)
 				defer r.Close()

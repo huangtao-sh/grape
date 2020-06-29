@@ -3,6 +3,7 @@ package wwxt
 import (
 	"flag"
 	"fmt"
+	_ "grape/params"
 	"grape/path"
 	"grape/sqlite3"
 	"runtime"
@@ -47,7 +48,8 @@ func Main() {
 	}
 	if *query != "" {
 		fmt.Println("编号  维护日期     机构范围    机构码       系统名称")
-		sqlite3.Printf("%3d  %-10s  %-8s %-11s %s\n", "select id,date,jglx,jgh,name from wwxt where name like ? order by id",
+		sqlite3.Printf("%3d  %-10s  %-8s %-11s %s\n",
+			"select id,date,jglx,jgh,name from wwxt where name like ? order by id",
 			fmt.Sprintf("%%%s%%", *query))
 	}
 	if *export {

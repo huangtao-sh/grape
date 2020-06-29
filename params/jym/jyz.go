@@ -3,7 +3,6 @@ package jym
 import (
 	"grape/data/xls"
 	"grape/params/load"
-	"grape/text"
 	"io"
 	"os"
 )
@@ -17,8 +16,16 @@ create table if not exists jyz(
 
 var loadJyz = `insert into jyz values(?,?)`
 
+func conv(s []string) []string {
+	if s[0] != "" {
+		return s
+	} else {
+		return nil
+	}
+}
+
 // LoadJyz 导入交易组
 func LoadJyz(info os.FileInfo, r io.Reader, ver string) *load.Loader {
-	reader := xls.NewXlsReader(r, "交易组", 1, text.Include(0, 1))
+	reader := xls.NewXlsReader(r, "交易组", 1, conv)
 	return load.NewLoader("jyz", info, ver, reader, initJyz, loadJyz)
 }
