@@ -3,7 +3,7 @@ package wwxt
 import (
 	"flag"
 	"fmt"
-	_ "grape/params"
+	_ "grape/params" // 初始化数据库配置
 	"grape/path"
 	"grape/sqlite3"
 	"runtime"
@@ -27,7 +27,6 @@ func Main() {
 	defer sqlite3.Close() // 关闭数据库，释放资源
 	load := flag.Bool("l", false, "导入数据")
 	export := flag.Bool("e", false, "导出数据")
-	sql := flag.String("E", "", "执行 SQL 语句")
 	names := flag.String("a", "", "新增外围系统名称，如有多个系统用逗号分开")
 	show := flag.Bool("s", false, "显示外围系统列表")
 	query := flag.String("q", "", "查询指定外围系统")
@@ -42,9 +41,6 @@ func Main() {
 	}
 	if *names != "" {
 		Add(names)
-	}
-	if *sql != "" {
-		sqlite3.Println(*sql)
 	}
 	if *query != "" {
 		fmt.Println("编号  维护日期     机构范围    机构码       系统名称")

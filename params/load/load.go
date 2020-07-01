@@ -11,21 +11,20 @@ import (
 )
 
 var initLoadfile = sync.Once{}
-var createLoadfile = `
+
+func createLoadFile() {
+	sqlite3.ExecScript(`
 create table if not exists LoadFile(
 	name	text 	primary key,  -- 类型
 	path	text,	              -- 文件名
 	mtime	text,                 -- 文件修改时间
 	ver		text		          -- 文件版本
-)
-`
+)`)
+}
 
 // LoadCheck 检查文件是否已导入数据库
 func loadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
-	initLoadfile.Do( // 仅在调用 LoadCheck 时运行一次建表
-		func() {
-			sqlite3.ExecScript(createLoadfile)
-		})
+	initLoadfile.Do(createLoadFile) // 仅在调用 LoadCheck 时运行一次建表
 	var count int
 	filename := info.Name()
 	mtime := info.ModTime()
