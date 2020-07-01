@@ -10,7 +10,7 @@ import (
 
 var initSQL = `
 create table if not exists yyzg(
-	gyh		text primary key, -- 柜员号
+	gyh		text, 		-- 柜员号
 	ygh		text,		-- 员工号
 	xm		text,		-- 姓名
 	js		text,		-- 角色
@@ -20,7 +20,8 @@ create table if not exists yyzg(
 	bz		text,		-- 备注
 	jg		text,		-- 机构号
 	jgmc	text,		-- 机构名称
-	whrq	text		-- 维护日期
+	whrq	text,		-- 维护日期
+	primary key(gyh,jg)
 )
 `
 
