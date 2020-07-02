@@ -176,4 +176,3 @@ func InitLog() {
 	r, err := os.OpenFile(filename.String(), os.O_CREATE|os.O_APPEND, os.ModePerm)
 	util.CheckFatal(err)
 	log.SetOutput(r)
-}
