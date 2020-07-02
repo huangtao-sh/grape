@@ -151,3 +151,10 @@ func (p *Path) FileInfo() (info os.FileInfo) {
 	util.CheckFatal(err)
 	return
 }
+
+// WithExt 替换扩展名
+func (p *Path) WithExt(ext string) *Path {
+	dir, base := filepath.Split(p.String())
+	base = strings.Split(base, ".")[0] + ext
+	return NewPath(filepath.Join(dir, base))
+}
