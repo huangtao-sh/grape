@@ -1,8 +1,10 @@
 package path
 
 import (
+	"grape/date"
 	"grape/util"
 	"io"
+	"log"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -150,4 +152,28 @@ func (p *Path) FileInfo() (info os.FileInfo) {
 	info, err := os.Stat(p.String())
 	util.CheckFatal(err)
 	return
+}
+
+// Split 拆分文件名，将文件名拆分行目录和文件名
+func (p *Path) Split() (dir, name string) {
+	return filepath.Split(p.path)
+}
+
+// WithExt 替换成指定的扩展名
+func (p *Path) WithExt(ext string) *Path {
+	dir, name := p.Split()
+	name = strings.Split(name, ".")[0]
+	return NewPath(dir).Join(name + ext)
+}
+
+// InitLog 初始化日志文件
+// 放在 $HOME/.logs/date 目录下，并且用命令作为文件名
+func InitLog() {
+	_, name := NewPath(os.Args[0]).Split() // 获取命令行
+	dir := NewPath("~/.logs").Join(date.Today().Format("%F"))
+	dir.Ensure() // 建立目录
+	filename := dir.Join(name).WithExt(".log")
+	r, err := os.OpenFile(filename.String(), os.O_CREATE|os.O_APPEND, os.ModePerm)
+	util.CheckFatal(err)
+	log.SetOutput(r)
 }
