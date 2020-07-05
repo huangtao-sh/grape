@@ -1,4 +1,4 @@
-// Package gbk  GBK转码包
+// Package gbk  GBK转码包                                                 
 // Writer : Huang Tao 2020/03/01
 // 支持将 GBK 编码的二进制解码为字符串，或将字符串使用 GBK 编码成二进制
 package gbk

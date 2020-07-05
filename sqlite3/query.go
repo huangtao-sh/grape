@@ -6,6 +6,7 @@ import (
 	"grape/data/xls"
 	"grape/util"
 	"reflect"
+	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
@@ -89,6 +90,31 @@ func FetchValue(sql string, args ...interface{}) interface{} {
 // QueryRow 执行查询，返回一行数据
 func QueryRow(query string, args ...interface{}) *sql.Row {
 	return NewDB().QueryRow(query, args...)
+}
+
+// PrintRow 查询并打印单行数据，作为一个对象打印
+// 采用的格式为： Name     Value 的格式打印
+func PrintRow(header string, query string, args ...interface{}) (err error) {
+	var width int
+	headers := strings.Split(header, ",")
+	count := len(headers)
+	values := make([]interface{}, count)
+	addrs := make([]interface{}, count)
+	for i := range headers {
+		addrs[i] = &values[i]
+		if l := util.Wlen(headers[i]); l > width {
+			width = l
+		}
+	}
+	format := fmt.Sprintf("%%%ds  %%s", width)
+	err = QueryRow(query, args...).Scan(addrs...)
+	if err != nil {
+		return
+	}
+	for i, header := range headers {
+		fmt.Println(util.Sprintf(format, header, fmt.Sprint(values[i])))
+	}
+	return
 }
 
 // Println 执行查询，并打印查询结果

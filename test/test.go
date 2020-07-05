@@ -3,11 +3,10 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"grape/path"
+	_ "grape/params"
 	"grape/sqlite3"
 	"grape/util"
 	"io"
-	"log"
 	"os"
 )
 
@@ -42,8 +41,5 @@ func MMain() {
 }
 
 func main() {
-	path.InitLog()
-	log.Println("Hello world.")
-	log.Println("Are you ok?")
-
+	sqlite3.PrintRow("交易码,交易名称,交易组,交易组名", "select jym,jymc,jyz,jyzm from jycs where jym=?", "1365")
 }
