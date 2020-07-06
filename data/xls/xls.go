@@ -1,6 +1,7 @@
 package xls
 
 import (
+	"grape/text"
 	"grape/util"
 	"strings"
 
@@ -29,6 +30,30 @@ func Write(book *excelize.File, sheet string, axis string, data util.Dater) {
 		rowdata := data.Read()
 		book.SetSheetRow(sheet, Cell(col, row), &rowdata)
 	}
+}
+
+// WriteData 向 Excel 写入数据
+func WriteData(book *excelize.File, sheet string, axis string, data util.Dater, header string, widthes map[string]float64) {
+	if book.GetSheetIndex(sheet) == -1 {
+		book.NewSheet(sheet) // 工作表不存在时自动创建
+	}
+	if widthes != nil {
+		SetWidth(book, sheet, widthes) // 设置宽度
+	}
+	col, row, err := excelize.CellNameToCoordinates(axis) // 读取初始
+	util.CheckFatal(err)
+	writer, err := book.NewStreamWriter(sheet)
+	util.CheckFatal(err)
+	if header != "" {
+		headers := text.Slice(strings.Split(header, ","))
+		writer.SetRow(Cell(col, row), headers)
+		row++
+	}
+	for ; data.Next(); row++ {
+		rowdata := data.Read()
+		writer.SetRow(Cell(col, row), rowdata)
+	}
+	writer.Flush()
 }
 
 // SetWidth 设置宽度

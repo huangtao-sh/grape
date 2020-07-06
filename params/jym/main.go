@@ -7,14 +7,13 @@ import (
 	"grape/params"
 	"grape/path"
 	"grape/sqlite3"
-	"grape/text"
 	"regexp"
-	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 var header = `交易名称,交易码,交易组,交易组名称,优先级,网点授权级别,中心授权级别,必须网点授权,中心授权机构,必须中心授权,技能级别,现转标志,是否外包,大额提示,是否扫描电子底卡,是否收手续费,是否需要后台监测,事中扫描方式,补扫时限,是否需要审查,是否允许抹账,是否允许超额授权,附加交易组,事后补扫,磁道校验,一级菜单,二级菜单`
+var header2 = `交易名称,交易码,交易组,交易组名称,优先级,网点授权级别,中心授权级别,必须网点授权,中心授权机构,必须中心授权,技能级别,现转标志,是否外包,大额提示,是否扫描电子底卡,是否收手续费,是否需要后台监测,事中扫描方式,补扫时限,是否需要审查,是否允许抹账,是否允许超额授权,附加交易组,事后补扫,磁道校验`
 
 // Main jy 程序入口
 func Main() {
@@ -64,19 +63,11 @@ func exportToXlsx() {
 	filename := fmt.Sprintf("交易码参数表（%s）.xlsx", params.GetVer("jym"))
 	filename = (path.NewPath("~/Documents").Join(filename)).String()
 	book := excelize.NewFile()
-	book.NewSheet("交易码表")
-	xls.SetWidth(book, "交易码表", jymbWidth)
-	xls.SetWidth(book, "交易码参数表", jycsWidth)
-	book.NewSheet("交易码参数表")
+	xls.WriteData(book, "交易码表", "A1", sqlite3.Fetch("select * from jycs order by jym"),
+		header, jymbWidth)
+	xls.WriteData(book, "交易码参数表", "A1", sqlite3.Fetch("select * from jymb order by jym"),
+		header2, jycsWidth)
 	book.DeleteSheet("Sheet1")
-	head := text.Slice(strings.Split(header, ","))
-	book.SetSheetRow("交易码表", "A1", &head)
-	rows := sqlite3.Fetch("select * from jycs order by jym")
-	rows.Export(book, "交易码表", "A2")
-	head = head[:len(head)-2]
-	book.SetSheetRow("交易码参数表", "A1", &head)
-	rows = sqlite3.Fetch("select * from jymb order by jym")
-	rows.Export(book, "交易码参数表", "A2")
 	book.SaveAs(filename)
 	fmt.Printf("导出参数成功")
 }

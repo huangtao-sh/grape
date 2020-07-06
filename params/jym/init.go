@@ -58,7 +58,7 @@ create table if not exists menu(
 -- drop view if exists jymb;
 
 create view if not exists jymb as 
-select a.jym,jymc,a.jyz,b.jyzm,yxj,wdsqjb,zssqjb,wdsq,zssqjg,zssq,jnjb,xzbz,wb,
+select a.jymc,a.jym,a.jyz,b.jyzm,yxj,wdsqjb,zssqjb,wdsq,zssqjg,zssq,jnjb,xzbz,wb,
 dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,
 case when exists(select jym from shbs where jym=a.jym) then "FALSE" else "TRUE" end as shbs,
 case when exists(select jym from cdjy where jym=a.jym) then "TRUE" else "FALSE" end as cdjy
