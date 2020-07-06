@@ -32,9 +32,9 @@ func Main() {
 				fmt.Printf("错误：交易码 %s 不存在\n", arg)
 			}
 		} else if matched, _ := regexp.MatchString(`^[A-Z]{2}\d{3}[A-Z]{1}$`, arg); matched {
-			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jyz=?", arg)
+			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)
 		} else {
-			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jymc like ?", fmt.Sprintf(`%%%s%%`, arg))
+			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jymc like ? order by jym", fmt.Sprintf(`%%%s%%`, arg))
 		}
 	}
 }
