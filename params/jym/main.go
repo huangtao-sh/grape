@@ -7,7 +7,7 @@ import (
 	"grape/params"
 	"grape/path"
 	"grape/sqlite3"
-	"regexp"
+	"grape/util"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
@@ -27,12 +27,12 @@ func Main() {
 		exportToXlsx()
 	}
 	for _, arg := range flag.Args() {
-		if matched, _ := regexp.MatchString(`^\d{4}$`, arg); matched {
+		if util.FullMatch(`\d{4}`, arg) {
 			err := sqlite3.PrintRow(header, "select * from jycs where jym=?", arg)
 			if err != nil {
 				fmt.Printf("错误：交易码 %s 不存在\n", arg)
 			}
-		} else if matched, _ := regexp.MatchString(`^[A-Z]{2}\d{3}[A-Z]{1}$`, arg); matched {
+		} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
 			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)
 		} else {
 			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jymc like ? order by jym", fmt.Sprintf(`%%%s%%`, arg))
@@ -61,14 +61,17 @@ var jycsWidth = map[string]float64{
 	"X:Y": 9,
 }
 
+const (
+	queryJycs = `select * from jycs order by jym`
+	queryJymb = `select * from jymb order by jym`
+)
+
 func exportToXlsx() {
 	filename := fmt.Sprintf("交易码参数表（%s）.xlsx", params.GetVer("jym"))
 	filename = (path.NewPath("~/Documents").Join(filename)).String()
 	book := excelize.NewFile()
-	xls.WriteData(book, "交易码表", "A1", sqlite3.Fetch("select * from jycs order by jym"),
-		header, jymbWidth)
-	xls.WriteData(book, "交易码参数表", "A1", sqlite3.Fetch("select * from jymb order by jym"),
-		header2, jycsWidth)
+	xls.WriteData(book, "交易码表", "A1", sqlite3.Fetch(queryJycs), header, jymbWidth)
+	xls.WriteData(book, "交易码参数表", "A1", sqlite3.Fetch(queryJymb), header2, jycsWidth)
 	book.DeleteSheet("Sheet1")
 	book.SaveAs(filename)
 	fmt.Printf("导出参数成功")

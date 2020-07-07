@@ -142,3 +142,15 @@ func Sprintf(format string, args ...interface{}) (d string) {
 	d = Pattern.ReplaceAllStringFunc(format, replFunc)
 	return
 }
+
+// Match 匹配字符串
+func Match(pattern string, s string) (matched bool) {
+	matched, err := regexp.MatchString(pattern, s)
+	CheckFatal(err)
+	return
+}
+
+// FullMatch 全匹配字符串
+func FullMatch(pattern string, s string) bool {
+	return Match(fmt.Sprintf("^%s$", pattern), s)
+}

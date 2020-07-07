@@ -3,6 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
+	"fmt"
 	_ "grape/params"
 	"grape/sqlite3"
 	"grape/util"
@@ -41,5 +42,7 @@ func MMain() {
 }
 
 func main() {
-	sqlite3.PrintRow("交易码,交易名称,交易组,交易组名", "select jym,jymc,jyz,jyzm from jycs where jym=?", "1365")
+	fmt.Println(util.Match(`\d{3}`, "134254325"))
+	fmt.Println(util.FullMatch(`\d{3}`, "134254325"))
+	fmt.Println(util.FullMatch(`\w{3}`, "ab1"))
 }
