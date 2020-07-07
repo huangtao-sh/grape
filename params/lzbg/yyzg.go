@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var initSQL = `
+const initSQL = `
 create table if not exists yyzg(
 	gyh		text, 		-- 柜员号
 	ygh		text,		-- 员工号
@@ -25,7 +25,7 @@ create table if not exists yyzg(
 )
 `
 
-var loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
+const loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 
 // LoadYyzg 导入营业主管信息
 func LoadYyzg(info os.FileInfo, r io.Reader, ver string) *load.Loader {
@@ -33,14 +33,14 @@ func LoadYyzg(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	return load.NewLoader("yyzg", info, ver, reader, initSQL, loadSQL)
 }
 
-var initSXB = `
+const initSXB = `
 create table if not exists fhsxb(
 	br		text primary key,  -- 分行
 	[order]	int					-- 顺序
 )
 `
 
-var loadSXB = `insert into fhsxb Values(?,?)`
+const loadSXB = `insert into fhsxb Values(?,?)`
 
 // LoadFhsxb 导入分行顺序表
 func LoadFhsxb(info os.FileInfo, r io.Reader, ver string) *load.Loader {

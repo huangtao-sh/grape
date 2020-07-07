@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-var initWwxt = `
+const initWwxt = `
 create table if not exists wwxt(
 	id 	int primary key,
 	name	text,
@@ -20,7 +20,7 @@ create table if not exists wwxt(
 	date	text  
 )
 `
-var loadWwxt = `insert into wwxt values(?,?,?,?,?)`
+const loadWwxt = `insert into wwxt values(?,?,?,?,?)`
 
 func conv(row []string) []string {
 	_, err := strconv.Atoi(row[0])

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var initSQL = `
+const initSQL = `
 create table if not exists teller(
     id          text    PRIMARY key,   -- 柜员号
     name        text,   -- 姓名
@@ -33,7 +33,7 @@ create table if not exists teller(
     zjhm        text    -- 证件号码
 )`
 
-var loadSQL = "insert into teller values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+const loadSQL = "insert into teller values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
 /*
 *row[:3], *row[4:8], ','.join(map(str.strip, row[8:-25])),

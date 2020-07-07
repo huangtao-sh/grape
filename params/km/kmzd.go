@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var initKmSQL = `
+const initKmSQL = `
 create table if not exists kmzd(
 	km  	text primary key,    	-- 科目号
 	hzkm	text,		-- 汇总科目
@@ -17,7 +17,7 @@ create table if not exists kmzd(
 	kmlx	text,		-- 科目类型
 	bz		text		-- 备注
 )`
-var loadKmSQL = "insert or replace into kmzd values(?,?,?,?,?,?,?)"
+const loadKmSQL = "insert or replace into kmzd values(?,?,?,?,?,?,?)"
 
 // LoadKm 导入科目字典
 func LoadKm(info os.FileInfo, r io.Reader, ver string) *load.Loader {

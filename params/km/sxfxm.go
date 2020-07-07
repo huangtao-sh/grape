@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var initSxfxm = `
+const initSxfxm = `
 create table if not exists sxfxm(
 	gn	text,	-- 功能
 	xm	text,	-- 项目
@@ -16,7 +16,7 @@ create table if not exists sxfxm(
 	primary key(xm,mx)
 )
 `
-var loadSxfxm = `insert or replace into sxfxm values(?,?,?,?)`
+const loadSxfxm = `insert or replace into sxfxm values(?,?,?,?)`
 
 func conv(s []string) []string {
 	if s[0] == "手续费" {
@@ -25,12 +25,11 @@ func conv(s []string) []string {
 			s[3] = xls.ConvertDate(s[3])
 		}
 		return s
-	} else {
-		return nil
 	}
+	return nil
 }
 
-// LoadTsnbh 导入科目
+// LoadSxfxm 导入科目
 func LoadSxfxm(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := xls.NewXlsReader(r, "历史参数", 1, conv)
 	return load.NewLoader("sxfxm", info, ver, reader, initSxfxm, loadSxfxm)

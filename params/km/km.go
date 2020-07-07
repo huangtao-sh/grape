@@ -11,14 +11,14 @@ import (
 	"strings"
 )
 
-var initKemuSQL = `
+const initKemuSQL = `
 create table if not exists kemu(
 	km      text primary key,  -- 科目
 	name    text,              -- 名称
 	description text           -- 说明
 );
 `
-var loadKemuSQL = `insert or replace into kemu values(?,?,?)`
+const loadKemuSQL = `insert or replace into kemu values(?,?,?)`
 
 // KemuReader 科目读取
 type KemuReader struct {

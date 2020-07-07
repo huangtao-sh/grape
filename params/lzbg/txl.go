@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var initTxl = `
+const initTxl = `
 create table if not exists txl(
 	br		text,	-- 所在机构 
 	dept	text,	-- 部门
@@ -20,7 +20,7 @@ create table if not exists txl(
 	email	text
 )
 `
-var loadTxl = `insert into txl values(?,?,?,?,?,?,?,?)`
+const loadTxl = `insert into txl values(?,?,?,?,?,?,?,?)`
 
 // LoadTxl 导入通讯录
 func LoadTxl(info os.FileInfo, r io.Reader, ver string) *load.Loader {

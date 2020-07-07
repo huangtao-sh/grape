@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var initTsnbh = `
+const initTsnbh = `
 create table if not exists tsnbh(
 	code text	primary key,	-- 代码
 	name	text,	-- 名称
@@ -18,7 +18,7 @@ create table if not exists tsnbh(
 	whrq	text	-- 维护日期
 )
 `
-var loadTsnbh = `insert or replace into tsnbh values(?,?,?,?,?,?)`
+const loadTsnbh = `insert or replace into tsnbh values(?,?,?,?,?,?)`
 
 func convTsnbh(s []string) []string {
 	s[5] = xls.ConvertDate(s[5])

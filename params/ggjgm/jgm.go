@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var initSQL = `
+const initSQL = `
 -- drop table if exists ggjgm;
 create table if not exists ggjgm (
     jgm text primary key,	-- 0 机构码
@@ -19,7 +19,7 @@ create table if not exists ggjgm (
     hzjgm text 				--17 汇总机构码
 );
 `
-var loadSQL = "insert or replace into ggjgm values(?,?,?,?,?,date(?),?)"
+const loadSQL = "insert or replace into ggjgm values(?,?,?,?,?,date(?),?)"
 
 // Load 导入文件
 func Load(info os.FileInfo, r io.Reader, ver string) *load.Loader {

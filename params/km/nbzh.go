@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var initNbzhSQL = `
+const initNbzhSQL = `
 create table if not exists nbzh(
 	zh text primary key,    --  账号
 	jgm text,               --  机构码
@@ -68,7 +68,7 @@ where a.zhzt like "0%"
 group by b.jglx,a.km,a.bz,xh;
 `
 
-var loadNbzhSQL = `
+const loadNbzhSQL = `
 insert into nbzh values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,date(?),date(?),date(?),date(?),?,?,?,?,?,?,?)
 `
 

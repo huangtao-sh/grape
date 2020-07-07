@@ -18,7 +18,7 @@ func Config(pathName string) {
 	if (pathName != ":memory:") && (path.NewPath(pathName).Dir() == ".") { // path 如果不是 :memory:，无目录的指定默认目录
 		dataHome := path.Home.Join(".data")
 		dataHome.Ensure() // 目录不存在则自动创建
-		pathName = (dataHome.Join(pathName)).String()
+		pathName = (dataHome.Join(pathName).WithExt(".db")).String()
 	}
 	dataSourceName = pathName
 }
