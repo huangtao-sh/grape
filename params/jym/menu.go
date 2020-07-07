@@ -30,7 +30,7 @@ func getAttr(token xml.StartElement) (attrs map[string]string) {
 	return
 }
 
-var loadSQL = `insert or replace into menu values(?,?,?,?)`
+const loadSQL = `insert or replace into menu values(?,?,?,?)`
 
 // LoadMenu 导入科目
 func LoadMenu(info os.FileInfo, r io.Reader, ver string) *load.Loader {

@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var loadJyz = `insert into jyz values(?,?)`
+const loadJyz = `insert into jyz values(?,?)`
 
 func conv(s []string) []string {
 	if s[0] != "" {

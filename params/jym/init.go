@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-var createSQL = `
+const createSQL = `
 -- 交易码表
 CREATE TABLE IF NOT EXISTS jym(
     jym     text primary key,   --交易码
@@ -88,6 +88,7 @@ from jym a
 left join jyz b on a.jyz=b.jyz
 left join menu c on a.jym=c.jym;
 `
+
 var onece = sync.Once{}
 
 // InitJym 初始化交易码相关表结构
