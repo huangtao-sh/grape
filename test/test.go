@@ -9,6 +9,8 @@ import (
 	"grape/util"
 	"io"
 	"os"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 // MMain Test
@@ -42,7 +44,10 @@ func MMain() {
 }
 
 func main() {
-	fmt.Println(util.Match(`\d{3}`, "134254325"))
-	fmt.Println(util.FullMatch(`\d{3}`, "134254325"))
-	fmt.Println(util.FullMatch(`\w{3}`, "ab1"))
+	book := excelize.NewFile()
+
+	fmt.Println(book.GetSheetIndex("Sheet1"))
+	fmt.Println(book.GetSheetIndex("Sheet2"))
+	fmt.Println(book.GetSheetList())
+
 }

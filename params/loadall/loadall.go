@@ -16,7 +16,6 @@ import (
 	"io"
 	"os"
 	"regexp"
-	"sync"
 )
 
 // ROOT 参数根目录
@@ -41,22 +40,14 @@ func Load() {
 	fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = km.LoadTsnbh // 特殊内部账户参数
 	fileList[ROOT.Find("岗位与交易组/岗位及组*")] = jym.LoadJyz         // 交易组
 	fileList[ROOT.Find("手续费项目/手续费项目参数*")] = km.LoadSxfxm      // 手续费项目
-	wg := &sync.WaitGroup{}
 	zipfile := ROOT.Find("运营参数*.zip")
 	if zipfile != "" {
-		wg.Add(1)
-		go LoadZip(path.NewPath(zipfile), wg)
+		LoadZip(path.NewPath(zipfile))
 	}
 	for file, f := range fileList {
 		if file != "" {
-			wg.Add(1)
-			go func(file string, f LoadFunc, wg *sync.WaitGroup) {
-				defer wg.Done()
-				defer func() {
-					if r := recover(); r != nil {
-						fmt.Printf("捕获到的错误：文件：%s 错误：%s\n", file, r)
-					}
-				}()
+			func(file string, f LoadFunc) {
+				defer util.Recover()
 				p := path.NewPath(file)
 				info := p.FileInfo()
 				ver := Ver.FindString(info.Name())
@@ -65,10 +56,9 @@ func Load() {
 				defer r.Close()
 				loader := f(info, r, ver)
 				loader.Load()
-			}(file, f, wg)
+			}(file, f)
 		}
 	}
-	wg.Wait()
 }
 
 var fileList = map[string]LoadFunc{
@@ -84,34 +74,25 @@ var fileList = map[string]LoadFunc{
 }
 
 // LoadZip 导入 zip 压缩包
-func LoadZip(file *path.Path, wwg *sync.WaitGroup) {
-	defer wwg.Done()
+func LoadZip(file *path.Path) {
 	ver := file.Base()[12:19]
 	fmt.Printf("导入 %s ，版本号：%s\n", file, ver)
 	f, err := zip.OpenReader(file.String())
 	util.CheckFatal(err)
 	defer f.Close()
-	wg := &sync.WaitGroup{}
 	for _, file := range f.File {
 		info := file.FileInfo()
 		loadfunc, ok := fileList[info.Name()]
 		if ok {
-			wg.Add(1)
-			go func(file *zip.File, ver string, w *sync.WaitGroup) {
-				defer w.Done()
-				defer func() {
-					if r := recover(); r != nil {
-						fmt.Printf("捕获到的错误：文件：%s 错误：%s\n", file.FileInfo().Name(), r)
-					}
-				}()
+			func(file *zip.File, ver string) {
+				defer util.Recover()
 				r, err := file.Open()
 				util.CheckFatal(err)
 				defer r.Close()
 				loader := loadfunc(file.FileInfo(), gbk.NewReader(r), ver)
 				loader.Load()
-			}(file, ver, wg)
+			}(file, ver)
 		}
 	}
-	wg.Wait()
 	fmt.Printf("文件 %s 处理完毕\n", file.Base())
 }

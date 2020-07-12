@@ -7,7 +7,11 @@ import (
 	"os"
 )
 
-const loadJymSQL = `insert or replace into jym values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+const (
+	loadJymSQL = `insert or replace into jym values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	loadShbs   = `insert or replace into shbs values(?)`
+	loadCdjy   = `insert or replace into cdjy values(?)`
+)
 
 func convert(s []string) []string {
 	if len(s) < 22 {
@@ -23,16 +27,12 @@ func LoadJym(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	return load.NewLoader("jym", info, ver, reader, "", loadJymSQL)
 }
 
-var loadShbs = `insert or replace into shbs values(?)`
-
 // LoadShbs 导入交易码文件
 func LoadShbs(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	InitJym()
 	reader := text.NewReader(r, false, text.NewSepSpliter(","), text.Include(0))
 	return load.NewLoader("shbs", info, ver, reader, "", loadShbs)
 }
-
-var loadCdjy = `insert or replace into cdjy values(?)`
 
 func convCdjy(s []string) (d []string) {
 	if s[1] == "8" {
