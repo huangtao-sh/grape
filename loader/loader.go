@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"grape/data"
 	"grape/sqlite3"
+	"grape/text"
 	"grape/util"
 	"io"
 	"os"
@@ -51,7 +52,7 @@ type File interface {
 
 // Reader 读取文件接口
 type Reader interface {
-	ReadAll(*data.Data)
+	ReadAll(text.Data)
 }
 
 // NewReader Reader 构造函数
@@ -70,7 +71,7 @@ func NewLoader(name string, ver string, loadSQL string, file File, new NewReader
 }
 
 // ReadAll 读取所有数据
-func (l *Loader) ReadAll(d *data.Data) {
+func (l *Loader) ReadAll(d text.Data) {
 	r, err := l.file.Open()
 	util.CheckFatal(err)
 	defer r.Close()
