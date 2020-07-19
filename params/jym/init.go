@@ -88,9 +88,10 @@ from jym a
 left join jyz b on a.jyz=b.jyz
 left join menu c on a.jym=c.jym;
 
+-- drop table if exists jymcs ;
 create table if not exists jymcs(
-    jym     text,   --交易码
     jymc    text,   --交易名称
+    jym     text,   --交易码
     jyz     text,   --交易组
     jyzm    text,   --交易组名
     yxj     text,   --优先级

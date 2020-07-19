@@ -103,7 +103,8 @@ func Sprintf(format string, args ...interface{}) (d string) {
 	StrPattern := regexp.MustCompile(`%(-)?(\d+)s`)
 	IntPattern := regexp.MustCompile(`%(\d+),d`)
 	FloatPattern := regexp.MustCompile(`%(\d+),\.(\d+)f`)
-	Pattern := regexp.MustCompile(`%.*?[sdfv%]`)
+	ValuesPattern := regexp.MustCompile(`%(\d+)V`)
+	Pattern := regexp.MustCompile(`%.*?[sdfvV%]`)
 	i := 0
 	replFunc := func(s string) (d string) {
 		if s == "%%" {
@@ -133,6 +134,11 @@ func Sprintf(format string, args ...interface{}) (d string) {
 			d = strings.Join(a, ".")
 			space := strings.Repeat(" ", l-len(d))
 			d = space + d
+		} else if k := ValuesPattern.FindStringSubmatch(s); k != nil {
+			count, _ := strconv.Atoi(k[1])
+			d = strings.Repeat("?,", count-1)
+			d += "?"
+			return fmt.Sprintf("Values(%s)", d)
 		} else {
 			d = fmt.Sprintf(s, args[i])
 		}

@@ -3,14 +3,13 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
 	_ "grape/params"
+	"grape/params/jym"
+	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
 	"io"
 	"os"
-
-	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 // MMain Test
@@ -44,10 +43,23 @@ func MMain() {
 }
 
 func main() {
-	book := excelize.NewFile()
+	p := path.NewPath(`C:\Users\huangtao\OneDrive\工作\参数备份\生产参数\交易码参数.xlsx`)
+	loader := jym.LoadJycs(p, "1.0")
+	loader.Load()
+	sqlite3.Println("select *,rowid from jymcs")
 
-	fmt.Println(book.GetSheetIndex("Sheet1"))
-	fmt.Println(book.GetSheetIndex("Sheet2"))
-	fmt.Println(book.GetSheetList())
-
+	/*
+		sqlite3.Config(":memory:")
+		sqlite3.ExecScript(`create table test(a text)`)
+		err := sqlite3.ExecTx(
+			sqlite3.NewTr("insert or replace into test(a,rowid)values(?,?)",  "test",nil),
+			sqlite3.NewTr("insert or replace into test(a,rowid)values(?,?)", "Ab", nil),
+			sqlite3.NewTr("insert or replace into test(a,rowid)values(?,?)",  "hello","2"),
+			//sqlite3.NewTr("insert into test(rowid,a)values(?,?)", "", "cd"),
+		)
+		if err != nil {
+			fmt.Println(err)
+		}
+		sqlite3.Println("select rowid,* from test")
+	*/
 }

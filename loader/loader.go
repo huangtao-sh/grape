@@ -63,11 +63,12 @@ type Loader struct {
 	name, Ver, loadSQL string
 	file               File
 	new                NewReader
+	Clear              bool // 是否清理数据库，默认为是
 }
 
 // NewLoader Loader 构造函数
 func NewLoader(name string, ver string, loadSQL string, file File, new NewReader) *Loader {
-	return &Loader{name, ver, loadSQL, file, new}
+	return &Loader{name, ver, loadSQL, file, new, true}
 }
 
 // ReadAll 读取所有数据
@@ -100,11 +101,14 @@ func (l *Loader) Exec(tx *sqlite3.Tx) (err error) {
 
 // Load 执行导入操作
 func (l *Loader) Load() {
+	var execer []interface{}
 	info := l.file.FileInfo()
-	err := sqlite3.ExecTx(
-		loadCheck(l.name, info, l.Ver),
-		sqlite3.NewTr(fmt.Sprintf("delete from %s", l.name)),
-		l)
+	execer = append(execer, loadCheck(l.name, info, l.Ver))
+	if l.Clear {
+		execer = append(execer, sqlite3.NewTr(fmt.Sprintf("delete from %s", l.name)))
+	}
+	execer = append(execer, l)
+	err := sqlite3.ExecTx(execer...)
 	if err != nil {
 		fmt.Println(err)
 	} else {
