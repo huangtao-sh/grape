@@ -101,15 +101,14 @@ func (l *Loader) Exec(tx *sqlite3.Tx) (err error) {
 
 // Load 执行导入操作
 func (l *Loader) Load() {
-	var execer []interface{}
 	info := l.file.FileInfo()
+	var execer []interface{}
 	execer = append(execer, loadCheck(l.name, info, l.Ver))
 	if l.Clear {
 		execer = append(execer, sqlite3.NewTr(fmt.Sprintf("delete from %s", l.name)))
 	}
 	execer = append(execer, l)
-	err := sqlite3.ExecTx(execer...)
-	if err != nil {
+	if err := sqlite3.ExecTx(execer...); err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Printf("导入文件 %s 完成！\n", info.Name())

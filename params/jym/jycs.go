@@ -47,3 +47,4 @@ func LoadJycs(file loader.File, ver string) *loader.Loader {
 		zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid) %31V`)
 	return loader.NewLoader("jymcs", ver, loadJycsSQL, file, newJycsReader)
 }
+
