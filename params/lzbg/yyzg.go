@@ -1,8 +1,12 @@
 package lzbg
 
 import (
+	"flag"
+	"fmt"
 	"grape/data/xls"
+	"grape/params"
 	"grape/params/load"
+	"grape/sqlite3"
 	"grape/text"
 	"io"
 	"os"
@@ -46,4 +50,20 @@ const loadSXB = `insert into fhsxb Values(?,?)`
 func LoadFhsxb(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := xls.NewXlsReader(r, "分行顺序表", 1, text.Include(0, 1))
 	return load.NewLoader("fhsxb", info, ver, reader, initSXB, loadSXB)
+}
+
+func YyzgMain() {
+	var t string
+	typ := flag.String("t", "", "主管类型")
+	flag.Parse()
+	if *typ != "" {
+		t = fmt.Sprintf(`and js like "%s%%" `, *typ)
+	}
+	params.PrintVer("yyzg")
+	fmt.Println("工号   姓名       角色            联系电话           手机         机构")
+	for _, arg := range flag.Args() {
+		arg = fmt.Sprintf("%%%s%%", arg)
+		sqlite3.Printf("%-6s %-10s %-15s %-15s %11s %-30s\n",
+			"select ygh,xm,js,lxdh,mobile,jgmc from yyzg where(xm like ? or jgmc like ?)"+t, arg, arg)
+	}
 }

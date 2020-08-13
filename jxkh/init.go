@@ -2,6 +2,9 @@
 	绩效考核统计程序
 
 */
+package jxkh
+
+
 import (
 	"database/sql"
 	"flag"
