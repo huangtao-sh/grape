@@ -8,8 +8,17 @@ import (
 	"strings"
 )
 
+func showKemu(kemu string) {
+	const (
+		querySQL = `select km,name,description from kemu where km=?`
+		format   = "%s  %s\n%s\n\n"
+	)
+	sqlite3.Printf(format, querySQL, kemu)
+}
+
 func main() {
 	var km, xh string
+	defer sqlite3.Close()
 	flag.Parse()
 	params.PrintVer("nbzhmb")
 	for _, ac := range flag.Args() {
@@ -17,7 +26,7 @@ func main() {
 		if len(kk) == 2 {
 			km, xh = kk[0], kk[1]
 		} else if len(ac) == 6 {
-			fmt.Printf("科目：%s\n", ac)
+			showKemu(ac)
 			fmt.Println("维护日期     机构   科目  序号  币种           透支额度   状态  计息  户名")
 			sqlite3.Printf("%-10s  %4s  %6s  %03d  %4s  %19,.2f  %4s  %4s  %s\n",
 				"select whrq,jglx,km,xh,bz,tzed,cszt,jxbz,hm from nbzhmb where km=? order by km,xh,jglx,bz", ac)

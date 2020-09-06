@@ -12,8 +12,10 @@ import (
 )
 
 var (
-	Encoder *encoding.Encoder // Encoder GBK 编码器
-	Decoder *encoding.Decoder // Decoder GBK 解码器
+	// Encoder GBK 编码器
+	Encoder *encoding.Encoder
+	// Decoder GBK 解码器
+	Decoder *encoding.Decoder
 )
 
 func init() {
