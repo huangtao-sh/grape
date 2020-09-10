@@ -3,14 +3,11 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"fmt"
 	_ "grape/params"
 	"grape/sqlite3"
 	"grape/util"
 	"io"
 	"os"
-
-	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 // MMain Test
@@ -44,13 +41,9 @@ func MMain() {
 }
 
 func main() {
-	var a, b int
-	a, b = 3, 5
-	book := excelize.NewFile()
-	for i, v := range book.GetSheetMap() {
-		fmt.Println(i, v)
-	}
-	fmt.Println(book.GetSheetIndex("Sheet1"))
-	fmt.Println(a, b)
-	fmt.Println(a, b)
+	sqlite3.Config(":memory:")
+	defer sqlite3.Close()
+	sqlite3.Attach("params.db", "pm")
+	defer sqlite3.Detach("pm")
+	sqlite3.Println("select * from pm.yyzg limit 10")
 }

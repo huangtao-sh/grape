@@ -2,6 +2,7 @@ package sqlite3
 
 import (
 	"database/sql"
+	"fmt"
 	"grape/path"
 	"grape/util"
 
@@ -12,15 +13,19 @@ import (
 var dataSourceName string
 var db *sql.DB
 
-// Config  配置数据库文件
-// 配置完成之后，可以直接调用 Open 打开
-func Config(pathName string) {
+func parsePath(pathName string) string {
 	if (pathName != ":memory:") && (path.NewPath(pathName).Dir() == ".") { // path 如果不是 :memory:，无目录的指定默认目录
 		dataHome := path.Home.Join(".data")
 		dataHome.Ensure() // 目录不存在则自动创建
 		pathName = (dataHome.Join(pathName).WithExt(".db")).String()
 	}
-	dataSourceName = pathName
+	return pathName
+}
+
+// Config  配置数据库文件
+// 配置完成之后，可以直接调用 Open 打开
+func Config(pathName string) {
+	dataSourceName = parsePath(pathName)
 }
 
 // NewDB 打开数据库
@@ -31,6 +36,18 @@ func NewDB() *sql.DB {
 		util.CheckFatal(err)
 	}
 	return db
+}
+
+// Attach 附加数据库
+func Attach(path string, name string) {
+	_, err := NewDB().Exec(fmt.Sprintf("attach database '%s' as %s", parsePath(path), name))
+	util.CheckFatal(err)
+}
+
+// Detach 分离数据库
+func Detach(name string) {
+	_, err := NewDB().Exec(fmt.Sprintf("detach database '%s'", name))
+	util.CheckFatal(err)
 }
 
 // Close 关闭数据库
