@@ -40,7 +40,7 @@ func NewDB() *sql.DB {
 
 // Attach 附加数据库
 func Attach(path string, name string) {
-	_, err := NewDB().Exec(fmt.Sprintf("attach database '%s' as %s", parsePath(path), name))
+	_, err := NewDB().Exec(fmt.Sprintf("attach database '%s' as '%s'", parsePath(path), name))
 	util.CheckFatal(err)
 }
 

@@ -19,7 +19,7 @@ func minAvaible(kemu string) {
 			break
 		}
 	}
-	fmt.Printf("\n最小未用序号： %03d\n\n", i)
+	fmt.Printf("\n最小未用序号： %03d\n", i)
 }
 
 // 打印该科目开户情况

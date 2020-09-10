@@ -43,7 +43,8 @@ func MMain() {
 func main() {
 	sqlite3.Config(":memory:")
 	defer sqlite3.Close()
-	sqlite3.Attach("params.db", "pm")
+	sqlite3.Attach("params", "pm")
 	defer sqlite3.Detach("pm")
 	sqlite3.Println("select * from pm.yyzg limit 10")
+	
 }
