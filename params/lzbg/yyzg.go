@@ -8,6 +8,7 @@ import (
 	"grape/params/load"
 	"grape/sqlite3"
 	"grape/text"
+	"grape/util"
 	"io"
 	"os"
 )
@@ -52,6 +53,7 @@ func LoadFhsxb(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	return load.NewLoader("fhsxb", info, ver, reader, initSXB, loadSXB)
 }
 
+// YyzgMain 营业主管查询程序主函数
 func YyzgMain() {
 	var t string
 	typ := flag.String("t", "", "主管类型")
@@ -62,8 +64,14 @@ func YyzgMain() {
 	params.PrintVer("yyzg")
 	fmt.Println("工号   姓名       角色            联系电话           手机         机构")
 	for _, arg := range flag.Args() {
-		arg = fmt.Sprintf("%%%s%%", arg)
-		sqlite3.Printf("%-6s %-10s %-15s %-15s %11s %-30s\n",
-			"select ygh,xm,js,lxdh,mobile,jgmc from yyzg where(xm like ? or jgmc like ?)"+t, arg, arg)
+		if util.FullMatch(`\d{9}`, arg) {
+			sqlite3.Printf("%-6s %-10s %-15s %-15s %11s %-30s\n",
+				"select ygh,xm,js,lxdh,mobile,jgmc from yyzg where jg =? "+t, arg)
+		} else {
+			arg = fmt.Sprintf("%%%s%%", arg)
+			sqlite3.Printf("%-6s %-10s %-15s %-15s %11s %-30s\n",
+				"select ygh,xm,js,lxdh,mobile,jgmc from yyzg where(xm like ? or jgmc like ?)"+t, arg, arg)
+		}
+
 	}
 }
