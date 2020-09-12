@@ -13,37 +13,22 @@ import (
 
 // RowReader 查询接口
 type RowReader struct {
-	rows          *sql.Rows
+	*sql.Rows
 	addrs, values []interface{}
 }
 
-// Next 是否有下一条记录
-func (reader *RowReader) Next() bool {
-	return reader.rows.Next()
-}
-
-// Close 关闭查询
-func (reader *RowReader) Close() error {
-	return reader.rows.Close()
-}
-
 // Read 读取下一条记录
-func (reader *RowReader) Read() []interface{} {
-	reader.rows.Scan(reader.addrs...)
-	return reader.values
+func (r *RowReader) Read() []interface{} {
+	r.Scan(r.addrs...)
+	return r.values
 }
 
-// Scan 读取下一条记录
-func (reader *RowReader) Scan(addr ...interface{}) error {
-	return reader.rows.Scan(addr...)
-}
-
-// Export 读取下一条记录
-func (reader *RowReader) Export(book *excelize.File, sheet string, axis string) {
+// Export 读取下一条记录 Deprecated
+func (r *RowReader) Export(book *excelize.File, sheet string, axis string) {
 	col, row, err := excelize.CellNameToCoordinates(axis)
 	util.CheckFatal(err)
-	for ; reader.Next(); row++ {
-		data := reader.Read()
+	for ; r.Next(); row++ {
+		data := r.Read()
 		book.SetSheetRow(sheet, xls.Cell(col, row), &data)
 	}
 }

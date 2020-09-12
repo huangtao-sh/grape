@@ -10,11 +10,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var dataSourceName string
-var db *sql.DB
+var (
+	dataSourceName string  // 默认数据连接
+	db             *sql.DB // 数据连接
+)
 
+// parsePath 数据库配置处理函数
 func parsePath(pathName string) string {
-	if (pathName != ":memory:") && (path.NewPath(pathName).Dir() == ".") { // path 如果不是 :memory:，无目录的指定默认目录
+	// path 如果不是 :memory:，无目录的指定默认目录
+	if (pathName != ":memory:") && (path.NewPath(pathName).Dir() == ".") {
 		dataHome := path.Home.Join(".data")
 		dataHome.Ensure() // 目录不存在则自动创建
 		pathName = (dataHome.Join(pathName).WithExt(".db")).String()

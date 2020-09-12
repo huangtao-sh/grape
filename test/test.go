@@ -1,50 +1,19 @@
 package main
 
 import (
-	"archive/tar"
-	"compress/gzip"
-	_ "grape/params"
+	"fmt"
+	"grape/data/xls"
 	"grape/sqlite3"
-	"grape/util"
-	"io"
-	"os"
 )
 
-// MMain Test
-func MMain() {
-	sqlite3.Config(":memory:")
-	var t *tar.Reader
-	sqlite3.ExecScript("create table if not exists test(name text,modtime text)")
-	f, err := os.Open("E:/yg20200430.tar.gz")
-	util.CheckFatal(err)
-	defer f.Close()
-	gz, err := gzip.NewReader(f)
-	if err != nil {
-		f.Seek(0, 0)
-		t = tar.NewReader(f)
-	} else {
-		t = tar.NewReader(gz)
-	}
-	func() {
-		tx := sqlite3.NewTx()
-		defer tx.Rollback()
-		stmt, err := tx.Prepare("insert into test values(?,datetime(?))")
-		util.CheckFatal(err)
-		defer stmt.Close()
-		for h, err := t.Next(); err != io.EOF; h, err = t.Next() {
-			info := h.FileInfo()
-			stmt.Exec(info.Name(), info.ModTime())
-		}
-		tx.Commit()
-	}()
-	sqlite3.Println("select modtime,name from test")
-}
-
 func main() {
-	sqlite3.Config(":memory:")
+	sqlite3.Config("params")
 	defer sqlite3.Close()
-	sqlite3.Attach("params", "pm")
-	defer sqlite3.Detach("pm")
-	sqlite3.Println("select * from pm.yyzg limit 10")
-	
+	//sqlite3.Println("select zh,hm from nbzh limit 10")
+	widthes := map[string]float64{"A": 25, "B": 50}
+	book := xls.NewFile()
+	book.SetWidth("Sheet1", widthes)
+	book.WriteData("Sheet1", "A1", "账号,户名", sqlite3.Fetch("select zh,hm from nbzh limit 10"))
+	book.SaveAs("~/abc.xlsx")
+	fmt.Println("导出文件成功！")
 }
