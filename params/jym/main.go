@@ -21,11 +21,30 @@ const (
 func Main() {
 	params.PrintVer("jym")
 	Fmt := "%-50s  %4s  %6s  %-20s\n"
-	var export = flag.Bool("e", false, "导出交易参数表")
+	var (
+		export  = flag.Bool("e", false, "导出交易参数表")
+		update  = flag.Bool("u", false, "更新参数")
+		publish = flag.Bool("p", false, "发布交易参数")
+		load    = flag.Bool("l", false, "恢复交易参数")
+		backup  = flag.Bool("b", false, "备份交易参数")
+	)
 	flag.Parse()
 	if *export {
 		exportToXlsx()
 	}
+	if *publish {
+		fmt.Println("导出交易码参数")
+	}
+	if *load {
+		fmt.Println("恢复交易参数")
+	}
+	if *backup {
+		fmt.Println("备份交易参数")
+	}
+	if *update {
+		fmt.Println("更新交易码参数")
+	}
+
 	for _, arg := range flag.Args() {
 		if util.FullMatch(`\d{4}`, arg) {
 			err := sqlite3.PrintRow(header, "select * from jycs where jym=?", arg)

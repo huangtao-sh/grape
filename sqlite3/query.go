@@ -3,12 +3,9 @@ package sqlite3
 import (
 	"database/sql"
 	"fmt"
-	"grape/data/xls"
 	"grape/util"
 	"reflect"
 	"strings"
-
-	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 // RowReader 查询接口
@@ -21,16 +18,6 @@ type RowReader struct {
 func (r *RowReader) Read() []interface{} {
 	r.Scan(r.addrs...)
 	return r.values
-}
-
-// Export 读取下一条记录 Deprecated
-func (r *RowReader) Export(book *excelize.File, sheet string, axis string) {
-	col, row, err := excelize.CellNameToCoordinates(axis)
-	util.CheckFatal(err)
-	for ; r.Next(); row++ {
-		data := r.Read()
-		book.SetSheetRow(sheet, xls.Cell(col, row), &data)
-	}
 }
 
 type querier interface {
