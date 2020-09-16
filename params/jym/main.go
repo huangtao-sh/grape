@@ -19,7 +19,6 @@ const (
 
 // Main jy 程序入口
 func Main() {
-	params.PrintVer("jym")
 	Fmt := "%-50s  %4s  %6s  %-20s\n"
 	var (
 		export  = flag.Bool("e", false, "导出交易参数表")
@@ -30,31 +29,34 @@ func Main() {
 	)
 	flag.Parse()
 	if *export {
+		params.PrintVer("jym")
 		exportToXlsx()
 	}
 	if *publish {
-		fmt.Println("导出交易码参数")
+		Publish() // 发布交易码参数
 	}
 	if *load {
-		fmt.Println("恢复交易参数")
+		LoadJycs() // 导入交易参数
 	}
 	if *backup {
-		fmt.Println("备份交易参数")
+		BackupJycs() // 备份交易参数
 	}
 	if *update {
 		fmt.Println("更新交易码参数")
 	}
-
-	for _, arg := range flag.Args() {
-		if util.FullMatch(`\d{4}`, arg) {
-			err := sqlite3.PrintRow(header, "select * from jycs where jym=?", arg)
-			if err != nil {
-				fmt.Printf("错误：交易码 %s 不存在\n", arg)
+	if len(flag.Args())>0{
+		params.PrintVer("jym")
+		for _, arg := range flag.Args() {
+			if util.FullMatch(`\d{4}`, arg) {
+				err := sqlite3.PrintRow(header, "select * from jycs where jym=?", arg)
+				if err != nil {
+					fmt.Printf("错误：交易码 %s 不存在\n", arg)
+				}
+			} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
+				sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)
+			} else {
+				sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jymc like ? order by jym", fmt.Sprintf(`%%%s%%`, arg))
 			}
-		} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
-			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)
-		} else {
-			sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jymc like ? order by jym", fmt.Sprintf(`%%%s%%`, arg))
 		}
 	}
 }
