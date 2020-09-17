@@ -135,7 +135,7 @@ TransIn：转账收、TransOut：转账付（现转账收与转账付相同）
 		book.SetSheetName("Sheet1", "新增交易码")
 		book.WriteData("新增交易码", "A1", header, sqlite3.Fetch(`select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy from jymcs where tcrq=?`, tcrq))
 		book.SetWidth("新增交易码", JycsWidth)
-		book.WriteData("事后监督参数", "A1", "交易名称,交易码,总行审查,分行审查,流水色对",
+		book.WriteData("事后监督参数", "A1", "交易名称,交易码,总行审查,分行审查,流水勾对",
 			sqlite3.Fetch("select jymc,jym,'0','0','0' from jymcs where tcrq=?", tcrq))
 		book.SetWidth("事后监督参数",
 			map[string]float64{
