@@ -33,7 +33,8 @@ func Main() {
 		exportToXlsx()
 	}
 	if *publish {
-		Publish() // 发布交易码参数
+		UpdateJycs() // 更新交易码参数
+		Publish()    // 发布交易码参数
 	}
 	if *load {
 		LoadJycs() // 导入交易参数
@@ -42,9 +43,9 @@ func Main() {
 		BackupJycs() // 备份交易参数
 	}
 	if *update {
-		fmt.Println("更新交易码参数")
+		UpdateJycs() // 更新交易码参数
 	}
-	if len(flag.Args())>0{
+	if len(flag.Args()) > 0 {
 		params.PrintVer("jym")
 		for _, arg := range flag.Args() {
 			if util.FullMatch(`\d{4}`, arg) {
