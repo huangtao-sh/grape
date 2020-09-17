@@ -80,11 +80,9 @@ func (r *jycsReader) ReadAll(d text.Data) {
 		d.Write(dt...)
 	}
 }
-func convJycs(row []string) []string {
-	return row[0:30]
-}
+
 func newJycsReader(r io.Reader) loader.Reader {
-	return xls.NewXlsReader(r, "新增", 1, convJycs)
+	return xls.NewXlsReader(r, "交易参数备份", 1)
 }
 
 // LoadJycs 导入交易码参数
@@ -101,14 +99,15 @@ func LoadJycs() {
 
 // BackupJycs 导出交易参数
 func BackupJycs() {
-	file := ROOT.Join(fmt.Sprintf("交易码参数备份-%s.xlsx", date.Today().Format("%Y%M%D")))
+	const sheet = "交易参数备份"
+	file := ROOT.Join(fmt.Sprintf("交易码参数备份-%s.xlsx", Today))
 	fmt.Println("导出备份文件：", file)
 	book := xls.NewFile()
-	book.SetSheetName("Sheet1", "新增")
-	book.SetWidth("新增", JycsWidth)
-	book.WriteData("新增", "A1", JycsHeader, sqlite3.Fetch(`
-	select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
-		zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid from jymcs`))
+	book.SetSheetName("Sheet1", sheet)
+	book.SetWidth(sheet, JycsWidth)
+	book.WriteData(sheet, "A1", JycsHeader, sqlite3.Fetch(`
+select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
+zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid from jymcs`))
 	book.SaveAs(file)
 	fmt.Println("导出备份文件成功！")
 }
