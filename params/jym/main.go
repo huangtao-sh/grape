@@ -26,6 +26,7 @@ func Main() {
 		publish = flag.Bool("p", false, "发布交易参数")
 		load    = flag.Bool("l", false, "恢复交易参数")
 		backup  = flag.Bool("b", false, "备份交易参数")
+		check   = flag.Bool("c", false, "检查交易码是否已使用")
 	)
 	flag.Parse()
 	if *export {
@@ -49,9 +50,16 @@ func Main() {
 		params.PrintVer("jym")
 		for _, arg := range flag.Args() {
 			if util.FullMatch(`\d{4}`, arg) {
-				err := sqlite3.PrintRow(header, "select * from jycs where jym=?", arg)
-				if err != nil {
-					fmt.Printf("错误：交易码 %s 不存在\n", arg)
+				if *check {
+					fmt.Println("检查交易码占用情况")
+					sqlite3.Printf("生产参数：%4s  %-40s\n", "select jym,jymc from jym where jym=?", arg)
+					sqlite3.Printf("待投产  ：%4s  %-40s\n", "select jym,jymc from jymcs where jym=?", arg)
+					sqlite3.Printf("交易菜单：%4s  %-40s\n", "select jym,name from menu where jym=?", arg)
+				} else {
+					err := sqlite3.PrintRow(header, "select * from jycs where jym=?", arg)
+					if err != nil {
+						fmt.Printf("错误：交易码 %s 不存在\n", arg)
+					}
 				}
 			} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
 				sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)

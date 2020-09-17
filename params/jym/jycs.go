@@ -199,8 +199,7 @@ func UpdateJycs() {
 	book := xls.NewFile()
 	book.SetSheetName("Sheet1", sheetName)
 	book.SetWidth(sheetName, JycsWidth)
-	book.WriteData(sheetName, "A1", JycsHeader,
-		sqlite3.Fetch(exportSQL, Today))
+	book.WriteData(sheetName, "A1", JycsHeader, tx.Fetch(exportSQL, Today))
 	book.SaveAs(p.String())
 	fmt.Println("导出交易码参数成功！")
 	info = p.FileInfo()
@@ -210,7 +209,11 @@ func UpdateJycs() {
 
 // upJycs 更新交易码参数
 func upJycs(file string, tx *sqlite3.Tx) (err error) {
-	var row []string
+	var (
+		row       []string
+		deleteSQL string = "delete from jymcs where rowid=?"
+		insertSQL string = util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid) %31V`)
+	)
 	book, err := excelize.OpenFile(file)
 	if err != nil {
 		return
@@ -228,7 +231,7 @@ func upJycs(file string, tx *sqlite3.Tx) (err error) {
 		if err != nil {
 			return
 		}
-		if len(row) >= 28 && row[0] != "" {
+		if len(row) > 28 && row[0] != "" {
 			s := text.Slice(row)
 			if len(row) > 28 {
 				s[28] = xls.ConvertDate(row[28])
@@ -236,18 +239,17 @@ func upJycs(file string, tx *sqlite3.Tx) (err error) {
 			if len(row) > 29 {
 				s[29] = xls.ConvertDate(row[29])
 			}
-			for len(s) < 31 {
+			if len(s) < 31 {
 				s = append(s, nil)
 			}
 			if len(row) == 31 && row[29] == "删除" && row[30] != "" {
-				_, err = tx.Exec("delete from jymcs where rowid=?", row[30])
+				_, err = tx.Exec(deleteSQL, row[30])
 				if err != nil {
 					return
 				}
 				fmt.Printf("删除交易 %s:%s-%s\n", row[30], row[1], row[0])
 			} else {
-				_, err = tx.Exec(util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid) %31V`),
-					s...)
+				_, err = tx.Exec(insertSQL, s...)
 				if err != nil {
 					return
 				}

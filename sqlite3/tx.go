@@ -23,6 +23,11 @@ func (tx *Tx) FetchValue(sql string, args ...interface{}) interface{} {
 	return fetchValue(tx, sql, args...)
 }
 
+// Fetch 查询数据
+func (tx *Tx) Fetch(sql string, args ...interface{}) (reader *RowReader) {
+	return fetch(tx, sql, args...)
+}
+
 // DataCh 数据通道接口
 type DataCh interface {
 	Done()
