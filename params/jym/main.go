@@ -19,7 +19,8 @@ const (
 
 // Main jy 程序入口
 func Main() {
-	Fmt := "%-50s  %4s  %6s  %-20s\n"
+	defer util.Recover()
+	defer sqlite3.Close()
 	var (
 		export  = flag.Bool("e", false, "导出交易参数表")
 		update  = flag.Bool("u", false, "更新参数")
@@ -47,6 +48,7 @@ func Main() {
 		UpdateJycs() // 更新交易码参数
 	}
 	if len(flag.Args()) > 0 {
+		const Format = "%-50s  %4s  %6s  %-20s\n"
 		params.PrintVer("jym")
 		for _, arg := range flag.Args() {
 			if util.FullMatch(`\d{4}`, arg) {
@@ -62,47 +64,47 @@ func Main() {
 					}
 				}
 			} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
-				sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)
+				sqlite3.Printf(Format, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)
 			} else {
-				sqlite3.Printf(Fmt, "select jymc,jym,jyz,jyzm from jycs where jymc like ? order by jym", fmt.Sprintf(`%%%s%%`, arg))
+				sqlite3.Printf(Format, "select jymc,jym,jyz,jyzm from jycs where jymc like ? order by jym", fmt.Sprintf(`%%%s%%`, arg))
 			}
 		}
 	}
 }
 
-var jymbWidth = map[string]float64{
-	"A":   44,
-	"B:C": 7,
-	"D":   21,
-	"E":   7,
-	"F:V": 13,
-	"W":   22,
-	"X:Y": 9,
-	"Z":   17,
-	"AA":  33,
-}
-var jycsWidth = map[string]float64{
-	"A":   44,
-	"B:C": 7,
-	"D":   21,
-	"E":   7,
-	"F:V": 13,
-	"W":   22,
-	"X:Y": 9,
-}
-
-const (
-	queryJycs = `select * from jycs order by jym`
-	queryJymb = `select * from jymb order by jym`
-)
-
 func exportToXlsx() {
+	const (
+		queryJycs = `select * from jycs order by jym`
+		queryJymb = `select * from jymb order by jym`
+	)
+	var (
+		jymbWidth = map[string]float64{
+			"A":   44,
+			"B:C": 7,
+			"D":   21,
+			"E":   7,
+			"F:V": 13,
+			"W":   22,
+			"X:Y": 9,
+			"Z":   17,
+			"AA":  33,
+		}
+		jycsWidth = map[string]float64{
+			"A":   44,
+			"B:C": 7,
+			"D":   21,
+			"E":   7,
+			"F:V": 13,
+			"W":   22,
+			"X:Y": 9,
+		}
+	)
 	filename := fmt.Sprintf("交易码参数表（%s）.xlsx", params.GetVer("jym"))
 	filename = (path.NewPath("~/Documents").Join(filename)).String()
 	book := excelize.NewFile()
+	book.SetSheetName("Sheet1", "交易码表")
 	xls.WriteData(book, "交易码表", "A1", sqlite3.Fetch(queryJycs), header, jymbWidth)
 	xls.WriteData(book, "交易码参数表", "A1", sqlite3.Fetch(queryJymb), header2, jycsWidth)
-	book.DeleteSheet("Sheet1")
 	book.SaveAs(filename)
 	fmt.Printf("导出参数成功")
 }
