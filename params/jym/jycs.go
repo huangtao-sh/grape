@@ -232,10 +232,10 @@ func upJycs(file string, tx *sqlite3.Tx) (err error) {
 		}
 		if len(row) > 28 && row[0] != "" {
 			s := text.Slice(row)
-			if len(row) > 28 {
+			if len(row) == 29 {
 				s[28] = xls.ConvertDate(row[28])
-			}
-			if len(row) > 29 {
+				s = append(s, "")
+			} else if len(row) == 30 {
 				s[29] = xls.ConvertDate(row[29])
 			}
 			if len(s) < 31 {
