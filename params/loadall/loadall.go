@@ -59,6 +59,7 @@ func Load() {
 			}(file, f)
 		}
 	}
+	km.CreateNbzhhz() // 创建内部账户汇总
 }
 
 var fileList = map[string]LoadFunc{

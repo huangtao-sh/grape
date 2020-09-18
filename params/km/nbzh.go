@@ -1,7 +1,9 @@
 package km
 
 import (
+	"fmt"
 	"grape/params/load"
+	"grape/sqlite3"
 	"grape/text"
 	"io"
 	"os"
@@ -59,13 +61,18 @@ jxbz char 2 N.N 计息标志
 	tzed real,  -- 透支额度
 	memo text   -- 备注
 );
--- drop view nbzhhz;
-create view if not exists nbzhhz as 
-select b.jglx,a.bz,a.km,cast(substr(a.zh,19,3)as int) as xh,a.hm,sum(abs(a.ye)), 
-max(a.sbfsr) from nbzh a 
-left join ggjgm b on a.jgm=b.jgm 
-where a.zhzt like "0%" 
-group by b.jglx,a.km,a.bz,xh;
+drop view if exists nbzhhz;
+
+create table if not exists nbzhhz(
+	jglx	text,  -- 机构类型
+	bz		text,	-- 币种
+	km		text,	-- 科目
+	xh		int,	-- 序号
+	hm		text,	-- 户名
+	ye 		real,	-- 余额
+	sbfsr	text	-- 最后发生日
+);
+create index if not exists nbzhhz_km on nbzhhz(km);
 `
 
 const loadNbzhSQL = `
@@ -80,4 +87,21 @@ func convert(s []string) []string {
 func LoadNbzh(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := text.NewReader(r, false, text.NewSepSpliter(","), convert)
 	return load.NewLoader("nbzh", info, ver, reader, initNbzhSQL, loadNbzhSQL)
+}
+
+// CreateNbzhhz 创建内部账户汇总文件
+func CreateNbzhhz() {
+	sql := `
+	insert into nbzhhz  
+	select b.jglx,a.bz,a.km,cast(substr(a.zh,19,3)as int) as xh,a.hm,sum(abs(a.ye)), 
+	max(a.sbfsr) from nbzh a 
+	left join ggjgm b on a.jgm=b.jgm 
+	where a.zhzt like "0%" 
+	group by b.jglx,a.km,a.bz,xh;`
+	tx := sqlite3.NewTx()
+	defer tx.Rollback()
+	tx.Exec(`delete from nbzhhz`)
+	tx.Exec(sql)
+	tx.Commit()
+	fmt.Println("创建内部账户汇总完成！")
 }
