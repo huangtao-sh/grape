@@ -29,6 +29,7 @@ func parsePath(pathName string) string {
 // Config  配置数据库文件
 // 配置完成之后，可以直接调用 Open 打开
 func Config(pathName string) {
+	Close() // 先关闭当前的数据库连接
 	dataSourceName = parsePath(pathName)
 }
 
@@ -56,7 +57,7 @@ func Detach(name string) {
 
 // Close 关闭数据库
 func Close() {
-	if db != nil {
+	if db != nil { // 判断当前连接是否有值，如有则关闭
 		db.Close()
 		db = nil
 	}

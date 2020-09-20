@@ -8,8 +8,6 @@ import (
 	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
-
-	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 const (
@@ -76,6 +74,8 @@ func exportToXlsx() {
 	const (
 		queryJycs = `select * from jycs order by jym`
 		queryJymb = `select * from jymb order by jym`
+		jySheet   = "交易码表"
+		csSheet   = "交易码参数表"
 	)
 	var (
 		jymbWidth = map[string]float64{
@@ -99,12 +99,13 @@ func exportToXlsx() {
 			"X:Y": 9,
 		}
 	)
-	filename := fmt.Sprintf("交易码参数表（%s）.xlsx", params.GetVer("jym"))
-	filename = (path.NewPath("~/Documents").Join(filename)).String()
-	book := excelize.NewFile()
-	book.SetSheetName("Sheet1", "交易码表")
-	xls.WriteData(book, "交易码表", "A1", sqlite3.Fetch(queryJycs), header, jymbWidth)
-	xls.WriteData(book, "交易码参数表", "A1", sqlite3.Fetch(queryJymb), header2, jycsWidth)
-	book.SaveAs(filename)
+	book := xls.NewFile()
+	book.SetSheetName("Sheet1", jySheet)
+	book.WriteData(jySheet, "A1", header, sqlite3.Fetch(queryJycs))
+	book.SetWidth(jySheet, jymbWidth)
+	book.WriteData(csSheet, "A1", header2, sqlite3.Fetch(queryJymb))
+	book.SetWidth(csSheet, jycsWidth)
+	file := path.Home.Join("Documents", fmt.Sprintf("交易码参数表（%s）.xlsx", params.GetVer("jym")))
+	book.SaveAs(file)
 	fmt.Printf("导出参数成功")
 }

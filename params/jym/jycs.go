@@ -187,11 +187,7 @@ func UpdateJycs() {
 			return
 		}
 		fmt.Printf("导入文件：%s\n", p)
-		err = upJycs(p.String(), tx)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		upJycs(p.String(), tx)
 	} else {
 		fmt.Printf("文件 %s 不存在，直接导出\n", p)
 	}
@@ -207,29 +203,23 @@ func UpdateJycs() {
 }
 
 // upJycs 更新交易码参数
-func upJycs(file string, tx *sqlite3.Tx) (err error) {
+func upJycs(file string, tx *sqlite3.Tx) {
 	var (
 		row       []string
 		deleteSQL string = "delete from jymcs where rowid=?"
 		insertSQL string = util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid) %31V`)
 	)
 	book, err := excelize.OpenFile(file)
-	if err != nil {
-		return
-	}
+	util.CheckFatal(err)
 	rows, err := book.Rows("交易码参数")
-	if err != nil {
-		return
-	}
+	util.CheckFatal(err)
 	for i := 0; i < 1; i++ {
 		rows.Next()
 		rows.Columns()
 	}
 	for rows.Next() {
 		row, err = rows.Columns()
-		if err != nil {
-			return
-		}
+		util.CheckFatal(err)
 		if len(row) > 28 && row[0] != "" {
 			s := text.Slice(row)
 			if len(row) == 29 {
@@ -243,17 +233,12 @@ func upJycs(file string, tx *sqlite3.Tx) (err error) {
 			}
 			if len(row) == 31 && row[29] == "删除" && row[30] != "" {
 				_, err = tx.Exec(deleteSQL, row[30])
-				if err != nil {
-					return
-				}
+				util.CheckFatal(err)
 				fmt.Printf("删除交易 %s:%s-%s\n", row[30], row[1], row[0])
 			} else {
 				_, err = tx.Exec(insertSQL, s...)
-				if err != nil {
-					return
-				}
+				util.CheckFatal(err)
 			}
 		}
 	}
-	return
 }
