@@ -3,6 +3,7 @@ package data
 import (
 	"fmt"
 	"grape/sqlite3"
+	"grape/text"
 	"grape/util"
 	"sync"
 )
@@ -55,7 +56,43 @@ func (d *Data) Printf(format string) {
 	}
 }
 
-// Exec 执行 SQL 语句
+// Exec 执行 SQL 语句 Deprecated: No longer used.
 func (d *Data) Exec(tx *sqlite3.Tx, sql string) (err error) {
 	return tx.ExecCh(sql, d)
+}
+
+// DReader 带通道的数据读取
+type DReader struct {
+	*Data
+	Reader
+	converters []text.ConvertFunc
+}
+
+// Reader 数据读取接口
+type Reader interface {
+	Next() bool
+	Read() []string
+}
+
+// NewDReader  DReader 构造函数
+func NewDReader(r Reader, converters ...text.ConvertFunc) *DReader {
+	return &DReader{NewData(), r, converters}
+}
+
+// ReadAll 读取所有数据
+func (d *DReader) ReadAll() {
+	defer d.Close()
+	var row []string
+	for d.Next() {
+		row = d.Read()
+		for _, convert := range d.converters {
+			row = convert(row)
+			if row == nil {
+				continue
+			}
+		}
+		if row != nil {
+			d.Write(text.Slice(row)...)
+		}
+	}
 }

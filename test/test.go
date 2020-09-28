@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"grape/util"
+	"grape/date"
 )
 
 func main() {
-	fmt.Println(util.Extract(`\d{4}-\d{2}-\d{2}`, "fdsa2019-02-14sfad"))
+	s := fmt.Sprint(date.Today())
+	fmt.Println(s)
 }

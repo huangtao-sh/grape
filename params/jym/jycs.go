@@ -11,7 +11,6 @@ import (
 	"grape/util"
 	"io"
 	"os"
-	"regexp"
 	"strconv"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -51,7 +50,7 @@ var (
 
 func init() {
 	ROOT = path.NewPath("~/OneDrive/工作/参数备份/交易码参数")
-	Today = date.Today().Format("%F")
+	Today = fmt.Sprint(date.Today())
 }
 
 type jycsReader struct {
@@ -88,8 +87,7 @@ func newJycsReader(r io.Reader) loader.Reader {
 // LoadJycs 导入交易码参数
 func LoadJycs() {
 	file := ROOT.Find("交易码参数备份-*")
-	Ver := regexp.MustCompile(`\d{6,8}`)
-	ver := Ver.FindString(file)
+	ver := util.Extract(`\d{6,8}`, file)
 	fmt.Printf("导入文件:%s\n文件版本：%s\n", file, ver)
 	loadJycsSQL := util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
 			zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq) %30V`)
