@@ -1,6 +1,7 @@
 package path
 
 import (
+	"fmt"
 	"grape/date"
 	"grape/util"
 	"io"
@@ -29,6 +30,10 @@ func init() {
 
 // Expand 扩展路径
 func Expand(p string) (path string) {
+	var root bool
+	if len(p) > 0 && p[0] == '/' {
+		root = true
+	}
 	parts := strings.Split(filepath.ToSlash(p), "/")
 	if len(parts) >= 1 {
 		base := parts[0]
@@ -46,6 +51,9 @@ func Expand(p string) (path string) {
 	}
 	p = filepath.Join(parts...)
 	path = os.ExpandEnv(p)
+	if root {
+		path = fmt.Sprintf("/%s", path)
+	}
 	return
 }
 

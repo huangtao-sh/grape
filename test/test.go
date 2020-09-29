@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"grape/date"
+	"grape/sqlite3"
 )
 
 func main() {
-	s := fmt.Sprint(date.Today())
-	fmt.Println(s)
+	sqlite3.Config("/Users/huangtao/data/abc.db")
+	defer sqlite3.Close()
+	sqlite3.ExecScript(`create table if not exists abc(a,b,c)`)
 }
