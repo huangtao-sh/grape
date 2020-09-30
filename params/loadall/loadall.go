@@ -73,6 +73,8 @@ var fileList = map[string]LoadFunc{
 	"YUNGUAN_MONTH_STG_TELLER_SCANVOUCHER.del":   jym.LoadShbs,  // 交易码事后补扫
 	"YUNGUAN_MONTH_STG_TELLER_TRANSCONTROLS.del": jym.LoadCdjy,  // 交易码磁道校验
 	"YUNGUAN_MONTH_STG_TELLER_DZZZCSB.del":       km.LoadDzzz,   // 定制转账参数
+	"YUNGUAN_MONTH_STG_TELLER_ZZZZCSB.del":       km.LoadZzzz,   // 定制转账参数
+
 }
 
 // LoadZip 导入 zip 压缩包
