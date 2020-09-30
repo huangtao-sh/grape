@@ -95,7 +95,7 @@ func (p *Path) MakeDir() error {
 
 // MakeDirAll 创建目录
 func (p *Path) MakeDirAll() error {
-	return os.MkdirAll(p.path, os.ModeDir)
+	return os.MkdirAll(p.path, os.ModePerm)
 }
 
 // Ensure 确保目录存在
