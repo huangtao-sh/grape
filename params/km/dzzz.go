@@ -1,7 +1,14 @@
 package km
 
-const(
-	initDzzz=`create table if not exists dzzz(
+import (
+	"grape/params/load"
+	"grape/text"
+	"io"
+	"os"
+)
+
+const (
+	initDzzz = `create table if not exists dzzz(
 		bh	text,	-- 定制转账编号
 		xh	text,	-- 定制转账序号
 		mc	text,	-- 名称
@@ -16,9 +23,26 @@ const(
 		zhjgfh	text,	-- 账户所在分行
 		zhlwjg	text,	-- 账户例外机构
 		km		text,	-- 科目
-		xh		int,	-- 序号
+		zhxh	int,	-- 序号
 		yxkjg	text,	-- 是否允许跨机构
 		yxhz	text,	-- 是否允许红字
 		primary key(bh,xh)
+	)
 `
+	loadDzzz = "insert or replace into dzzz values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 )
+
+func convDzzz(row []string) []string {
+	for i, v := range row {
+		if v == "null" {
+			row[i] = ""
+		}
+	}
+	return row
+}
+
+// LoadDzzz 导入定制转账参数
+func LoadDzzz(info os.FileInfo, r io.Reader, ver string) *load.Loader {
+	reader := text.NewReader(r, false, text.NewSepSpliter(","), convDzzz)
+	return load.NewLoader("dzzz", info, ver, reader, initDzzz, loadDzzz)
+}
