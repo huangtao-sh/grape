@@ -63,7 +63,6 @@ func (d *Data) Exec(tx *sqlite3.Tx, sql string) (err error) {
 
 // DReader 带通道的数据读取
 type DReader struct {
-	*Data
 	Reader
 	converters []text.ConvertFunc
 }
@@ -76,11 +75,11 @@ type Reader interface {
 
 // NewDReader  DReader 构造函数
 func NewDReader(r Reader, converters ...text.ConvertFunc) *DReader {
-	return &DReader{NewData(), r, converters}
+	return &DReader{ r, converters}
 }
 
 // ReadAll 读取所有数据
-func (d *DReader) ReadAll() {
+func (d *DReader) ReadAll(d *Data) {
 	defer d.Close()
 	var row []string
 	for d.Next() {
