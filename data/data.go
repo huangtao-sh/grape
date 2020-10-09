@@ -75,19 +75,19 @@ type Reader interface {
 
 // NewDReader  DReader 构造函数
 func NewDReader(r Reader, converters ...text.ConvertFunc) *DReader {
-	return &DReader{ r, converters}
+	return &DReader{r, converters}
 }
 
 // ReadAll 读取所有数据
-func (d *DReader) ReadAll(d *Data) {
+func (r *DReader) ReadAll(d *Data) {
 	defer d.Close()
 	var row []string
-	for d.Next() {
-		row = d.Read()
-		for _, convert := range d.converters {
+	for r.Next() {
+		row = r.Read()
+		for _, convert := range r.converters {
 			row = convert(row)
 			if row == nil {
-				continue
+				break
 			}
 		}
 		if row != nil {
