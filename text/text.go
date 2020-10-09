@@ -88,7 +88,7 @@ func (r *Reader) ReadAll(d Data) {
 		for _, convert := range r.converter {
 			row = convert(row)
 			if row == nil {
-				continue
+				break
 			}
 		}
 		if row !=nil{
