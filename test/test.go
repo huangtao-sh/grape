@@ -1,11 +1,32 @@
 package main
 
 import (
-	"grape/sqlite3"
+	"errors"
+	"fmt"
 )
 
+func yz(num int) (result []int, err error) {
+	if num <= 1 {
+		err = errors.New("整数不应小于1")
+	} else {
+		prime := 2
+		for num > 1 {
+			if num%prime == 0 {
+				result = append(result, prime)
+				num /= prime
+			} else {
+				prime++
+			}
+		}
+	}
+	return
+}
 func main() {
-	sqlite3.Config("/Users/huangtao/data/abc.db")
-	defer sqlite3.Close()
-	sqlite3.ExecScript(`create table if not exists abc(a,b,c)`)
+	var i int
+	fmt.Printf("Please enter a number:")
+	fmt.Scanf("%d", &i)
+	k, err := yz(i)
+	if err == nil {
+		fmt.Println(k)
+	}
 }
