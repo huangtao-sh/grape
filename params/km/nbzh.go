@@ -61,7 +61,6 @@ jxbz char 2 N.N 计息标志
 	tzed real,  -- 透支额度
 	memo text   -- 备注
 );
-drop view if exists nbzhhz;
 
 create table if not exists nbzhhz(
 	jglx	text,  -- 机构类型
