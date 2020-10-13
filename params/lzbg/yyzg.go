@@ -55,6 +55,8 @@ func LoadFhsxb(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 
 // YyzgMain 营业主管查询程序主函数
 func YyzgMain() {
+	sqlite3.Config("params")
+	defer sqlite3.Close()
 	var t string
 	typ := flag.String("t", "", "主管类型")
 	flag.Parse()
@@ -73,6 +75,5 @@ func YyzgMain() {
 			sqlite3.Printf("%-6s %-10s %-15s %-15s %11s %-30s\n",
 				"select ygh,xm,js,lxdh,mobile,jgmc from yyzg where(xm like ? or jgmc like ?)"+t, arg, arg)
 		}
-
 	}
 }
