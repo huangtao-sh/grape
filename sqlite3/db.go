@@ -19,7 +19,7 @@ var (
 func parsePath(pathName string) string {
 	// path 如果不是 :memory:，无目录的指定默认目录
 	if (pathName != ":memory:") && (path.NewPath(pathName).Dir() == ".") {
-		dataHome := path.Home.Join("data")
+		dataHome := path.Home.Join(".data")
 		dataHome.Ensure() // 目录不存在则自动创建
 		pathName = (dataHome.Join(pathName).WithExt(".db")).String()
 	}
