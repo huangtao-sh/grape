@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"grape/params"
 	"grape/sqlite3"
+	"grape/util"
 	"strings"
 )
 
@@ -68,6 +69,8 @@ func main() {
 			return
 		} else if len(ac) == 9 {
 			km, xh = ac[:6], ac[6:]
+		} else if util.Match(`[\u4e00-\u9fa5]*`, ac) {
+			sqlite3.Printf("%6s  %s","select ")
 		} else {
 			fmt.Printf("账号:%s 格式错，应为：000000-1或者：000000000\n", ac)
 			return
