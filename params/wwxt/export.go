@@ -9,6 +9,9 @@ import (
 // Export 导出数据主程序
 func Export() {
 	var date string
+	const (
+		Header = "系统编号, 系统名称, 机构类型, 机构号"
+	)
 	err := sqlite3.QueryRow("select max(date) from wwxt").Scan(&date)
 	if err == nil {
 		widthes := map[string]float64{
@@ -18,14 +21,11 @@ func Export() {
 		}
 		fmt.Println("最新日期：", date)
 		book := xls.NewFile()
-		sheet := "新增"
-		book.SetSheetName("Sheet1", sheet)
-		book.SetWidth(sheet, widthes)
-		book.WriteData(sheet, "A1", "系统编号, 系统名称, 机构类型, 机构号", sqlite3.Fetch("select id,name,jglx,jgh from wwxt where date=?", date))
-		sheet = "历史"
-		book.NewSheet(sheet)
-		book.SetWidth(sheet, widthes)
-		book.WriteData(sheet, "A1", "系统编号, 系统名称, 机构类型, 机构号", sqlite3.Fetch("select * from wwxt order by id"))
+		sheet := book.GetSheet(0)
+		sheet.Rename("新增")
+		sheet.Write("A1", Header, widthes, sqlite3.Fetch("select id,name,jglx,jgh from wwxt where date=?", date))
+		sheet = book.GetSheet("历史")
+		sheet.Write("A1", Header, widthes, sqlite3.Fetch("select * from wwxt order by id"))
 		book.SaveAs(fmt.Sprintf("%s/新增外围系统列表%s.xlsx", Root.String(), date))
 		fmt.Println("导出文件成功！")
 	} else {

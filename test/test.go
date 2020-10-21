@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"grape/data/xls"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -22,14 +22,8 @@ func getPrimes(num int) (primes []int, err error) {
 	return
 }
 func main() {
-	var widthes = []struct {
-		Name  string
-		Width float64
-	}{
-		{"A", 15},
-		{"B", 45},
-	}
-	for _, v := range widthes {
-		fmt.Println(v.Name, v.Width)
-	}
+	book := xls.NewFile()
+	sheet := book.GetSheet("Sheet1")
+	sheet.Rename("Test1")
+	book.SaveAs("~/abc.xlsx")
 }
