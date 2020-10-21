@@ -22,11 +22,14 @@ func getPrimes(num int) (primes []int, err error) {
 	return
 }
 func main() {
-	var i int
-	fmt.Printf("Please enter a number:")
-	fmt.Scanf("%d", &i)
-	k, err := getPrimes(i)
-	if err == nil {
-		fmt.Println(k)
+	var widthes = []struct {
+		Name  string
+		Width float64
+	}{
+		{"A", 15},
+		{"B", 45},
+	}
+	for _, v := range widthes {
+		fmt.Println(v.Name, v.Width)
 	}
 }
