@@ -2,12 +2,8 @@ package main
 
 import (
 	"errors"
-<<<<<<< HEAD
 	"grape/data/xls"
 	"grape/sqlite3"
-=======
-	"grape/path"
->>>>>>> cf0f29f730d467270fa1047af4f9583ec33e4ea2
 )
 
 func getPrimes(num int) (primes []int, err error) {
