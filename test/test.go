@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"grape/data/xls"
+	"grape/path"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -22,8 +22,6 @@ func getPrimes(num int) (primes []int, err error) {
 	return
 }
 func main() {
-	book := xls.NewFile()
-	sheet := book.GetSheet("Sheet1")
-	sheet.Rename("Test1")
-	book.SaveAs("~/abc.xlsx")
+	p := path.NewPath("~/test")
+	p.Ensure()
 }
