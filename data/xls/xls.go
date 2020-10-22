@@ -112,8 +112,12 @@ func (f *File) SetWidth(sheet string, widthes map[string]float64) {
 	}
 }
 
+// TableFormat 单位元样式
+const TableFormat = `{"table_style":"TableStyleMedium6", "show_first_column":false,"show_last_column":false,"show_row_stripes":true,"show_column_stripes":false}`
+
 // WriteData 设置表格的宽度
 func (f *File) WriteData(sheet string, axis string, header string, data util.Dater) {
+	var count int
 	if f.GetSheetIndex(sheet) == -1 {
 		f.NewSheet(sheet) // 工作表不存在时自动创建
 	}
@@ -123,6 +127,7 @@ func (f *File) WriteData(sheet string, axis string, header string, data util.Dat
 	util.CheckFatal(err)
 	if header != "" {
 		headers := text.Slice(strings.Split(header, ","))
+		count = len(headers)
 		writer.SetRow(Cell(col, row), headers)
 		row++
 	}
@@ -130,6 +135,8 @@ func (f *File) WriteData(sheet string, axis string, header string, data util.Dat
 		rowdata := data.Read()
 		writer.SetRow(Cell(col, row), rowdata)
 	}
+	end, _ := excelize.CoordinatesToCellName(col+count-1, row-1)
+	writer.AddTable(axis, end, TableFormat)
 	writer.Flush()
 }
 
