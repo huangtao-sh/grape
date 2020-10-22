@@ -90,12 +90,12 @@ func (p *Path) IsExist() bool {
 
 // MakeDir 创建目录
 func (p *Path) MakeDir() error {
-	return os.Mkdir(p.path, os.ModeDir)
+	return os.Mkdir(p.path, 0755) // 调整生成文件的权限为 755
 }
 
 // MakeDirAll 创建目录
 func (p *Path) MakeDirAll() error {
-	return os.MkdirAll(p.path, os.ModePerm)
+	return os.MkdirAll(p.path, 0755) // 调整生成文件的权限为 755
 }
 
 // Ensure 确保目录存在
