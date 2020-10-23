@@ -219,15 +219,14 @@ func upJycs(file string, tx *sqlite3.Tx) {
 		row, err = rows.Columns()
 		util.CheckFatal(err)
 		if len(row) > 28 && row[0] != "" {
-			s := text.Slice(row)
-			if len(row) == 29 {
-				s[28] = xls.ConvertDate(row[28])
-				s = append(s, "")
-			} else if len(row) == 30 {
-				s[29] = xls.ConvertDate(row[29])
+			for len(row) < 31 {
+				row = append(row, "")
 			}
-			if len(s) < 31 {
-				s = append(s, nil)
+			s := text.Slice(row)
+			s[28] = xls.ConvertDate(row[28])
+			s[29] = xls.ConvertDate(row[29])
+			if row[30] == "" {
+				s[30] = nil
 			}
 			if len(row) == 31 && row[29] == "删除" && row[30] != "" {
 				_, err = tx.Exec(deleteSQL, row[30])

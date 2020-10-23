@@ -163,6 +163,7 @@ type WorkSheet struct {
 // Rename 修改工作表名称
 func (s *WorkSheet) Rename(newName string) {
 	s.file.SetSheetName(s.name, newName)
+	s.name = newName
 }
 
 // Write 写入数据

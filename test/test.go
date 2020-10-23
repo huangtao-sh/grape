@@ -32,9 +32,12 @@ type Test struct {
 func main() {
 	sqlite3.Config("params")
 	defer sqlite3.Close()
+	widthes := map[string]float64{
+		"A:D": 40,
+	}
 	sql := "select ygh,xm,js,lxdh from yyzg limit 10"
 	book := xls.NewFile()
 	sheet := book.GetSheet("Sheet1")
-	sheet.Write("A1", "工号,姓名,角色,联系电话", nil, sqlite3.Fetch(sql))
+	sheet.Write("A1", "工号,姓名,角色,联系电话", widthes, sqlite3.Fetch(sql))
 	book.SaveAs("~/abc.xlsx")
 }
