@@ -129,32 +129,38 @@ TransIn：转账收、TransOut：转账付（现转账收与转账付相同）
 	} else {
 		fmt.Println("投产日期：", tcrq)
 		book := xls.NewFile()
-		book.SetSheetName("Sheet1", "新增交易码")
-		book.WriteData("新增交易码", "A1", header, sqlite3.Fetch(`select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy from jymcs where tcrq=?`, tcrq))
-		book.SetWidth("新增交易码", JycsWidth)
-		book.WriteData("事后监督参数", "A1", "交易名称,交易码,总行审查,分行审查,流水勾对",
-			sqlite3.Fetch("select jymc,jym,'0','0','0' from jymcs where tcrq=?", tcrq))
-		book.SetWidth("事后监督参数",
+		sheet := book.GetSheet("Sheet1")
+		sheet.Rename("新增交易码")
+		sheet.Write("A1", header, JycsWidth, sqlite3.Fetch(`select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy from jymcs where tcrq=?`, tcrq))
+		sheet = book.GetSheet("事后监督参数")
+		sheet.Write("A1",
+			"交易名称,交易码,总行审查,分行审查,流水勾对",
 			map[string]float64{
 				"A": 44,
-				"B": 7,
-			})
-		book.WriteData("绩效-系统交易码", "A1", "交易名称,交易码,交易类型（内部/外部/其他）",
-			sqlite3.Fetch("select jymc,jym,'外部' from jymcs where tcrq=?", tcrq))
-		book.SetWidth("绩效-系统交易码",
+				"B": 8.47,
+			},
+			sqlite3.Fetch("select jymc,jym,'0','0','0' from jymcs where tcrq=?", tcrq),
+		)
+		sheet = book.GetSheet("绩效-系统交易码")
+		sheet.Write("A1",
+			"交易名称,交易码,交易类型（内部/外部/其他）",
 			map[string]float64{
 				"A": 44,
-				"B": 7,
+				"B": 8.47,
 				"C": 27,
-			})
-		book.WriteData("绩效-交易折算系数", "A1", "交易名称,交易码,折算系数",
-			sqlite3.Fetch("select jymc,jym,1 from jymcs where tcrq=?", tcrq))
-		book.SetWidth("绩效-交易折算系数",
+			},
+			sqlite3.Fetch("select jymc,jym,'外部' from jymcs where tcrq=?", tcrq),
+		)
+		sheet = book.GetSheet("绩效-交易折算系数")
+		sheet.Write("A1",
+			"交易名称,交易码,折算系数",
 			map[string]float64{
 				"A": 44,
-				"B": 7,
+				"B": 8.47,
 				"C": 10,
-			})
+			},
+			sqlite3.Fetch("select jymc,jym,1 from jymcs where tcrq=?", tcrq),
+		)
 		book.SaveAs(ROOT.Join(fmt.Sprintf("交易码参数%s.xlsx", tcrq)))
 		fmt.Printf("导出交易码参数文件：%s\n", fmt.Sprintf("交易码参数%s.xlsx", tcrq))
 	}
