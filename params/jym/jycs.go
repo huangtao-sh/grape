@@ -86,7 +86,7 @@ func newJycsReader(r io.Reader) loader.Reader {
 
 // LoadJycs 导入交易码参数
 func LoadJycs() {
-	file := ROOT.Find("交易码参数备份-*")
+	file := ROOT.Find("交易码参数备份-????-??-??.*")
 	ver := util.Extract(`\d{6,8}`, file)
 	fmt.Printf("导入文件:%s\n文件版本：%s\n", file, ver)
 	loadJycsSQL := util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
