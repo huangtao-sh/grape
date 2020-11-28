@@ -12,14 +12,14 @@ import (
 	"strings"
 )
 
-// HomeDir 用户家目录
-var HomeDir string
-
-// TempDir 临时目录
-var TempDir string
-
-// Home 家目录
-var Home *Path
+var (
+	// HomeDir 用户家目录
+	HomeDir string
+	// TempDir 临时目录
+	TempDir string
+	// Home 家目录
+	Home *Path
+)
 
 func init() {
 	ur, _ := user.Current()
