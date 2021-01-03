@@ -74,7 +74,11 @@ func main() {
 			if k[0] >= 0x4E00 && k[0] <= 0x9FA5 {
 				fmt.Println("科目    科目名称")
 				ac = fmt.Sprintf("%%%s%%", ac)
-				sqlite3.Printf("%-6s  %-50s\n", `select km,name from kemu where name like ?`, ac)
+				sqlite3.Printf("%-6s  %-50s\n", `select km,kmmc from kmzd where kmmc like ?`, ac)
+				continue
+			} else if util.FullMatch(`\d{2,5}`, ac) {
+				ac = ac + "%"
+				sqlite3.Printf("%-6s  %-50s\n", `select km,kmmc from kmzd where km like ?`, ac)
 				continue
 			} else {
 				fmt.Printf("账号:%s 格式错，应为：000000-1或者：000000000\n", ac)
