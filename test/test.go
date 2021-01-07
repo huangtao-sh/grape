@@ -2,9 +2,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
-
-	"github.com/extrame/xls"
+	"grape/data"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -25,13 +23,11 @@ func getPrimes(num int) (primes []int, err error) {
 }
 
 func main() {
-	xl, err := xls.Open("C:/Users/huangtao/Downloads/resultReg.xls", "")
-	fmt.Println(err)
-	if err == nil {
-		s := xl.ReadAllCells(100)
-		for i, r := range s {
-			fmt.Println(i, r)
-		}
-	}
-
+	dt := data.NewXlsReader("C:/Users/huangtao/Downloads/resultReg.xls", 0)
+	f := data.NewData()
+	d := data.NewConvertReader(dt, data.Include(1,2))
+	f.Add(1)
+	go d.ReadAll(f)
+	go f.Println()
+	f.Wait()
 }
