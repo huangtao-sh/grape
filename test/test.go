@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"grape/data/xls"
-	"grape/sqlite3"
+
+	"github.com/extrame/xls"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -24,26 +24,14 @@ func getPrimes(num int) (primes []int, err error) {
 	return
 }
 
-// Test a test class
-type Test struct {
-	Name string `json:"姓名"`
-	Age  int64  `json:"年龄"`
-}
-
 func main() {
-	sqlite3.Config("params")
-	defer sqlite3.Close()
-	/*
-		widthes := map[string]float64{
-			"A:D": 40,
+	xl, err := xls.Open("C:/Users/huangtao/Downloads/resultReg.xls", "")
+	fmt.Println(err)
+	if err == nil {
+		s := xl.ReadAllCells(100)
+		for i, r := range s {
+			fmt.Println(i, r)
 		}
-		sql := "select ygh,xm,js,lxdh from yyzg limit 10"
-	*/
-	book := xls.NewFile()
-	style1, err := book.NewStyle(`{"border":[]}`)
-	if err != nil {
-		fmt.Println(err)
 	}
-	book.SaveAs("~/test.xlsx")
 
 }
