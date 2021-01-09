@@ -28,9 +28,9 @@ func (s *XlsReader) Read() (res []string) {
 }
 
 // NewXlsReader 读取 Excel 文件
-func NewXlsReader(filename string, sheet int) Reader {
+func NewXlsReader(filename string, sheet int, skip int) Reader {
 	book, err := xls.Open(filename, "utf-8")
 	util.CheckFatal(err)
 	st := book.GetSheet(sheet)
-	return &XlsReader{st, 0}
+	return &XlsReader{st, uint16(skip)}
 }

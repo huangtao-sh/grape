@@ -23,7 +23,7 @@ func NewConvertReader(r Reader, converters ...ConvertFunc) *ConvertReader {
 }
 
 // ReadAll 读取所有数据
-func (r *ConvertReader) ReadAll(d *Data) {
+func (r *ConvertReader) ReadAll(d text.Data) {
 	defer d.Close()
 	var row []string
 	for r.Next() {
