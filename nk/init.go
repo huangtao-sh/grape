@@ -1,4 +1,4 @@
-package nkwg
+package main
 
 import "grape/sqlite3"
 

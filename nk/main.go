@@ -1,4 +1,4 @@
-package nkwg
+package main
 
 import (
 	"flag"
@@ -82,8 +82,7 @@ order by sl desc`
 		"select count(djbh),sum(kfz) from nkwg where strftime('%Y',lrsj)=?", year)
 }
 
-// Main 主程序
-func Main() {
+func main() {
 	load := flag.Bool("l", false, "导入数据")
 	report := flag.Bool("r", false, "报告统计结果")
 	showall := flag.Bool("a", false, "显示本年度扣分情况")
