@@ -1,3 +1,10 @@
+/*
+	项目：内控违规统计程序
+	作者：黄涛
+	创建：2021-01-09
+
+*/
+
 package main
 
 import (
@@ -10,7 +17,7 @@ import (
 	"grape/util"
 )
 
-// Load 导入数据
+// Load 读取数据
 func Load() {
 	sql := "insert or ignore into nkwg values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	jlrsql := util.Sprintf("insert or ignore into djr %2V")
@@ -64,7 +71,7 @@ func Report() {
 		`, year, value)
 }
 
-// ShowAll 显示本年度扣分情况
+// ShowAll 显示本部门当前年度扣分情况
 func ShowAll() {
 	const sql = `
 select lrrgh,lxrxm,count(djbh)as sl,sum(kfz),max(lrsj)from nkwg
