@@ -89,11 +89,17 @@ func LoadZip(file *path.Path) {
 		loadfunc, ok := fileList[info.Name()]
 		if ok {
 			func(file *zip.File, ver string) {
+				var k io.Reader
 				defer util.Recover()
 				r, err := file.Open()
 				util.CheckFatal(err)
 				defer r.Close()
-				loader := loadfunc(file.FileInfo(), gbk.NewReader(r), ver)
+				if info.Name() != "users_output.csv" || info.Name() == "users_output.csv" {
+					k = r
+				} else {
+					k = gbk.NewReader(r)
+				}
+				loader := loadfunc(file.FileInfo(), k, ver)
 				loader.Load()
 			}(file, ver)
 		}
