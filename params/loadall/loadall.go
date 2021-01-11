@@ -94,7 +94,7 @@ func LoadZip(file *path.Path) {
 				r, err := file.Open()
 				util.CheckFatal(err)
 				defer r.Close()
-				if info.Name() != "users_output.csv" || info.Name() == "users_output.csv" {
+				if info.Name() == "transactions_output.csv" || info.Name() == "users_output.csv" {
 					k = r
 				} else {
 					k = gbk.NewReader(r)

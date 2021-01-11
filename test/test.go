@@ -2,7 +2,9 @@ package main
 
 import (
 	"errors"
-	"grape/nkwg"
+	"fmt"
+	"io/ioutil"
+	"os"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -33,5 +35,11 @@ func main() {
 		f.Wait()
 	*/
 	//nkwg.Load()
-	nkwg.Report()
+	file := "d:/transactions_output.csv"
+	f, err := os.Open(file)
+	defer f.Close()
+	if err == nil {
+		s ,_:= ioutil.ReadAll(f)
+		fmt.Println(string(s))
+	}
 }
