@@ -62,7 +62,7 @@ func Report() {
 	fmt.Println("工号    姓名      数量  最后登记日期")
 	sqlite3.Printf(
 		"%5s  %-10s %4d   %10s\n",
-		`select a.gh,a.djr,nullif(b.sl,0) as sl,nullif(b.sj,"")
+		`select a.gh,a.djr,ifnull(b.sl,0) as sl,ifnull(b.sj,"")
 		from djr a left join 
 		(select lrrgh,count(djbh) as sl,max(lrsj) as sj from nkwg where strftime('%Y',lrsj)=? group by lrrgh)  b
 		on a.gh=b.lrrgh  
