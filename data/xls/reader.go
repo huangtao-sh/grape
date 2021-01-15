@@ -58,6 +58,8 @@ func (r *Reader) ReadAll(d text.Data) {
 				continue
 			}
 		}
-		d.Write(text.Slice(row)...)
+		if row != nil {
+			d.Write(text.Slice(row)...)
+		}
 	}
 }

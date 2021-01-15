@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"os"
+	_ "grape/params"
+	"grape/params/eddj"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -35,11 +35,6 @@ func main() {
 		f.Wait()
 	*/
 	//nkwg.Load()
-	file := "d:/transactions_output.csv"
-	f, err := os.Open(file)
-	defer f.Close()
-	if err == nil {
-		s ,_:= ioutil.ReadAll(f)
-		fmt.Println(string(s))
-	}
+	ed := eddj.GetEd("0252")
+	fmt.Println(ed)
 }

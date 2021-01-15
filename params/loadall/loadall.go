@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"grape/gbk"
+	"grape/params/eddj"
 	"grape/params/ggjgm"
 	"grape/params/jym"
 	"grape/params/km"
@@ -40,6 +41,7 @@ func Load() {
 	fileList[ROOT.Find("特殊内部账户参数表/特殊内部账户参数*")] = km.LoadTsnbh // 特殊内部账户参数
 	fileList[ROOT.Find("岗位与交易组/岗位及组*")] = jym.LoadJyz         // 交易组
 	fileList[ROOT.Find("手续费项目/手续费项目参数*")] = km.LoadSxfxm      // 手续费项目
+	fileList[ROOT.Find("额度登记配置/额度登记配置-*.xlsx")] = eddj.Load   // 额度登记
 	zipfile := ROOT.Find("运营参数*.zip")
 	if zipfile != "" {
 		LoadZip(path.NewPath(zipfile))
