@@ -18,7 +18,7 @@ name	text,	--	等级名称
 ed		text,	--	额度
 memo	text	-- 备注
 )`
-	loadSQL = `insert or ignore into eddj values(?,?,?,?)`
+	loadSQL = `insert or replace into eddj values(?,?,?,?)`
 )
 
 // conv 转换函数
@@ -32,8 +32,6 @@ func conv(row []string) (result []string) {
 		} else {
 			result[3] = fmt.Sprintf("转：%s", row[11])
 		}
-	} else {
-		result = nil
 	}
 	return
 }

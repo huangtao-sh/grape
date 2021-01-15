@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	_ "grape/params"
-	"grape/params/eddj"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -35,6 +34,9 @@ func main() {
 		f.Wait()
 	*/
 	//nkwg.Load()
-	ed := eddj.GetEd("0252")
-	fmt.Println(ed)
+	var s []string
+	if s==nil{
+		fmt.Println(s)
+	}
+	
 }
