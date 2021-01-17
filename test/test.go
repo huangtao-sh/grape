@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	_ "grape/params"
+	"io/ioutil"
+	"net/http"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -24,19 +26,17 @@ func getPrimes(num int) (primes []int, err error) {
 }
 
 func main() {
-	/*
-		dt := data.NewXlsReader("C:/Users/huangtao/Downloads/resultReg.xls", 0)
-		f := data.NewData()
-		d := data.NewConvertReader(dt, data.Include(1,2))
-		f.Add(1)
-		go d.ReadAll(f)
-		go f.Println()
-		f.Wait()
-	*/
-	//nkwg.Load()
-	var s []string
-	if s==nil{
-		fmt.Println(s)
+	resp, err := http.Get("https://www.jianshu.com/p/6db79ccbb18d")
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
-	
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(body))
 }

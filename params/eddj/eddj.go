@@ -13,10 +13,10 @@ import (
 
 const (
 	initSQL = `create table if not exists eddj(
-code	text	primary key,	-- 等级代码
-name	text,	--	等级名称
-ed		text,	--	额度
-memo	text	-- 备注
+	code	text	primary key,	-- 等级代码
+	name	text,	--	等级名称
+	ed		text,	--	额度
+	memo	text	-- 备注
 )`
 	loadSQL = `insert or replace into eddj values(?,?,?,?)`
 )
