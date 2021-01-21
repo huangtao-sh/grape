@@ -23,7 +23,7 @@ import (
 var ROOT *path.Path
 
 func init() {
-	ROOT = path.NewPath("~/OneDrive/工作/参数备份")
+	ROOT = path.NewPath("~/Documents/参数备份")
 }
 
 // LoadFunc 导入函数类型
