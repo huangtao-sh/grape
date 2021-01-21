@@ -90,6 +90,8 @@ func LoadNbzh(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 
 // CreateNbzhhz 创建内部账户汇总文件
 func CreateNbzhhz() {
+	var verNbzh, verHz string
+	const sql2 = `select ver from LoadFile where name=?`
 	sql := `
 	insert into nbzhhz  
 	select b.jglx,a.bz,a.km,cast(substr(a.zh,19,3)as int) as xh,a.hm,sum(abs(a.ye)), 
@@ -99,8 +101,16 @@ func CreateNbzhhz() {
 	group by b.jglx,a.km,a.bz,xh;`
 	tx := sqlite3.NewTx()
 	defer tx.Rollback()
-	tx.Exec(`delete from nbzhhz`)
-	tx.Exec(sql)
-	tx.Commit()
-	fmt.Println("创建内部账户汇总完成！")
+	tx.QueryRow(sql2, "nbzh").Scan(&verNbzh)
+	tx.QueryRow(sql2, "nbzhhz").Scan(&verHz)
+	if verNbzh != verHz {
+		tx.Exec(`delete from nbzhhz`)
+		tx.Exec(sql)
+		tx.Exec(`insert or replace into LoadFile(name,ver) values(?,?)`, "nbzhhz", verNbzh)
+		tx.Commit()
+		fmt.Println("创建内部账户汇总完成！")
+	} else {
+		fmt.Println("无需创建内部账户汇总")
+	}
+
 }
