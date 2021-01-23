@@ -30,6 +30,7 @@ func Load() {
 		r := data.NewXlsReader(file, 0, 1)
 		d := data.NewConvertReader(r)
 		loader := load.NewLoader("nkwg", info, "", d, "", sql)
+		loader.Clear = false // 不对已导入数据进行清理
 		loader.Load()
 	}
 	file = path.NewPath("~/OneDrive/工作/参数备份/考核记录人").Find("考核记录人*.xls")
