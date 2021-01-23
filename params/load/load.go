@@ -51,22 +51,35 @@ type Loader struct {
 	ver              string
 	reader           Reader
 	initSQL, loadSQL string
+	Clear            bool // 是否清除数据库，默认清理
+	Check            bool // 是否检查重复导入，默认检查
 }
 
 // NewLoader 构造函数
 func NewLoader(name string, fileInfo os.FileInfo, ver string, txt Reader, initSQL string, loadSQL string) *Loader {
-	return &Loader{name, fileInfo, ver, txt, initSQL, loadSQL}
+	return &Loader{name, fileInfo, ver, txt, initSQL, loadSQL, true, true}
 }
 
 // Load 导入数据
 func (l *Loader) Load() {
+	var procs []interface{}
 	if l.initSQL != "" {
 		sqlite3.ExecScript(l.initSQL) // 初始化数据库
 	}
-	err := sqlite3.ExecTx(
-		loadCheck(l.Name, l.FileInfo, l.ver),
-		sqlite3.NewTr(fmt.Sprintf("delete from %s", l.Name)),
-		l)
+	if l.Check {
+		procs = append(procs, loadCheck(l.Name, l.FileInfo, l.ver))
+	}
+	if l.Clear {
+		procs = append(procs, sqlite3.NewTr(fmt.Sprintf("delete from %s", l.Name)))
+	}
+	procs = append(procs, l)
+	err := sqlite3.ExecTx(procs...)
+	/*
+		err := sqlite3.ExecTx(
+			loadCheck(l.Name, l.FileInfo, l.ver),
+			sqlite3.NewTr(fmt.Sprintf("delete from %s", l.Name)),
+			l)
+	*/
 	if err != nil {
 		fmt.Println(err)
 	} else {
