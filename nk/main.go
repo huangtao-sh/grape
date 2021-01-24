@@ -53,18 +53,17 @@ func Load() {
 }
 
 // getCurMonth 获取最近的月份
-func getCurMonth() (month string) {
+func getCurMonth() (year, month string) {
 	err := sqlite3.QueryRow("select max(substr(lrsj,1,7)) from nkwg").Scan(&month)
 	util.CheckFatal(err)
-	log.Printf("Current year :%s", month)
+	log.Printf("Current month :%s", month)
+	year, month = month[:4], month[5:]
 	return
 }
 
 // Report 报告登记情况
 func Report() {
-	var year, month string
-	month = getCurMonth()
-	year, month = month[:4], month[5:]
+	year, month := getCurMonth()
 	value := 1
 	if month >= "05" {
 		value = 3
@@ -94,7 +93,7 @@ where strftime('%Y',lrsj)=?
 group by lrrgh
 order by sl desc`
 	const format = "%5s  %-10s  %4d  %4d  %10s\n"
-	year := getCurMonth()[:4]
+	year, _ := getCurMonth()
 	fmt.Printf("当前年份：%s\n", year)
 	fmt.Println("工号   姓名        笔数   分值  最后时间")
 	sqlite3.Printf(format, sql, year)
