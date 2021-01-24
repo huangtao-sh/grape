@@ -1,8 +1,8 @@
 package main
 
 import (
+	"grape/path"
 	"grape/sqlite3"
-	"grape/util"
 	"log"
 )
 
@@ -45,7 +45,7 @@ create table if not exists nkwg(
 `
 
 func init() {
-	util.InitLog()
+	path.InitLog()
 	sqlite3.Config("nkwg")
 	log.Printf("Set Database %s", "nkwg")
 	sqlite3.ExecScript(initSQL)
