@@ -10,8 +10,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"grape/data"
-	"grape/params/load"
+	"grape/loader"
 	"grape/path"
 	"grape/sqlite3"
 	"grape/util"
@@ -27,21 +26,25 @@ func Load() {
 	} else {
 		p := path.NewPath(file)
 		info := p.FileInfo()
-		r := data.NewXlsReader(file, 0, 1)
-		d := data.NewConvertReader(r)
-		loader := load.NewLoader("nkwg", info, "", d, "", sql)
-		loader.Clear = false // 不对已导入数据进行清理
-		loader.Load()
+		d := loader.NewXlsReader(file, 0, 1)
+		l := loader.NewLoader(info, "nkwg", sql, d)
+		l.Clear = false // 不对已导入数据进行清理
+		err := l.Load()
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
-	file = path.NewPath("~/OneDrive/工作/参数备份/考核记录人").Find("考核记录人*.xls")
+	file = path.NewPath("~/Documents/参数备份/考核记录人").Find("考核记录人*.xls")
 	if file == "" {
-		fmt.Println("未在 ~/OneDrive/工作/参数备份/考核记录人 目录下找到 考核记录人.xls 文件")
+		fmt.Println("未在 ~/Documents/参数备份/考核记录人 目录下找到 考核记录人.xls 文件")
 	} else {
 		info := path.NewPath(file).FileInfo()
-		r := data.NewXlsReader(file, 0, 1)
-		d := data.NewConvertReader(r)
-		loader := load.NewLoader("djr", info, "", d, "", jlrsql)
-		loader.Load()
+		d := loader.NewXlsReader(file, 0, 1)
+		l := loader.NewLoader(info, "djr", jlrsql, d)
+		err := l.Load()
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 

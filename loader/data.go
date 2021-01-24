@@ -23,10 +23,19 @@ func NewConverter(r Reader, converters ...ConvertFunc) *Converter {
 func (c *Converter) Read() (rows []string, err error) {
 	rows, err = c.Reader.Read()
 	for _, conv := range c.converters {
-		if err != nil && rows != nil {
+		if err != nil  || rows == nil {
 			return
 		}
 		rows, err = conv(rows)
+	}
+	return
+}
+
+// Slice 把 []string 转换成 []interface{}
+func Slice(row []string) (col []interface{}) {
+	col = make([]interface{}, len(row))
+	for i, v := range row {
+		col[i] = v
 	}
 	return
 }

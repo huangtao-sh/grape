@@ -2,11 +2,10 @@ package loader
 
 import (
 	"fmt"
-	"grape/data"
 	"grape/sqlite3"
-	"grape/text"
 	"grape/util"
 	"io"
+	"log"
 	"os"
 	"sync"
 )
@@ -15,7 +14,7 @@ var initLoadfile = sync.Once{}
 
 func createLoadFile() {
 	sqlite3.ExecScript(`
-create table if not exists LoadFile(
+create table if not exists loadfile(
 	name	text 	primary key,  -- 类型
 	path	text,	              -- 文件名
 	mtime	text,                 -- 文件修改时间
@@ -26,8 +25,8 @@ create table if not exists LoadFile(
 // LoadCheck 检查文件是否已导入数据库
 func loadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 	const (
-		checkSQL = "select count(name) from LoadFile where name=? and path=? and mtime>=datetime(?)"
-		doneSQL  = "insert or replace into LoadFile values(?,?,datetime(?),?)"
+		checkSQL = "select count(name) from loadfile where name=? and path=? and mtime>=datetime(?)"
+		doneSQL  = "insert or replace into foadfile values(?,?,datetime(?),?)"
 	)
 	initLoadfile.Do(createLoadFile) // 仅在调用 LoadCheck 时运行一次建表
 	var count int
@@ -44,73 +43,67 @@ func loadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 	}
 }
 
-// File 文件接口
-type File interface {
-	FileInfo() os.FileInfo        // 获取文件信息
-	Open() (io.ReadCloser, error) // 打开文件
-}
-
-// Reader 读取文件接口
-type Reader interface {
-	ReadAll(text.Data)
-}
-
-// NewReader Reader 构造函数
-type NewReader func(r io.Reader) Reader
-
 // Loader 数据装入类
 type Loader struct {
-	name, Ver, loadSQL string
-	file               File
-	new                NewReader
-	Clear              bool // 是否清理数据库，默认为是
+	name, sql string      // 表名，导入的SQL语句
+	info      os.FileInfo // 文件信息
+	Ver       string      // 导入数据版本
+	data      Reader      // 数据读取程序
+	Clear     bool        // 是否清理数据库，默认为是
+	Check     bool        // 是否需要检查文件导入
 }
 
 // NewLoader Loader 构造函数
-func NewLoader(name string, ver string, loadSQL string, file File, new NewReader) *Loader {
-	return &Loader{name, ver, loadSQL, file, new, true}
-}
-
-// ReadAll 读取所有数据
-func (l *Loader) ReadAll(d text.Data) {
-	r, err := l.file.Open()
-	util.CheckFatal(err)
-	defer r.Close()
-	reader := l.new(r)
-	reader.ReadAll(d)
+func NewLoader(info os.FileInfo, name string, sql string, data Reader) *Loader {
+	return &Loader{name: name, info: info, sql: sql, data: data, Clear: true, Check: true}
 }
 
 // Test 导入主函数
 func (l *Loader) Test() {
-	d := data.NewData()
-	d.Add(1)
-	go l.ReadAll(d)
-	go d.Println()
-	d.Wait()
+	var (
+		columns []string
+		err     error
+	)
+	for i := 0; i < 10 && err == nil; columns, err = l.data.Read() {
+		if columns != nil {
+			fmt.Println(Slice(columns)...)
+			i++
+		}
+	}
+	if err != nil && err != io.EOF {
+		fmt.Println(err)
+	}
 }
 
 // Exec 执行导入操作
 func (l *Loader) Exec(tx *sqlite3.Tx) (err error) {
-	d := data.NewData()
-	d.Add(1)
-	go l.ReadAll(d)
-	go tx.ExecCh(l.loadSQL, d)
-	d.Wait()
+	var columns []string
+	stmt, err := tx.Prepare(l.sql)
+	log.Printf("准备SQL：%s\n", l.sql)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+	for ; err == nil; columns, err = l.data.Read() {
+		if columns != nil {
+			_, err = stmt.Exec(Slice(columns)...)
+		}
+	}
+	if err == io.EOF {
+		err = nil
+	}
 	return
 }
 
-// Load 执行导入操作
-func (l *Loader) Load() {
-	info := l.file.FileInfo()
-	var execer []interface{}
-	execer = append(execer, loadCheck(l.name, info, l.Ver))
+// Load 导入数据
+func (l *Loader) Load() error {
+	var steps []interface{}
+	if l.Check {
+		steps = append(steps, loadCheck(l.name, l.info, l.Ver))
+	}
 	if l.Clear {
-		execer = append(execer, sqlite3.NewTr(fmt.Sprintf("delete from %s", l.name)))
+		steps = append(steps, sqlite3.NewTr(fmt.Sprintf("delete from %s", l.name)))
 	}
-	execer = append(execer, l)
-	if err := sqlite3.ExecTx(execer...); err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Printf("导入文件 %s 完成！\n", info.Name())
-	}
+	steps = append(steps, l)
+	return sqlite3.ExecTx(steps...)
 }

@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"grape/loader"
 	_ "grape/params"
-	"io/ioutil"
-	"net/http"
+	"grape/path"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -26,17 +26,17 @@ func getPrimes(num int) (primes []int, err error) {
 }
 
 func main() {
-	resp, err := http.Get("https://www.jianshu.com/p/6db79ccbb18d")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
+	file := path.NewPath("~/Downloads/resultReg (1).xls")
+	r := loader.NewXlsReader(file.String(), 0, 1)
+	r = loader.NewConverter(r, loader.Include(0, 1))
+	var row []string
+	var err error
+	var i int
+	for ; err == nil && i<2; row, err = r.Read() {
+		if row != nil  {
+			fmt.Println(loader.Slice(row)...)
+			i++
+		}
 	}
 
-	fmt.Println(string(body))
 }
