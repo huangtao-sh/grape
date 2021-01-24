@@ -3,6 +3,7 @@ package main
 import (
 	"grape/sqlite3"
 	"grape/util"
+	"log"
 )
 
 const initSQL = `
@@ -44,7 +45,8 @@ create table if not exists nkwg(
 `
 
 func init() {
-	sqlite3.Config("nkwg")
-	sqlite3.ExecScript(initSQL)
 	util.InitLog()
+	sqlite3.Config("nkwg")
+	log.Printf("Set Database %s", "nkwg")
+	sqlite3.ExecScript(initSQL)
 }
