@@ -26,7 +26,7 @@ create table if not exists loadfile(
 func loadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 	const (
 		checkSQL = "select count(name) from loadfile where name=? and path=? and mtime>=datetime(?)"
-		doneSQL  = "insert or replace into foadfile values(?,?,datetime(?),?)"
+		doneSQL  = "insert or replace into loadfile values(?,?,datetime(?),?)"
 	)
 	initLoadfile.Do(createLoadFile) // 仅在调用 LoadCheck 时运行一次建表
 	var count int
