@@ -34,7 +34,7 @@ func Load() {
 	Ver := regexp.MustCompile(`\d{6,8}`)
 	var fileList = map[string]LoadFunc{}
 	fileList[ROOT.Find("科目说明/会计科目说明*")] = km.LoadKemu         // 会计科目说明
-	fileList[ROOT.Find("营业主管/营业主管信息*")] = lzbg.LoadYyzg       // 营业主管
+	//fileList[ROOT.Find("营业主管/营业主管信息*")] = lzbg.LoadYyzg       // 营业主管
 	fileList[ROOT.Find("分行表/分行顺序表*")] = lzbg.LoadFhsxb        // 分行顺序表
 	fileList[ROOT.Find("交易菜单/menu*")] = jym.LoadMenu          // 交易菜单
 	fileList[ROOT.Find("通讯录/通讯录*")] = lzbg.LoadTxl            // 通讯录
