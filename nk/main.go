@@ -103,6 +103,10 @@ order by sl desc`
 }
 
 func main() {
+	path.InitLog()
+	sqlite3.Config("nkwg")
+	log.Printf("Set Database %s", "nkwg")
+	sqlite3.ExecScript(initSQL)
 	load := flag.Bool("l", false, "导入数据")
 	report := flag.Bool("r", false, "报告统计结果")
 	showall := flag.Bool("a", false, "显示本年度扣分情况")

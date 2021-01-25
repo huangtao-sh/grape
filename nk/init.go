@@ -1,11 +1,5 @@
 package main
 
-import (
-	"grape/path"
-	"grape/sqlite3"
-	"log"
-)
-
 const initSQL = `
 create table if not exists djr(
     gh  text    primary key, -- 工号
@@ -43,10 +37,3 @@ create table if not exists nkwg(
     kfyjnr  text    -- 扣分依据内容
 );
 `
-
-func init() {
-	path.InitLog()
-	sqlite3.Config("nkwg")
-	log.Printf("Set Database %s", "nkwg")
-	sqlite3.ExecScript(initSQL)
-}
