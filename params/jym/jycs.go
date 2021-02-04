@@ -49,7 +49,7 @@ var (
 )
 
 func init() {
-	ROOT = path.NewPath("~/OneDrive/工作/参数备份/交易码参数")
+	ROOT = path.NewPath("~/Documents/参数备份/交易码参数")
 	Today = fmt.Sprint(date.Today())
 }
 
@@ -80,9 +80,11 @@ func (r *jycsReader) ReadAll(d text.Data) {
 	}
 }
 
+/*
 func newJycsReader(r io.Reader) loader.Reader {
 	return xls.NewXlsReader(r, "交易参数备份", 1)
 }
+*/
 
 // LoadJycs 导入交易码参数
 func LoadJycs() {
@@ -91,8 +93,10 @@ func LoadJycs() {
 	fmt.Printf("导入文件:%s\n文件版本：%s\n", file, ver)
 	loadJycsSQL := util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
 			zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq) %30V`)
-	lder := loader.NewLoader("jymcs", ver, loadJycsSQL, path.NewPath(file), newJycsReader)
-	lder.Load()
+	//lder := loader.NewLoader("jymcs", ver, loadJycsSQL, path.NewPath(file), newJycsReader)
+	rder := loader.NewXlsReader(file, 0, 1)
+	lder := loader.NewLoader(path.NewPath(file).FileInfo(), "jymcs", loadJycsSQL, rder)
+	lder.Test()
 }
 
 // BackupJycs 导出交易参数
