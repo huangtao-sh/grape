@@ -6,6 +6,7 @@ import (
 	"grape/loader"
 	_ "grape/params"
 	"grape/path"
+	"os"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -26,17 +27,18 @@ func getPrimes(num int) (primes []int, err error) {
 }
 
 func main() {
-	file := path.NewPath("~/Downloads/resultReg (1).xls")
-	r := loader.NewXlsReader(file.String(), 0, 1)
-	r = loader.NewConverter(r, loader.Include(0, 1))
+	file := path.NewPath("~/test.xls")
+	book, err := loader.NewXlsFile(file.String())
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer book.Close()
+	r := book.Read(0, 0)
 	var row []string
-	var err error
-	var i int
-	for ; err == nil && i<2; row, err = r.Read() {
-		if row != nil  {
-			fmt.Println(loader.Slice(row)...)
-			i++
+	for ; err == nil; row, err = r.Read() {
+		if row != nil {
+			fmt.Println(row)
 		}
 	}
-
 }

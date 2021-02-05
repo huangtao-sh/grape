@@ -40,7 +40,7 @@ func (f *xlsxFile) Read(sheet int, skip int, converters ...ConvertFunc) Reader {
 	sheetname := f.book.GetSheetName(sheet)
 	rows, err := f.book.Rows(sheetname)
 	util.CheckFatal(err)
-	for i := 0; rows.Next() && (i < skip); i++ {
+	for i := 0; (i < skip) && rows.Next(); i++ {
 		rows.Columns()
 	}
 	return NewConverter(&xlsxReader{rows}, converters...)
