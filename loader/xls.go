@@ -3,9 +3,53 @@ package loader
 import (
 	"grape/util"
 	"io"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/extrame/xls"
 )
+
+// XlsFile 接口
+type XlsFile interface {
+	Close() // 关闭文件
+	Read(sheet int, skip int, converters ...ConvertFunc) Reader
+}
+
+// NewXlsFile 新建 xlsFile 根据文件扩展名自动判断
+func NewXlsFile(filename string) (file XlsFile, err error) {
+	var fp *os.File
+	if strings.ToLower(filepath.Ext(filename)) == ".xls" {
+		fp, err = os.Open(filename)
+		if err != nil {
+			return
+		}
+		book, err := xls.OpenReader(fp, "utf8")
+		if err != nil {
+			return nil, err
+		}
+		file = &xlsFile{fp, book}
+	}
+	return
+}
+
+// xlsFile .xls 文件对 XlsFile 接口实现
+type xlsFile struct {
+	file *os.File
+	book *xls.WorkBook
+}
+
+// Close 关闭文件
+func (f *xlsFile) Close() {
+	f.file.Close()
+}
+
+// Read 读取数据
+func (f *xlsFile) Read(sheet int, skip int, converters ...ConvertFunc) Reader {
+	st := f.book.GetSheet(sheet)
+	r := XlsReader{st, skip}
+	return NewConverter(&r, converters...)
+}
 
 // XlsReader Excel 文件读取
 type XlsReader struct {
