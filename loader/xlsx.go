@@ -3,6 +3,7 @@ package loader
 import (
 	"fmt"
 	"grape/util"
+	"io"
 	"os"
 	"strings"
 
@@ -20,10 +21,29 @@ func (f *xlsxFile) Close() {
 	f.file.Close()
 }
 
+type xlsxReader struct {
+	*excelize.Rows
+}
+
+// Read 读取数据
+func (r *xlsxReader) Read() (result []string, err error) {
+	if r.Rows.Next() {
+		result, err = r.Rows.Columns()
+	} else {
+		err = io.EOF
+	}
+	return
+}
+
 // Read 读取数据
 func (f *xlsxFile) Read(sheet int, skip int, converters ...ConvertFunc) Reader {
-	rows, err := f.book.Rows()
+	sheetname := f.book.GetSheetName(sheet)
+	rows, err := f.book.Rows(sheetname)
 	util.CheckFatal(err)
+	for i := 0; rows.Next() && (i < skip); i++ {
+		rows.Columns()
+	}
+	return NewConverter(&xlsxReader{rows}, converters...)
 }
 
 // ConvertDate 转换日期，把 05-16-20 格式的日期转换成 2020-05-16 格式，无法转换则返回原数据

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/extrame/xls"
 )
 
@@ -29,6 +30,16 @@ func NewXlsFile(filename string) (file XlsFile, err error) {
 			return nil, err
 		}
 		file = &xlsFile{fp, book}
+	} else {
+		fp, err = os.Open(filename)
+		if err != nil {
+			return
+		}
+		book, err := excelize.OpenReader(fp)
+		if err != nil {
+			return nil, err
+		}
+		file = &xlsxFile{fp, book}
 	}
 	return
 }
