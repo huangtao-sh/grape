@@ -126,7 +126,7 @@ func (f *File) WriteData(sheet string, axis string, header string, data util.Dat
 	writer, err := f.NewStreamWriter(sheet)
 	util.CheckFatal(err)
 	if header != "" {
-		headers := text.Slice(strings.Split(header, ","))
+		headers := text.Slice(strings.Split(header, "|"))
 		count = len(headers)
 		writer.SetRow(Cell(col, row), headers)
 		row++
