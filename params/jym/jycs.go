@@ -12,18 +12,22 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 const (
 	// JycsHeader 交易码数表头
-	JycsHeader = `交易名称,现有系统交易码,交易所属交易组（编码）,交易所属交易组（中文名称）,交易所属优先级（两位数字）,网点交易授权级别:1－主办授权，2－主管授权,中心交易授权级别：1－主办授权，2－主管授权,必须网点授权？TRUE，FALSE,中心授权机构：0-总中心、1-分中心,必须中心授权？TRUE，FALSE,技能级别要求（两位数字）,CashIn：现金收
+	JycsHeader = `交易名称||现有系统交易码||交易所属交易组（编码）||交易所属交易组（中文名称）||交易所属优先级（两位数字）||网点交易授权级别:1－主办授权,2－主管授权||中心交易授权级别：1－主办授权，2－主管授权||必须网点授权？TRUE, FALSE||中心授权机构：0-总中心、1-分中心||必须中心授权？TRUE, FALSE||技能级别要求（两位数字）||CashIn：现金收
 CashOut：现金付
 TransIn：转账收、TransOut：转账付（现转账收与转账付相同）
 自助现金收SelfCashIn
 自助现金付SelfCashOut
-自助转账SelfTransIn/SelfTransOut,是否需要外包：1－不需要，2－需要,是否需要大额提示（大额核查，电话确认）：0－不需要，1－需要,是否需要扫描电子底卡 0-不扫描，1-扫描,是否需要收手续费 0-不需要，1-需要,是否需要后台监测：0－不需要，1－需要,事中监督扫描方式：0-不扫描，1-实时扫描，2-补扫，0-不监督，1-实时监督，2-非实时监督,补扫的限时时间(分钟),是否需要审查（用于调用审查规则的服务）：0－不需要，1－需要,是否允许抹账：0-不允许，1-允许,是否允许超额授权：TRUE－允许，FALSE－不允许,辅助交易组（需与主交易组不一致，以“|”分隔，例：TG001P|TG002P）可为空,是否需要事后补扫TRUE - 需要， FALSE - 不需要,磁道校验信息TRUE - 需要， FALSE - 不需要,一级菜单,二级菜单,备注,创建日期,投产日期,ID`
+自助转账SelfTransIn/SelfTransOut||是否需要外包：1－不需要，2－需要||是否需要大额提示（大额核查，电话确认）：0－不需要，1－需要||是否需要扫描电子底卡 0-不扫描，1-扫描||是否需要收手续费 0-不需要，1-需要||是否需要后台监测：0－不需要，1－需要||事中监督扫描方式：0-不扫描，1-实时扫描，2-补扫
+0-不监督
+1-实时监督
+2-非实时监督||补扫的限时时间(分钟)||是否需要审查（用于调用审查规则的服务）：0－不需要，1－需要||是否允许抹账：0-不允许，1-允许||是否允许超额授权：TRUE－允许，FALSE－不允许||辅助交易组（需与主交易组不一致，以“|”分隔，例：TG001P|TG002P）可为空||是否需要事后补扫TRUE - 需要, FALSE - 不需要||磁道校验信息TRUE - 需要, FALSE - 不需要||一级菜单||二级菜单||备注||创建日期||投产日期||ID`
 )
 
 var (
@@ -51,6 +55,7 @@ var (
 func init() {
 	ROOT = path.NewPath("~/Documents/参数备份/交易码参数")
 	Today = fmt.Sprint(date.Today())
+	fmt.Println(ROOT)
 }
 
 type jycsReader struct {
@@ -107,7 +112,7 @@ func BackupJycs() {
 	book := xls.NewFile()
 	book.SetSheetName("Sheet1", sheet)
 	book.SetWidth(sheet, JycsWidth)
-	book.WriteData(sheet, "A1", JycsHeader, sqlite3.Fetch(`
+	book.WriteData(sheet, "A1", strings.Split(JycsHeader, "||"), sqlite3.Fetch(`
 select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
 zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid from jymcs`))
 	book.SaveAs(file)
@@ -117,12 +122,15 @@ zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,e
 // Publish 发布最新的投产参数
 func Publish() {
 	const (
-		header = `交易名称,现有系统交易码,交易所属交易组（编码）,交易所属交易组（中文名称）,交易所属优先级（两位数字）,网点交易授权级别:1－主办授权，2－主管授权,中心交易授权级别：1－主办授权，2－主管授权,必须网点授权？TRUE，FALSE,中心授权机构：0-总中心、1-分中心,必须中心授权？TRUE，FALSE,技能级别要求（两位数字）,CashIn：现金收
+		header = `交易名称||现有系统交易码||交易所属交易组（编码）||交易所属交易组（中文名称）||交易所属优先级（两位数字）||网点交易授权级别:1－主办授权,2－主管授权||中心交易授权级别：1－主办授权，2－主管授权||必须网点授权？TRUE, FALSE||中心授权机构：0-总中心、1-分中心||必须中心授权？TRUE, FALSE||技能级别要求（两位数字）||CashIn：现金收
 CashOut：现金付
 TransIn：转账收、TransOut：转账付（现转账收与转账付相同）
 自助现金收SelfCashIn
 自助现金付SelfCashOut
-自助转账SelfTransIn/SelfTransOut,是否需要外包：1－不需要，2－需要,是否需要大额提示（大额核查，电话确认）：0－不需要，1－需要,是否需要扫描电子底卡 0-不扫描，1-扫描,是否需要收手续费 0-不需要，1-需要,是否需要后台监测：0－不需要，1－需要,事中监督扫描方式：0-不扫描，1-实时扫描，2-补扫，0-不监督，1-实时监督，2-非实时监督,补扫的限时时间(分钟),是否需要审查（用于调用审查规则的服务）：0－不需要，1－需要,是否允许抹账：0-不允许，1-允许,是否允许超额授权：TRUE－允许，FALSE－不允许,辅助交易组（需与主交易组不一致，以“|”分隔，例：TG001P|TG002P）可为空,是否需要事后补扫TRUE - 需要， FALSE - 不需要,磁道校验信息TRUE - 需要， FALSE - 不需要`
+自助转账SelfTransIn/SelfTransOut||是否需要外包：1－不需要，2－需要||是否需要大额提示（大额核查，电话确认）：0－不需要，1－需要||是否需要扫描电子底卡 0-不扫描，1-扫描||是否需要收手续费 0-不需要，1-需要||是否需要后台监测：0－不需要，1－需要||事中监督扫描方式：0-不扫描，1-实时扫描，2-补扫
+0-不监督
+1-实时监督
+2-非实时监督||补扫的限时时间(分钟)||是否需要审查（用于调用审查规则的服务）：0－不需要，1－需要||是否允许抹账：0-不允许，1-允许||是否允许超额授权：TRUE－允许，FALSE－不允许||辅助交易组（需与主交易组不一致，以“|”分隔，例：TG001P|TG002P）可为空||是否需要事后补扫TRUE - 需要, FALSE - 不需要||磁道校验信息TRUE - 需要, FALSE - 不需要`
 	)
 	var tcrq string
 	today := date.Today().Format("%F")
@@ -135,7 +143,8 @@ TransIn：转账收、TransOut：转账付（现转账收与转账付相同）
 		book := xls.NewFile()
 		sheet := book.GetSheet("Sheet1")
 		sheet.Rename("新增交易码")
-		sheet.Write("A1", header, JycsWidth, sqlite3.Fetch(`select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy from jymcs where tcrq=?`, tcrq))
+		book.SetWidth("新增交易码", JycsWidth)
+		book.WriteData("新增交易码", "A1", strings.Split(header, "||"), sqlite3.Fetch(`select jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy from jymcs where tcrq=?`, tcrq))
 		sheet = book.GetSheet("事后监督参数")
 		sheet.Write("A1",
 			"交易名称,交易码,总行审查,分行审查,流水勾对",
@@ -202,7 +211,7 @@ func UpdateJycs() {
 	book := xls.NewFile()
 	book.SetSheetName("Sheet1", sheetName)
 	book.SetWidth(sheetName, JycsWidth)
-	book.WriteData(sheetName, "A1", JycsHeader, tx.Fetch(exportSQL, Today))
+	book.WriteData(sheetName, "A1", strings.Split(JycsHeader, "||"), tx.Fetch(exportSQL, Today))
 	book.SaveAs(p.String())
 	fmt.Println("导出交易码参数成功！")
 	info = p.FileInfo()

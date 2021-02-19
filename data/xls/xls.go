@@ -47,7 +47,7 @@ func WriteData(book *excelize.File, sheet string, axis string, data util.Dater, 
 	writer, err := book.NewStreamWriter(sheet)
 	util.CheckFatal(err)
 	if header != "" {
-		headers := text.Slice(strings.Split(header, ","))
+		headers := text.Slice(strings.Split(header, "|"))
 		writer.SetRow(Cell(col, row), headers)
 		row++
 	}
