@@ -116,7 +116,7 @@ func (f *File) SetWidth(sheet string, widthes map[string]float64) {
 const TableFormat = `{"table_style":"TableStyleMedium6", "show_first_column":false,"show_last_column":false,"show_row_stripes":true,"show_column_stripes":false}`
 
 // WriteData 设置表格的宽度
-func (f *File) WriteData(sheet string, axis string, header string, data util.Dater) {
+func (f *File) WriteData(sheet string, axis string, header interface{}, data util.Dater) {
 	var count int
 	if f.GetSheetIndex(sheet) == -1 {
 		f.NewSheet(sheet) // 工作表不存在时自动创建
@@ -125,10 +125,18 @@ func (f *File) WriteData(sheet string, axis string, header string, data util.Dat
 	util.CheckFatal(err)
 	writer, err := f.NewStreamWriter(sheet)
 	util.CheckFatal(err)
-	if header != "" {
-		headers := text.Slice(strings.Split(header, ","))
+	if header != nil {
+		var headers []string
+		switch head := header.(type) {
+		case []string:
+			headers = head
+		case string:
+			headers = strings.Split(head, ",")
+		default:
+			panic("标题必须为 string 或 []string")
+		}
 		count = len(headers)
-		writer.SetRow(Cell(col, row), headers)
+		writer.SetRow(Cell(col, row), text.Slice(headers))
 		row++
 	}
 	for ; data.Next(); row++ {
