@@ -2,11 +2,8 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"grape/loader"
 	_ "grape/params"
-	"grape/path"
-	"os"
+	"grape/rhzh"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -27,18 +24,7 @@ func getPrimes(num int) (primes []int, err error) {
 }
 
 func main() {
-	file := path.NewPath("~/test.xls")
-	book, err := loader.NewXlsFile(file.String())
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer book.Close()
-	r := book.Read(0, 0)
-	var row []string
-	for ; err == nil; row, err = r.Read() {
-		if row != nil {
-			fmt.Println(row)
-		}
-	}
+	//rhzh.LoadRhsj()
+	//rhzh.LoadBhsj()
+	rhzh.Query1()
 }
