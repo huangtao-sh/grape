@@ -61,7 +61,7 @@ func Main() {
 						fmt.Printf("错误：交易码 %s 不存在\n", arg)
 					} else {
 						var tcrq string
-						sqlite3.QueryRow("select tcrq from jymcs where jymc=?", arg).Scan(&tcrq)
+						sqlite3.QueryRow("select tcrq from jymcs where jym=?", arg).Scan(&tcrq)
 						if tcrq != "" {
 							fmt.Printf("投产日期：%s", tcrq)
 						}
