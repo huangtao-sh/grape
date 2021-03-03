@@ -62,9 +62,7 @@ func Main() {
 					} else {
 						var tcrq string
 						sqlite3.QueryRow("select tcrq from jymcs where jym=?", arg).Scan(&tcrq)
-						if tcrq != "" {
-							fmt.Printf("投产日期：%s", tcrq)
-						}
+						fmt.Printf("        投产日期  %s", tcrq)
 					}
 				}
 			} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
