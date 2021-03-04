@@ -66,27 +66,29 @@ from jym a
 left join jyz b on a.jyz=b.jyz;
 
 create view if not exists jycs as 
-select a.jymc,a.jym,a.jyz,b.jyzm,yxj,
-case wdsqjb when "1" then "1-主办授权" when "2" then "2-主管授权" end as wdsqjb,
-case zssqjb when "1" then "1-主办授权" when "2" then "2-主管授权" end as zssqjb,
-wdsq,case zssqjg when "0" then "0-总中心" when "1" then "1-分中心" end as zssqjg,
-zssq,jnjb,xzbz,
-case wb when "1" then "1-不需要" when "2" then "2-需要" end as wb,
-case dets when "0" then "0-不需要" when "1" then "1-需要" end as dets,
-case dzdk when "0" then "0-不扫描" when "1" then "1-扫描" end as dzdk,
-case sxf when "0" then "0-不需要" when "1" then "1-需要" end as sxf,
-case htjc when "0" then "0-不需要" when "1" then "1-需要" end as htjc,
-case szjd when "0" then "0-不扫描" when "1" then "1-实时扫描" when "2" then "2-补扫" end as sxjd,
-bssx,
-case sc when "0" then "0-不需要" when "1" then "1-需要" end as sc,
-case mz when "0" then "0-不允许" when "1" then "1-允许" end as mz,
-cesq,fjjyz,
+select a.jymc,a.jym,a.jyz,b.jyzm,a.yxj,
+case a.wdsqjb when "1" then "1-主办授权" when "2" then "2-主管授权" end as wdsqjb,
+case a.zssqjb when "1" then "1-主办授权" when "2" then "2-主管授权" end as zssqjb,
+a.wdsq,case a.zssqjg when "0" then "0-总中心" when "1" then "1-分中心" end as zssqjg,
+a.zssq,a.jnjb,a.xzbz,
+case a.wb when "1" then "1-不需要" when "2" then "2-需要" end as wb,
+case a.dets when "0" then "0-不需要" when "1" then "1-需要" end as dets,
+case a.dzdk when "0" then "0-不扫描" when "1" then "1-扫描" end as dzdk,
+case a.sxf when "0" then "0-不需要" when "1" then "1-需要" end as sxf,
+case a.htjc when "0" then "0-不需要" when "1" then "1-需要" end as htjc,
+case a.szjd when "0" then "0-不扫描" when "1" then "1-实时扫描" when "2" then "2-补扫" end as sxjd,
+a.bssx,
+case a.sc when "0" then "0-不需要" when "1" then "1-需要" end as sc,
+case a.mz when "0" then "0-不允许" when "1" then "1-允许" end as mz,
+a.cesq,a.fjjyz,
 case when exists(select jym from shbs where jym=a.jym) then "FAlSE" else "TRUE" end as shbs,
 case when exists(select jym from cdjy where jym=a.jym) then "TRUE" else "FALSE" end as cdjy,
-c.yjcd,c.ejcd
+coalesce(c.yjcd,d.yjcd,''),coalesce(c.ejcd,d.ejcd,''),
+ifnull(d.cjrq,''),ifnull(d.tcrq,'') 
 from jym a 
 left join jyz b on a.jyz=b.jyz
-left join menu c on a.jym=c.jym;
+left join menu c on a.jym=c.jym
+left join jymcs d on a.jym=d.jym;
 
 -- drop table if exists jymcs ;
 create table if not exists jymcs(

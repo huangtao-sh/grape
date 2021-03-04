@@ -56,13 +56,10 @@ func Main() {
 					sqlite3.Printf("待投产  ：%4s  %-40s\n", "select jym,jymc from jymcs where jym=?", arg)
 					sqlite3.Printf("交易菜单：%4s  %-40s\n", "select jym,name from menu where jym=?", arg)
 				} else {
-					err := sqlite3.PrintRow(header, "select * from jycs where jym=?", arg)
+					err := sqlite3.PrintRow(header+",创建日期,投产日期", "select * from jycs where jym=?", arg)
 					if err != nil {
+						fmt.Println(err)
 						fmt.Printf("错误：交易码 %s 不存在\n", arg)
-					} else {
-						var tcrq string
-						sqlite3.QueryRow("select tcrq from jymcs where jym=?", arg).Scan(&tcrq)
-						fmt.Printf("        投产日期  %s", tcrq)
 					}
 				}
 			} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
