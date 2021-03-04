@@ -58,7 +58,6 @@ func Main() {
 				} else {
 					err := sqlite3.PrintRow(header+",创建日期,投产日期", "select * from jycs where jym=?", arg)
 					if err != nil {
-						fmt.Println(err)
 						fmt.Printf("错误：交易码 %s 不存在\n", arg)
 					}
 				}
