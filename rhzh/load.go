@@ -81,7 +81,7 @@ func convBhsj(row []string) (d []string, err error) {
 // LoadBhsj 导入人行数据
 func LoadBhsj() {
 	ROOT := path.NewPath("~/Downloads")
-	fileName := ROOT.Find("*/20210218*.xls*")
+	fileName := ROOT.Find("*/开销户登记簿*.xls*")
 	log.Printf("导入文件:%s\n", fileName)
 	file, err := loader.NewXlsFile(fileName)
 	if err != nil {
