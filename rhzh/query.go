@@ -14,7 +14,7 @@ from bhsj a left join rhsj b on a.zh=b.zh or "NRA"||a.zh=b.zh
 where b.zh is null or a.hm<>b.hm or a.khrq<>b.khrq or a.xhrq<>b.xhrq or a.zt<>b.zt or a.zhlb<>b.zhlb`
 	cftj = `select a.zh,count(a.zh),sum(case when a.hm=b.hm and a.khrq=b.khrq and a.xhrq=b.xhrq and a.zt=b.zt and a.zhlb=b.zhlb then 1 else 0 end)
 from bhsj a left join rhsj b on a.zh=b.zh or "NRA"||a.zh=b.zh 
-group by a.zh having count(a.zh)>1`
+group by a.zh having count(a.zh)>1 `
 )
 
 // Query1 test
