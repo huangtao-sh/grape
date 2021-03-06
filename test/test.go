@@ -26,5 +26,6 @@ func getPrimes(num int) (primes []int, err error) {
 func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
-	rhzh.Query1()
+	rhzh.Query()
+
 }
