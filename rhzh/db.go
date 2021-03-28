@@ -36,6 +36,7 @@ create table if not exists bhsj(
 );
 `
 
+
 func init() {
 	path.InitLog()                // 初始化日志
 	sqlite3.Config("rhzh")        //设置数据库
