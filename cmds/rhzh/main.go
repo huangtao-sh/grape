@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	description = `人行报送数据比对程序 Version 0.1
+	description = `人行报送数据比对程序 Version %s
 用法：
 1、将从人行账户管理系统导出的文件 "单位银行结算账户开立、变更及撤销情况查询结果输出" 放在当前用户的下载目录下
 2、将从柜面系统 1181-开销户登记簿中导出的数据文件 "开销户登记簿" 放在当前用户的下载目录下
@@ -23,10 +23,9 @@ func main() {
 	all := flag.Bool("a", false, "比对所有账户")
 	flag.Parse()
 	if *version {
-		fmt.Printf("人行账户比对程序 Ver %s", rhzh.Version)
+		fmt.Printf(description, rhzh.Version)
 		os.Exit(0)
 	}
-	fmt.Println(description)
 	rhzh.LoadBhsj()
 	rhzh.LoadRhsj()
 	rhzh.Query(*all)
