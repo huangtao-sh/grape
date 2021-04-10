@@ -55,7 +55,6 @@ func convert(s []string) (d []string) {
 	copy(d[9:12], s[length-24:length-21])
 	copy(d[12:19], s[length-11:length-4])
 	copy(d[19:], s[length-3:])
-	fmt.Println(d)
 	return
 }
 
