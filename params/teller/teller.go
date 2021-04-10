@@ -1,6 +1,7 @@
 package teller
 
 import (
+	"fmt"
 	"grape/params/load"
 	"grape/text"
 	"io"
@@ -30,10 +31,11 @@ create table if not exists teller(
     jybz        text,   -- 交易币种
     fqjyz       text,   -- 发起交易组
     zjlx        text,   -- 证件类型
-    zjhm        text    -- 证件号码
+    zjhm        text,   -- 证件号码
+    sfyy        text    -- 是否运营人员
 )`
 
-const loadSQL = "insert into teller values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+const loadSQL = "insert into teller values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
 /*
 *row[:3], *row[4:8], ','.join(map(str.strip, row[8:-25])),
@@ -41,18 +43,19 @@ const loadSQL = "insert into teller values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
 */
 
 func convert(s []string) (d []string) {
-	d = make([]string, 21)
+	d = make([]string, 22)
 	for i := range s {
 		s[i] = strings.TrimSpace(s[i])
 	}
 	length := len(s)
 	copy(d[:3], s[:3])
 	copy(d[3:7], s[4:8])
-	d[7] = strings.Join(s[8:length-25], ",")
-	d[8] = s[length-25]
-	copy(d[9:12], s[length-23:length-20])
-	copy(d[12:19], s[length-10:length-3])
-	copy(d[19:], s[length-2:])
+	d[7] = strings.Join(s[8:length-26], ",")
+	d[8] = s[length-26]
+	copy(d[9:12], s[length-24:length-21])
+	copy(d[12:19], s[length-11:length-4])
+	copy(d[19:], s[length-3:])
+	fmt.Println(d)
 	return
 }
 

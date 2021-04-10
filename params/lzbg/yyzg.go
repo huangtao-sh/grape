@@ -54,7 +54,7 @@ func LoadZg(file string) {
 	reader := loader.NewXlsReader(file, 0, 1)
 	reader = loader.NewConverter(reader, loader.Include(2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 11), conv)
 	lder := loader.NewLoader(info, "yyzg", loadSQL, reader)
-	lder.Ver = util.Extract(`\d*`, info.Name())
+	lder.Ver = util.Extract(`\d+`, info.Name())
 	lder.Clear = true
 	lder.Check = true
 	lder.Load()

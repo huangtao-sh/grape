@@ -2,9 +2,11 @@ package main
 
 import (
 	"errors"
-	"grape/path"
+	"fmt"
 	_ "grape/params"
-	"grape/params/lzbg"
+	"grape/path"
+	"grape/util"
+	//"grape/params/lzbg"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -28,5 +30,7 @@ func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
 	file := path.NewPath("~/Documents/参数备份/营业主管").Find("营业主管信息*.xls*")
-	lzbg.LoadZg(file)
+	info := path.NewPath(file).FileInfo()
+	s := util.Extract("\\d+", info.Name())
+	fmt.Println(s,info.Name())
 }
