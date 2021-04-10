@@ -32,5 +32,5 @@ func main() {
 	file := path.NewPath("~/Documents/参数备份/营业主管").Find("营业主管信息*.xls*")
 	info := path.NewPath(file).FileInfo()
 	s := util.Extract("\\d+", info.Name())
-	fmt.Println(s,info.Name())
+	fmt.Println(s, info.Name())
 }
