@@ -1,7 +1,6 @@
 package teller
 
 import (
-	"fmt"
 	"grape/params/load"
 	"grape/text"
 	"io"
