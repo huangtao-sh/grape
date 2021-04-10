@@ -4,13 +4,16 @@ import (
 	"flag"
 	"fmt"
 	"grape/data/xls"
+	"grape/loader"
 	"grape/params"
 	"grape/params/load"
+	"grape/path"
 	"grape/sqlite3"
 	"grape/text"
 	"grape/util"
 	"io"
 	"os"
+	"strings"
 )
 
 const initSQL = `
@@ -36,6 +39,26 @@ const loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 func LoadYyzg(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 	reader := xls.NewXlsReader(r, "Sheet1", 1, text.Include(0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 10))
 	return load.NewLoader("yyzg", info, ver, reader, initSQL, loadSQL)
+}
+
+func conv(row []string) ([]string, error) {
+	s := row[10]
+	row[10] = strings.Join([]string{s[:4], s[4:6], s[6:]}, "-")
+	return row, nil
+}
+
+// LoadZg 导入营业主管信息
+func LoadZg(file string) {
+	sqlite3.ExecScript(initSQL)
+	info := path.NewPath(file).FileInfo()
+	reader := loader.NewXlsReader(file, 0, 1)
+	reader = loader.NewConverter(reader, loader.Include(2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 11), conv)
+	lder := loader.NewLoader(info, "yyzg", loadSQL, reader)
+	lder.Ver = util.Extract(`\d*`, info.Name())
+	lder.Clear = true
+	lder.Check = true
+	lder.Load()
+	fmt.Println("营业主管表导入成功")
 }
 
 const initSXB = `

@@ -74,7 +74,7 @@ func (s *XlsReader) Read() (res []string, err error) {
 		err = io.EOF
 	} else {
 		row := s.Sheet.Row(s.CurLine)
-		for i := row.FirstCol(); i < row.LastCol(); i++ {
+		for i := row.FirstCol(); i <= row.LastCol(); i++ {
 			res = append(res, row.Col(i))
 		}
 		s.CurLine++
