@@ -59,14 +59,14 @@ func Load() {
 	sqlite3.ExecScript(InitSQL)
 	log.Println("初始化数据库")
 	var Root = path.NewPath("~/Downloads")
-	file := Root.Find("会计履职报告*.xls*")
+	file := Root.Find("会计履职报告*.xls")
 	if file == "" {
 		log.Println("未在下载目录找到 会计履职报告 文件")
 	} else {
 		log.Printf("导入文件：%s", file)
 		LoadLzbg(file)
 	}
-	file = Root.Find("营业主管信息*.xls*")
+	file = Root.Find("营业主管信息*.xls")
 	if file == "" {
 		log.Println("未在下载目录找到 营业主管信息 文件")
 	} else {
