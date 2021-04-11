@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"grape/data/xls"
 	"grape/sqlite3"
+	"log"
 )
 
 const (
@@ -88,4 +89,5 @@ func report() {
 	sheet.Write("A1", yyzgYcHeader, yyzgYcWidth, sqlite3.Fetch(yyzgYcSQL, current))
 
 	book.SaveAs("~/Downloads/履职报告报送统计.xlsx")
+	log.Println("导出文件：~/Downloads/履职报告报送统计.xlsx")
 }
