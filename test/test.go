@@ -3,7 +3,8 @@ package main
 import (
 	"errors"
 	//"grape/params/lzbg"
-	"grape/lzbg"
+	"fmt"
+	"grape/sqlite3"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -26,5 +27,6 @@ func getPrimes(num int) (primes []int, err error) {
 func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
-	lzbg.Main()
+	s := sqlite3.LoadSQL("insert or ignore", "lzbg", []string{"name","age"})
+	fmt.Println(s)
 }
