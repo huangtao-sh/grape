@@ -35,12 +35,6 @@ create table if not exists yyzg(
 
 const loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 
-// LoadYyzg 导入营业主管信息
-func LoadYyzg(info os.FileInfo, r io.Reader, ver string) *load.Loader {
-	reader := xls.NewXlsReader(r, "Sheet1", 1, text.Include(0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 10))
-	return load.NewLoader("yyzg", info, ver, reader, initSQL, loadSQL)
-}
-
 func conv(row []string) ([]string, error) {
 	s := row[10]
 	row[10] = strings.Join([]string{s[:4], s[4:6], s[6:]}, "-")
@@ -64,7 +58,7 @@ func LoadZg(file string) {
 const initSXB = `
 create table if not exists fhsxb(
 	br		text primary key,  -- 分行
-	[order]	int					-- 顺序
+	[order]	int				   -- 顺序
 )
 `
 
