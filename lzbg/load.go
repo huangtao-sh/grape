@@ -35,7 +35,7 @@ func LoadYyzg(file string) {
 }
 
 func convLzbg(row []string) ([]string, error) {
-	row[3] = strings.ToUpper(row[3])
+	row[3] = strings.ToUpper(row[3])                 // 将工号全部转换成大写字母
 	row[3] = util.Extract(`[A-Z]{1,2}\d{4}`, row[3]) // 修正员工号，将多余的数字剔除
 	if row[3] != "" {
 		row = row[:23]
