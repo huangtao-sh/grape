@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"grape/loader"
 	"grape/path"
+	"grape/sqlite3"
 	"grape/util"
 	"strings"
 )
-
-const loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 
 func conv(row []string) ([]string, error) {
 	s := row[10]
@@ -22,6 +21,7 @@ func LoadYyzg(file string) {
 	reader := loader.NewConverter(loader.NewXlsReader(file, 0, 1),
 		loader.Include(2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 11),
 		conv)
+	const loadSQL = "insert or replace into yyzg values(?,?,?,?,?,?,?,?,?,?,?)"
 	lder := loader.NewLoader(info, "yyzg", loadSQL, reader)
 	lder.Ver = util.Extract(`\d+`, info.Name())
 	lder.Clear = true
@@ -47,11 +47,12 @@ func convLzbg(row []string) ([]string, error) {
 
 // LoadZg 导入营业主管信息
 func LoadLzbg(file string) {
-	loadSQL := util.Sprintf("insert or replace into lzbg %23V")
+	loadSQL := sqlite3.LoadSQL("insert or replace", "lzbg", 23)
 	info := path.NewPath(file).FileInfo()
 	reader := loader.NewConverter(loader.NewXlsReader(file, 0, 1), convLzbg)
 	lder := loader.NewLoader(info, "lzbg", loadSQL, reader)
 	lder.Ver = "1.0"
+	lder.Clear = false
 	lder.Check = true
 	err := lder.Load()
 	if err == nil {
