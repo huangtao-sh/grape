@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
-	"github.com/extrame/xls"
+	"github.com/huangtao-sh/xls"
 )
 
 // XlsFile 接口
