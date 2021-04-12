@@ -42,6 +42,8 @@ func Load() {
 		err := l.Load()
 		if err != nil {
 			fmt.Println(err)
+		} else {
+			fmt.Printf("导入文件 %s 成功\n", info.Name())
 		}
 	}
 	file = path.NewPath("~/Documents/参数备份/考核记录人").Find("考核记录人*.xls")
@@ -54,6 +56,8 @@ func Load() {
 		err := l.Load()
 		if err != nil {
 			fmt.Println(err)
+		} else {
+			fmt.Printf("导入文件 %s 成功\n", info.Name())
 		}
 	}
 }
