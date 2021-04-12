@@ -2,7 +2,6 @@ package xyk
 
 import (
 	"database/sql"
-	"grape/sqlite"
 	"grape/sqlite3"
 	"path/filepath"
 )
@@ -10,7 +9,7 @@ import (
 func init() {
 	// 配置连接数据库
 	path := filepath.Join(Home, "xyk.db")
-	sqlite.Config(path)
+	sqlite3.Config(path)
 }
 
 // Open 打开数据库连接
