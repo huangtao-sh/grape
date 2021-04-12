@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
 
 // xlsxFile .xlsx .xlsm 文件的 XlsFile 接口实现
