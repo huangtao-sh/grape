@@ -9,10 +9,8 @@ import (
 	"grape/sqlite3"
 	"grape/text"
 	"grape/util"
-	"io"
-	"os"
-	"strconv"
 	"strings"
+	"os"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
@@ -57,6 +55,7 @@ func init() {
 	Today = fmt.Sprint(date.Today())
 }
 
+/*
 type jycsReader struct {
 	r io.Reader
 }
@@ -83,7 +82,7 @@ func (r *jycsReader) ReadAll(d text.Data) {
 		d.Write(dt...)
 	}
 }
-
+*/
 /*
 func newJycsReader(r io.Reader) loader.Reader {
 	return xls.NewXlsReader(r, "交易参数备份", 1)
