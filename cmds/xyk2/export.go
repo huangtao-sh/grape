@@ -7,7 +7,7 @@ import (
 	"grape/util"
 	"strings"
 
-	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
 
 func Cell(row, col int) (r string) {

@@ -1,7 +1,7 @@
 package xyk
 
 import (
-	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
 
 // Export 导出报表
