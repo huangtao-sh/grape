@@ -87,6 +87,9 @@ func (l *Loader) Exec(tx *sqlite3.Tx) (err error) {
 	for ; err == nil; columns, err = l.data.Read() {
 		if columns != nil {
 			_, err = stmt.Exec(Slice(columns)...)
+			if err != nil {
+				return
+			}
 		}
 	}
 	if err == io.EOF {

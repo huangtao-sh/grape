@@ -138,7 +138,7 @@ func Sprintf(format string, args ...interface{}) (d string) {
 			count, _ := strconv.Atoi(k[1])
 			d = strings.Repeat("?,", count-1)
 			d += "?"
-			return fmt.Sprintf("Values(%s)", d)
+			return fmt.Sprintf("values(%s)", d)
 		} else {
 			d = fmt.Sprintf(s, args[i])
 		}

@@ -1,10 +1,9 @@
 package lzbg
 
 import (
-	"flag"
-	"fmt"
 	"grape/path"
 	"grape/sqlite3"
+	"log"
 )
 
 // InitSQL 初始化表结构
@@ -26,14 +25,16 @@ create table if not exists yyzg(
 
 create table if not exists lzbg (
 	bt		 	text,	-- 请求标题
+	jjcd		text,	-- 紧急程度
 	bgr	 		text,	-- 报告人
-	yzh			text,	-- 报告人工号
+	ygh			text,	-- 报告人工号
 	bm			text,	-- 部门
 	jg			text,	-- 机构 
 	bgrq		text,	-- 报告日期
 	cs			text,	-- 抄送
 	fj			text,	-- 附件
-	yxqk		text,	-- 设备运行情况
+	yxqkzc		text,	-- 设备运行情况正常
+	yxqkyc		text,	-- 设备运行情况异常
 	sbmc		text,	-- 设备名称
 	ycnr		text,	-- 异常内容
 	spyj		text,	-- 审批意见
@@ -46,31 +47,40 @@ create table if not exists lzbg (
 	bgzl		text,	-- 报告种类
 	zyx			text,	-- 重要性
 	nr			text,	-- 具体内容
-	primary key(yzh,bgrq)
+	primary key(ygh,bgrq)
 );
+drop view if exists lz;
+create view if not exists lz as 
+select distinct bgr,ygh,bglx,jg,substr(bgrq,1,7)as bgq from lzbg
 `
 
 // Load 导入数据
 func Load() {
-	file := path.NewPath("~/Downloads").Find("会计履职报告????-??.xlsx")
-	fmt.Println(file)
-
+	sqlite3.ExecScript(InitSQL)
+	log.Println("初始化数据库")
+	var Root = path.NewPath("~/Downloads")
+	file := Root.Find("会计履职报告*.xls")
+	if file == "" {
+		log.Println("未在下载目录找到 会计履职报告 文件")
+	} else {
+		log.Printf("导入文件：%s", file)
+		LoadLzbg(file)
+	}
+	file = Root.Find("营业主管信息*.xls")
+	if file == "" {
+		log.Println("未在下载目录找到 营业主管信息 文件")
+	} else {
+		log.Printf("导入文件：%s", file)
+		LoadYyzg(file)
+	}
 }
 
 // Main 履职报告主程序
 func Main() {
+	path.InitLog()
 	sqlite3.Config("lzbg")
+	log.Printf("设置数据库为：%s\n", "lzbg")
 	defer sqlite3.Close()
-	init := flag.Bool("i", false, "初始化数据库")
-	load := flag.Bool("l", false, "导入数据")
-
-	flag.Parse()
-	if *init {
-		sqlite3.ExecScript(InitSQL)
-		fmt.Println("初始化数据库完成！")
-	}
-	if *load {
-		Load()
-		fmt.Println("导入数据完成！")
-	}
+	Load()
+	report()
 }

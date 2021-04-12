@@ -2,8 +2,8 @@ package main
 
 import (
 	"errors"
-	_ "grape/params"
-	"grape/rhzh"
+	//"grape/params/lzbg"
+	"fmt"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -26,5 +26,6 @@ func getPrimes(num int) (primes []int, err error) {
 func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
-	rhzh.Query1()
+	fmt.Println("This is a test.")
+
 }

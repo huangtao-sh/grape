@@ -49,7 +49,7 @@ func (l *MenuReader) ReadAll(dt text.Data) {
 	defer dt.Close()
 	d := xml.NewDecoder(l.r)
 	d.CharsetReader = read
-	submenu := make([]string, 2, 2)
+	submenu := make([]string,  2)
 	i := -1
 	for t, err := d.Token(); err == nil; t, err = d.Token() {
 		switch token := t.(type) {

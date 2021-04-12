@@ -2,9 +2,11 @@ package sqlite3
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"grape/path"
 	"grape/util"
+	"strings"
 
 	// 引用 go-sqlite3 进行初始化
 	_ "github.com/mattn/go-sqlite3"
@@ -67,4 +69,24 @@ func Close() {
 func ExecScript(sql string) {
 	_, err := NewDB().Exec(sql)
 	util.CheckFatal(err)
+}
+
+// LoadSQL 生成导入 SQL 语句
+func LoadSQL(method string, table string, columns interface{}) string {
+	var colCount int
+	switch cols := columns.(type) {
+	case string:
+		fields := strings.Split(cols, ",")
+		colCount = len(fields)
+		table = fmt.Sprintf("%s(%s)", table, cols)
+	case int:
+		colCount = cols
+	case []string:
+		colCount = len(cols)
+		table = fmt.Sprintf("%s(%s)", table, strings.Join(cols, ","))
+	default:
+		util.CheckFatal(errors.New("columns must be string,int or []stirng"))
+	}
+	s := fmt.Sprintf("%%s into %%s %%%dV", colCount)
+	return util.Sprintf(s, method, table)
 }

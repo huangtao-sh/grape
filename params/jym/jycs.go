@@ -55,7 +55,6 @@ var (
 func init() {
 	ROOT = path.NewPath("~/Documents/参数备份/交易码参数")
 	Today = fmt.Sprint(date.Today())
-	fmt.Println(ROOT)
 }
 
 type jycsReader struct {

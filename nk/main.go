@@ -15,6 +15,7 @@ import (
 	"grape/sqlite3"
 	"grape/util"
 	"log"
+	"strings"
 )
 
 const (
@@ -110,6 +111,7 @@ func main() {
 	load := flag.Bool("l", false, "导入数据")
 	report := flag.Bool("r", false, "报告统计结果")
 	showall := flag.Bool("a", false, "显示本年度扣分情况")
+	query := flag.String("q", "", "查询内控违规")
 	flag.Parse()
 	if *load {
 		Load()
@@ -119,5 +121,21 @@ func main() {
 	}
 	if *showall {
 		ShowAll()
+	}
+	if *query != "" {
+		sql := `
+select lrsj,ssjg,sstx,kfz,fxqk from nkwg 
+where %s
+and lrsj>date('now','-3 year')    -- 仅显示近三年记录
+order by lrsj 
+`
+		var q []string
+		for _, v := range strings.Split(*query, " ") {
+			q = append(q, fmt.Sprintf("fxqk like '%%%s%%'", v))
+		}
+		s := strings.Join(q, " and ")
+		sqlite3.Printf("录入时间：%s\n所属机构：%s\n所属条线：%s\n扣分值  ：%d\n%s\n\n",
+			fmt.Sprintf(sql, s),
+			fmt.Sprintf("%%%s%%", *query))
 	}
 }
