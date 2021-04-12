@@ -10,14 +10,14 @@ import (
 const (
 	tjSQL = `select bglx,count(distinct ygh) 
 from lzbg 
-where substr(bgrq,1,7)=? and bglx in ('营业主管','事后监督')
+where bgrq>=? and bglx in ('营业主管','事后监督')
 group by bglx`
 	shjdSQL = `
 select a.jg,a.jgmc
 from 
 (select distinct jg,jgmc from yyzg where jg like '%000' 
 and jg not in('331000000','338702000') ) a
-left join (select distinct bgr,jg from lzbg where substr(bgrq,1,7)=? and bglx='事后监督') b
+left join (select distinct bgr,jg from lzbg where bgrq>=? and bglx='事后监督') b
 on instr(a.jgmc,b.jg)
 where b.bgr is null 
 order by a.jg
@@ -30,7 +30,7 @@ from
 where jg not like "331000%" and js like "a%" 
 and jg not in("191000000","342002000","361000000","421000000","551000000","338702000")
 ) a
-left join (select distinct ygh from lzbg where substr(bgrq,1,7)=? and bglx='营业主管') b
+left join (select distinct ygh from lzbg where bgrq>=? and bglx='营业主管') b
 on a.ygh=b.ygh
 where b.ygh is null
 order by a.jg
@@ -38,10 +38,11 @@ order by a.jg
 	yyzgLbHeader = `机构号,机构名称,员工号,姓名`
 	yyzgYcSQL    = `
 select a.jg||a.bm,a.ygh,a.bgr from 
-(select distinct ygh,bgr,jg,bm from lzbg where substr(bgrq,1,7)=? and bglx='营业主管') a
+(select distinct ygh,bgr,jg,bm from lzbg where bgrq>=? and bglx='营业主管') a
 left join
 (select ygh from yyzg where js like "a%" and jg not like "331000%" )b 
 on a.ygh=b.ygh
+where b.ygh is null
 order by a.jg||a.bm
 `
 	yyzgYcHeader = `机构,员工号,报告人`
@@ -49,11 +50,11 @@ order by a.jg||a.bm
 
 func report() {
 	var current string
-	err := sqlite3.QueryRow(`select substr(max(bgrq),1,7)from lzbg`).Scan(&current)
+	err := sqlite3.QueryRow(`select date(max(bgrq),"start of month","-5 day")from lzbg`).Scan(&current)
 	if err != nil {
 		fmt.Println("履职报告中无数据，请先导入数据")
 	}
-	fmt.Printf("\n当前期次：%s\n", current)
+	fmt.Printf("\n起始日期：%s\n", current)
 	sqlite3.Printf("%-10s        %3d\n", tjSQL, current)
 	fmt.Println("\n事后监督报告漏报清单")
 	sqlite3.Printf("%-9s       %-40s\n", shjdSQL, current)
