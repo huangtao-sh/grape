@@ -23,6 +23,10 @@ const (
 	jlrsql = "insert or ignore into djr values(?,?)"
 )
 
+func conv(row []string) ([]string, error) {
+	return row[:29], nil
+}
+
 // Load 读取数据
 func Load() {
 	file := path.NewPath("~/Downloads").Find("resultReg*.xls")
@@ -32,7 +36,8 @@ func Load() {
 		p := path.NewPath(file)
 		info := p.FileInfo()
 		d := loader.NewXlsReader(file, 0, 1)
-		l := loader.NewLoader(info, "nkwg", nksql, d)
+		dd := loader.NewConverter(d, conv)
+		l := loader.NewLoader(info, "nkwg", nksql, dd)
 		l.Clear = false // 不对已导入数据进行清理
 		err := l.Load()
 		if err != nil {
