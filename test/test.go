@@ -4,6 +4,7 @@ import (
 	"errors"
 	//"grape/params/lzbg"
 	"fmt"
+	"github.com/huangtao-sh/xls"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -27,5 +28,10 @@ func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
 	fmt.Println("This is a test.")
-
+	if file, err := xls.Open("C:/Users/huangtao/test.xls", ""); err == nil {
+		s, _ := file.GetRows("Sheet1")
+		for i, r := range s {
+			fmt.Println(i,len(r),r)
+		}
+	}
 }
