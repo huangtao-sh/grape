@@ -28,7 +28,7 @@ func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
 	fmt.Println("This is a test.")
-	if file, err := xls.Open("C:/Users/huangtao/test.xls", ""); err == nil {
+	if file, err := xls.Open("C:/Users/huangtao/Downloads/resultReg.xls", ""); err == nil {
 		s, _ := file.GetRows("Sheet1")
 		for i, r := range s {
 			fmt.Println(i,len(r),r)
