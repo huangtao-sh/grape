@@ -6,15 +6,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"grape/sqlite"
-	"grape/util"
+	"grape/sqlite3"
 )
 
 func init() {
-	sqlite.Config("xyk.db")
+	sqlite3.Config("xyk.db")
 }
 
-func create_table(db *sqlite.DB) {
+func create_table() {
 	sql := `
 create table if not exists ylqs(
 	rq		text	primary key,  -- 日期
@@ -44,8 +43,7 @@ from ylqs a
 left join ys b 
 on a.rq=b.rq;
 	`
-	_, err := db.Exec(sql)
-	util.CheckErr(err, 1)
+	sqlite3.ExecScript(sql)
 	// fmt.Println("创建数据库表成功")
 }
 
@@ -63,31 +61,27 @@ func main() {
 	flag.StringVar(&sql, "e", "", "显示数据结果")
 	flag.BoolVar(&export, "p", false, "导出报表")
 	flag.Parse()
-	db, err := sqlite.Open()
-	util.CheckFatal(err)
-	defer db.Close()
+	defer sqlite3.Close()
 	version()
 	if auto || init {
-		create_table(db)
+		create_table()
 	}
 	if auto || load {
-		Load(db)
+		Load()
 	}
 	if auto || show {
-		Show(db)
+		Show()
 	}
 	if auto || export {
-		Export(db)
+		Export()
 	}
 	if sql != "" {
-		db.ExecQuery(sql)
+		sqlite3.Println(sql)
 	}
 }
 
-func Show(db *sqlite.DB) {
+func Show() {
 	sql := `select * from (select * from ylb order by rq desc limit 10) order by rq`
-	r, err := db.Fetch(sql)
-	util.CheckFatal(err)
 	fmt.Println("日期       银联净额（借方） 收付费（借方)   手续费轧差（贷方）  银数轧差（贷方）   记账金额（贷方）")
-	util.Printf("%s%19.2f%15.2f%19.2f%19.2f%19.2f\n", r)
+	sqlite3.Printf("%s%19.2f%15.2f%19.2f%19.2f%19.2f\n", sql)
 }
