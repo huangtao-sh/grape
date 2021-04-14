@@ -31,7 +31,7 @@ func init() {
 		"不动户": "久悬",
 		"抹账":  "撤销"}
 	loadRhsj = util.Sprintf("insert into rhsj %15V")
-	loadBhsj = util.Sprintf("insert or replace into bhsj(zh,yshm,hm,zhlb,khrq,xhrq,zt) %7V")
+	loadBhsj = util.Sprintf("insert or replace into bhsj(zh,khjg,bz,hm,zhlb,khrq,xhrq,zt,yshm) %9V")
 }
 
 func convRhsj(row []string) (d []string, err error) {
@@ -64,24 +64,17 @@ func LoadRhsj() {
 
 }
 func convBhsj(row []string) (d []string, err error) {
-	d = make([]string, 7)
-	d[0] = row[14]
-	d[1] = strings.TrimSpace(strings.ToUpper(row[4]))
-	d[2] = FullChar(d[1])
-	d[3] = row[16]
-	if d[3] == "\\N" {
-		d[3] = ""
-	}
-	d[4] = Date(row[5])
-	d[5] = Date(row[13])
-	d[6] = acStatus[row[18]]
+	d = make([]string, 9)
+	copy(d[:8], row[:8])
+	d[3] = strings.TrimSpace(strings.ToUpper(d[3]))
+	d[8] = FullChar(d[3])
 	return
 }
 
 // LoadBhsj 导入人行数据
 func LoadBhsj() {
 	ROOT := path.NewPath("~/Downloads")
-	fileName := ROOT.Find("*/开销户登记簿*.xls*")
+	fileName := ROOT.Find("开户销户登记簿对公账户信息*.xls")
 	log.Printf("导入文件:%s\n", fileName)
 	file, err := loader.NewXlsFile(fileName)
 	if err != nil {

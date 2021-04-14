@@ -26,12 +26,14 @@ create table if not exists rhsj(
 create index if not exists rhsj_zh on rhsj(zh);
 create table if not exists bhsj(
 	zh		text primary key, -- 账号
+	khjg	text,	-- 开户机构
+	bz		text,	-- 币种
 	yshm	text,	-- 户名
-	hm		text,	-- 修正户名
 	zhlb	text,	-- 账户类别
 	khrq	text,	-- 开户日期
 	xhrq	text,	-- 销户日期
 	zt		text,	-- 状态  
+	hm		text,	-- 修正户名
 	hdjg	text	-- 核对结果
 );
 `
