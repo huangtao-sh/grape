@@ -32,7 +32,11 @@ func main() {
 		fmt.Printf(description, rhzh.Version)
 		os.Exit(0)
 	}
-	rhzh.LoadBhsj()
-	rhzh.LoadRhsj()
+	if 1 == 2 {
+
+		rhzh.LoadBhsj()
+		rhzh.LoadRhsj()
+	}
+
 	rhzh.Query(*all)
 }
