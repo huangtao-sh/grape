@@ -61,6 +61,7 @@ func LoadRhsj() {
 	reader := file.Read(0, 1, convRhsj)
 	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "rhsj", loadRhsj, reader)
 	lder.Clear = true
+	lder.Check = true
 	err = lder.Load()
 	if err != nil {
 		fmt.Println(err)
@@ -94,7 +95,8 @@ func LoadBhsj() {
 	defer file.Close()
 	reader := file.Read(0, 1, convBhsj)
 	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "bhsj", loadBhsj, reader)
-	lder.Clear = true
+	lder.Clear = false
+	lder.Check = true
 	err = lder.Load()
 	if err != nil {
 		fmt.Println(err)

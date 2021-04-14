@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"grape/path"
 	"grape/rhzh"
+	"grape/sqlite3"
 	"os"
 )
 
@@ -21,7 +22,12 @@ func main() {
 	path.InitLog()
 	version := flag.Bool("v", false, "显示程序版本")
 	all := flag.Bool("a", false, "比对所有账户")
+	querySQL := flag.String("q", "", "执行查询")
 	flag.Parse()
+	if *querySQL != "" {
+		sqlite3.Println(*querySQL)
+		os.Exit(0)
+	}
 	if *version {
 		fmt.Printf(description, rhzh.Version)
 		os.Exit(0)
