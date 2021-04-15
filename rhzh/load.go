@@ -51,7 +51,7 @@ func convRhsj(row []string) (d []string, err error) {
 // LoadRhsj 导入人行数据
 func LoadRhsj() {
 	ROOT := path.NewPath("~/Downloads")
-	fileName := ROOT.Find("*/单位银行结算账户开立、变更及撤销情况查询结果输出*.xls*")
+	fileName := ROOT.Find("单位银行结算账户开立、变更及撤销情况查询结果输出*.xls*")
 	log.Printf("导入文件:%s\n", fileName)
 	file, err := loader.NewXlsFile(fileName)
 	if err != nil {
@@ -60,8 +60,6 @@ func LoadRhsj() {
 	defer file.Close()
 	reader := file.Read(0, 1, convRhsj)
 	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "rhsj", loadRhsj, reader)
-	lder.Clear = true
-	lder.Check = true
 	err = lder.Load()
 	if err != nil {
 		fmt.Println(err)
@@ -73,14 +71,13 @@ func LoadRhsj() {
 	}
 
 }
-func convBhsj(row []string) (d []string, err error) {
-	d = make([]string, 9)
-	copy(d[:8], row[:8])
-	d[3] = strings.TrimSpace(strings.ToUpper(d[3]))
-	d[4] = acType[d[4]]
-	d[7] = acStatus[d[7]]
-	d[8] = FullChar(d[3])
-	return
+func convBhsj(row []string) ([]string, error) {
+	row = row[:8]
+	row[3] = strings.TrimSpace(strings.ToUpper(row[3]))
+	row[4] = acType[row[4]]
+	row[7] = acStatus[row[7]]
+	row = append(row, FullChar(row[3]))
+	return row, nil
 }
 
 // LoadBhsj 导入本行数据
@@ -96,7 +93,6 @@ func LoadBhsj() {
 	reader := file.Read(0, 1, convBhsj)
 	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "bhsj", loadBhsj, reader)
 	lder.Clear = false
-	lder.Check = true
 	err = lder.Load()
 	if err != nil {
 		fmt.Println(err)
