@@ -44,7 +44,7 @@ func init() {
 }
 
 func convRhsj(row []string) (d []string, err error) {
-	d = append(row, acTypeRh[row[6]])
+	d = append(row[:14], acTypeRh[row[6]])
 	return
 }
 
