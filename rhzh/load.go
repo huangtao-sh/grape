@@ -51,25 +51,25 @@ func convRhsj(row []string) (d []string, err error) {
 // LoadRhsj 导入人行数据
 func LoadRhsj() {
 	ROOT := path.NewPath("~/Downloads")
-	fileName := ROOT.Find("单位银行结算账户开立、变更及撤销情况查询结果输出*.xls*")
-	log.Printf("导入文件:%s\n", fileName)
+	fileName := ROOT.Find("单位银行结算账户开立、变更及撤销情况查询结果输出*.xls")
+	fmt.Printf("导入文件:%s\n", fileName)
 	file, err := loader.NewXlsFile(fileName)
 	if err != nil {
-		log.Fatal("打开文件失败")
-	}
-	defer file.Close()
-	reader := file.Read(0, 1, convRhsj)
-	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "rhsj", loadRhsj, reader)
-	err = lder.Load()
-	if err != nil {
-		fmt.Println(err)
+		log.Println("打开文件失败")
 	} else {
-		fmt.Printf("导入文件 %s 成功\n", fileName)
-		sqlite3.Printf(
-			"导入数据：%d 条\n",
-			"select count(*) from rhsj")
+		defer file.Close()
+		reader := file.Read(0, 1, convRhsj)
+		lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "rhsj", loadRhsj, reader)
+		err = lder.Load()
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Printf("导入文件 %s 成功\n", fileName)
+			sqlite3.Printf(
+				"导入数据：%d 条\n",
+				"select count(*) from rhsj")
+		}
 	}
-
 }
 func convBhsj(row []string) ([]string, error) {
 	row = row[:8]
@@ -84,22 +84,22 @@ func convBhsj(row []string) ([]string, error) {
 func LoadBhsj() {
 	ROOT := path.NewPath("~/Downloads")
 	fileName := ROOT.Find("开户销户登记簿对公账户信息*.xls")
-	log.Printf("导入文件:%s\n", fileName)
-	file, err := loader.NewXlsFile(fileName)
-	if err != nil {
-		log.Fatal("打开文件失败")
-	}
-	defer file.Close()
-	reader := file.Read(0, 1, convBhsj)
-	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "bhsj", loadBhsj, reader)
-	lder.Clear = false
-	err = lder.Load()
-	if err != nil {
-		fmt.Println(err)
+	fmt.Printf("导入文件:%s\n", fileName)
+	if file, err := loader.NewXlsFile(fileName); err != nil {
+		log.Println("打开文件失败")
 	} else {
-		fmt.Printf("导入文件 %s 成功\n", fileName)
-		sqlite3.Printf(
-			"导入数据：%d 条\n",
-			"select count(zh) from bhsj")
+		defer file.Close()
+		reader := file.Read(0, 1, convBhsj)
+		lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "bhsj", loadBhsj, reader)
+		lder.Clear = false
+		err = lder.Load()
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Printf("导入文件 %s 成功\n", fileName)
+			sqlite3.Printf(
+				"导入数据：%d 条\n",
+				"select count(zh) from bhsj")
+		}
 	}
 }

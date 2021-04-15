@@ -5,6 +5,7 @@ import (
 	//"grape/params/lzbg"
 	"fmt"
 	"github.com/huangtao-sh/xls"
+	"grape/path"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -28,10 +29,13 @@ func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
 	fmt.Println("This is a test.")
-	if file, err := xls.Open("C:/Users/huangtao/Downloads/resultReg.xls", ""); err == nil {
-		s, _ := file.GetRows("Sheet1")
+	file := path.NewPath("~/Downloads/账户管理数据").Find("单位银行结算*.xls")
+	if file, err := xls.Open(file, ""); err == nil {
+		s, _ := file.GetRows(0)
 		for i, r := range s {
-			fmt.Println(i,len(r),r)
+			fmt.Println(i, len(r), r)
 		}
+	} else {
+		fmt.Println(err)
 	}
 }
