@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"grape/gbk"
 	"grape/path"
-	"grape/sqlite"
+	"grape/sqlite3"
 	"grape/text"
 	"grape/util"
 	"io"
@@ -18,9 +18,8 @@ import (
 	"sync"
 )
 
-func GetDate(db *sqlite.DB) (rq string) {
-	row := db.QueryRow("select max(rq) from ylqs")
-	row.Scan(&rq)
+func GetDate() (rq string) {
+	sqlite3.QueryRow("select max(rq) from ylqs").Scan(&rq)
 	return
 }
 
@@ -34,12 +33,12 @@ func findPath(p string, pattern string) *path.Path {
 	return nil
 }
 
-func Load(db *sqlite.DB) {
+func Load() {
 	root := path.NewPath("~/信用卡")
-	tx, err := db.Begin()
+	tx,err:=sqlite3.NewDB().Begin()
 	util.CheckFatal(err)
 	defer tx.Rollback()
-	date := GetDate(db)
+	date := GetDate()
 	wg := &sync.WaitGroup{}
 	for _, p := range root.Glob("??????") {
 		rq := path.NewPath(p).Base()

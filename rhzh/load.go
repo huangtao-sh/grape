@@ -13,12 +13,20 @@ import (
 var (
 	acType   map[string]string // 账户类型转换
 	acStatus map[string]string // 账户状态转换
+	acTypeRh map[string]string // 人行账户类型转换
 	loadRhsj string            // 导入人行数据 SQL
 	loadBhsj string            // 导入本行数据 SQL
 )
 
 func init() {
 	acType = map[string]string{
+		"结算账户(基本户)":  "基本户",
+		"结算账户(一般户)":  "一般户",
+		"结算账户(专用户)":  "专用户",
+		"电子结算户(一般户)": "一般户",
+		"结算账户()":     "结算账户"}
+
+	acTypeRh = map[string]string{
 		"基本存款账户":      "基本户",
 		"一般存款账户":      "一般户",
 		"非预算单位专用存款账户": "专用户",
@@ -26,16 +34,17 @@ func init() {
 		"预算单位专用存款账户":  "专用户"}
 
 	acStatus = map[string]string{
-		"正常":  "正常",
+		"开户":  "正常",
 		"销户":  "撤销",
 		"不动户": "久悬",
+		"待启用": "正常",
 		"抹账":  "撤销"}
 	loadRhsj = util.Sprintf("insert into rhsj %15V")
-	loadBhsj = util.Sprintf("insert or replace into bhsj(zh,yshm,hm,zhlb,khrq,xhrq,zt) %7V")
+	loadBhsj = util.Sprintf("insert or replace into bhsj(zh,khjg,bz,yshm,zhlb,khrq,xhrq,zt,hm) %9V")
 }
 
 func convRhsj(row []string) (d []string, err error) {
-	d = append(row, acType[row[6]])
+	d = append(row, acTypeRh[row[6]])
 	return
 }
 
@@ -52,6 +61,7 @@ func LoadRhsj() {
 	reader := file.Read(0, 1, convRhsj)
 	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "rhsj", loadRhsj, reader)
 	lder.Clear = true
+	lder.Check = true
 	err = lder.Load()
 	if err != nil {
 		fmt.Println(err)
@@ -64,24 +74,19 @@ func LoadRhsj() {
 
 }
 func convBhsj(row []string) (d []string, err error) {
-	d = make([]string, 7)
-	d[0] = row[14]
-	d[1] = strings.TrimSpace(strings.ToUpper(row[4]))
-	d[2] = FullChar(d[1])
-	d[3] = row[16]
-	if d[3] == "\\N" {
-		d[3] = ""
-	}
-	d[4] = Date(row[5])
-	d[5] = Date(row[13])
-	d[6] = acStatus[row[18]]
+	d = make([]string, 9)
+	copy(d[:8], row[:8])
+	d[3] = strings.TrimSpace(strings.ToUpper(d[3]))
+	d[4] = acType[d[4]]
+	d[7] = acStatus[d[7]]
+	d[8] = FullChar(d[3])
 	return
 }
 
-// LoadBhsj 导入人行数据
+// LoadBhsj 导入本行数据
 func LoadBhsj() {
 	ROOT := path.NewPath("~/Downloads")
-	fileName := ROOT.Find("*/开销户登记簿*.xls*")
+	fileName := ROOT.Find("开户销户登记簿对公账户信息*.xls")
 	log.Printf("导入文件:%s\n", fileName)
 	file, err := loader.NewXlsFile(fileName)
 	if err != nil {
@@ -90,7 +95,8 @@ func LoadBhsj() {
 	defer file.Close()
 	reader := file.Read(0, 1, convBhsj)
 	lder := loader.NewLoader(path.NewPath(fileName).FileInfo(), "bhsj", loadBhsj, reader)
-	lder.Clear = true
+	lder.Clear = false
+	lder.Check = true
 	err = lder.Load()
 	if err != nil {
 		fmt.Println(err)
