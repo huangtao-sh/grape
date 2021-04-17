@@ -19,8 +19,9 @@ order by a.zh`
 rhsj b on a.zh=b.zh 
 where b.zh is null and %s and substr(a.zh,12,3)='201' and a.bz='01' 
 order by a.khrq `
-	cwsjHeader = "账号,户名,户名（人行）,账户类别,账户性质（人行）,开户日期,开户日期（人行）,销户日期,销户日期（人行）,状态,状态（人行）"
-	cwsjSQL    = `select a.zh,a.yshm,b.hm,a.zhlb,b.zhxz,a.khrq,b.khrq,a.xhrq,b.xhrq,a.zt,b.zt 
+	cwsjHeader = "账号,户名,户名（人行）,账户类别,账户性质（人行）,开户日期,开户日期（人行）,销户日期,销户日期（人行）,状态,状态（人行）,户名比对结果,账户种类比对结果,开户日期比对结果,销户日期比对结果,状态比对结果"
+	cwsjSQL    = `select a.zh,a.yshm,b.hm,a.zhlb,b.zhxz,a.khrq,b.khrq,a.xhrq,b.xhrq,a.zt,b.zt,
+iif(a.hm==b.hm,"","不相符"),iif(a.khrq==b.khrq,"","不相符"),iif(a.xhrq==b.xhrq,"","不相符"),iif(a.zt==b.zt,"","不相符") 
 from bhsj a left join rhsj b on a.zh=b.zh  
 where(a.hm<>b.hm or a.khrq<>b.khrq or a.xhrq<>b.xhrq or a.zt<>b.zt or a.zhlb<>b.zhlb)and %s
 and substr(a.zh,12,3)='201' and a.bz='01' 
@@ -52,6 +53,7 @@ func Query(exportall bool) {
 			"D:E": 13,
 			"F:I": 12,
 			"J:K": 8,
+			"L:O": 15,
 		}
 		tjWidth = map[string]float64{
 			"A":   25.4,
