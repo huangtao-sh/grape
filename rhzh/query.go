@@ -67,7 +67,6 @@ func Query(exportall bool) {
 	} else {
 		condition = "(a.khrq > date('now','-3 month')or(a.xhrq>date('now','-3 nonth'))) "
 	}
-
 	book := xls.NewFile()
 	sheet := book.GetSheet(0)
 	sheet.Rename("多报送数据")
@@ -78,9 +77,7 @@ func Query(exportall bool) {
 	sheet.Write("A1", cwsjHeader, cwsjWidth, sqlite3.Fetch(fmt.Sprintf(cwsjSQL, condition)))
 	sheet = book.GetSheet("多次报送统计")
 	sheet.Write("A1", tjHeader, tjWidth, sqlite3.Fetch(fmt.Sprintf(tjSQL, condition)))
-
 	file := path.NewPath("~/Downloads/账户报送数据比对.xlsx")
 	book.SaveAs(file)
 	fmt.Printf("导出报送成功\n")
-
 }
