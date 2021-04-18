@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"grape/path"
+	"grape"
 	"grape/sqlite3"
-	"grape/util"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
@@ -12,9 +11,9 @@ import (
 
 func Cell(row, col int) (r string) {
 	column, err := excelize.ColumnNumberToName(col)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	r, err = excelize.JoinCellName(column, row)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	return
 }
 
@@ -26,9 +25,9 @@ func Export() {
 	file.SetColWidth(sheet, "A", "A", 12)
 	file.SetColWidth(sheet, "B", "F", 20)
 	style, err := file.NewStyle(`{"number_format":4}`)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	headerStyle, err := file.NewStyle(`{"alignment":{"horizontal":"center"},"font":{"family":"黑体"}}`)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	file.SetCellStyle(sheet, "A1", "F1", headerStyle)
 	for i, h := range header {
 		file.SetCellValue(sheet, Cell(1, i+1), h)
@@ -44,7 +43,7 @@ func Export() {
 	file.SetCellStyle(sheet, "B2", Cell(row-1, 6), style)
 	// 获取导出文件名
 	date := GetDate()
-	filename := path.NewPath(fmt.Sprintf("~/信用卡/信用卡报表-%s.xlsx", date))
+	filename := grape.NewPath(fmt.Sprintf("~/信用卡/信用卡报表-%s.xlsx", date))
 	file.SaveAs(filename.String())
 	fmt.Printf("导出文件 %s 成功！\n", filename)
 }

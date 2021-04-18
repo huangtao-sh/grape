@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"grape/data/xls"
 	"grape/params/load"
-	"grape/path"
-	"grape/util"
+	"grape"
 	"io"
 	"os"
 	"strconv"
@@ -45,10 +44,10 @@ func LoadWwxt(info os.FileInfo, r io.Reader, ver string) *load.Loader {
 func Load() {
 	file := Root.Find("新增外围系统列表????-??-??.xlsx")
 	if file != "" {
-		p := path.NewPath(file)
+		p := grape.NewPath(file)
 		r, err := p.Open()
 		ver := p.FileInfo().Name()[24:34]
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 		loader := LoadWwxt(p.FileInfo(), r, ver)
 		loader.Load()
 	} else {

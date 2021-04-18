@@ -4,16 +4,16 @@ import (
 	"flag"
 	"fmt"
 	_ "grape/params" // 初始化数据库配置
-	"grape/path"
+	"grape"
 	"grape/sqlite3"
 	"runtime"
 )
 
 // Root 参数根目录
-var Root *path.Path
+var Root *grape.Path
 
 func init() {
-	Root = path.NewPath("~/OneDrive/工作/参数备份/外围系统")
+	Root = grape.NewPath("~/OneDrive/工作/参数备份/外围系统")
 }
 
 // Version 打印版本信息

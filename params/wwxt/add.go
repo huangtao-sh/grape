@@ -3,7 +3,7 @@ package wwxt
 import (
 	"fmt"
 	"grape/sqlite3"
-	"grape/util"
+	"grape"
 	"strings"
 )
 
@@ -33,7 +33,7 @@ func Add(names *string) {
 		tx := sqlite3.NewTx()
 		defer tx.Rollback()
 		stmt, err := tx.Prepare("insert into wwxt(id,name,date) values(?,?,date('now'))")
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 		defer stmt.Close()
 		for i, name := range Names {
 			stmt.Exec(int(No)+i, name)
