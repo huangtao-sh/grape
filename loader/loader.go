@@ -3,7 +3,7 @@ package loader
 import (
 	"fmt"
 	"grape/sqlite3"
-	"grape/util"
+	"grape"
 	"io"
 	"log"
 	"os"
@@ -34,7 +34,7 @@ func loadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 	mtime := info.ModTime()
 	return func(tx *sqlite3.Tx) (err error) {
 		err = tx.QueryRow(checkSQL, name, filename, mtime).Scan(&count)
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 		if count > 0 {
 			return fmt.Errorf("文件 %s 已导入", filename)
 		}

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"grape"
 	"grape/date"
 	"log"
 	"os"
@@ -17,6 +18,6 @@ func InitLog() {
 	os.Mkdir(logRoot, 0755)
 	filePath := filepath.Join(logRoot, name)
 	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR|os.O_APPEND, os.ModeAppend|os.ModePerm)
-	CheckFatal(err)
+	grape.CheckFatal(err)
 	log.SetOutput(f)
 }

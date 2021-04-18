@@ -1,11 +1,10 @@
-package rhzh
+package main
 
 import (
 	"fmt"
+	"grape"
 	"grape/loader"
-	"grape/path"
 	"grape/sqlite3"
-	"grape/util"
 	"log"
 	"strings"
 )
@@ -40,8 +39,8 @@ func init() {
 		"不动户": "久悬",
 		"待启用": "正常",
 		"抹账":  "撤销"}
-	loadRhsj = util.Sprintf("insert into rhsj %15V")
-	loadBhsj = util.Sprintf("insert or replace into bhsj(zh,khjg,bz,yshm,zhlb,khrq,xhrq,zt,hm) %9V")
+	loadRhsj = grape.Sprintf("insert into rhsj %15V")
+	loadBhsj = grape.Sprintf("insert or replace into bhsj(zh,khjg,bz,yshm,zhlb,khrq,xhrq,zt,hm) %9V")
 }
 
 // convRhsj 人行数据转换程序，新增转换后的账户类型
@@ -52,13 +51,13 @@ func convRhsj(row []string) (d []string, err error) {
 
 // LoadRhsj 导入人行数据
 func LoadRhsj() {
-	ROOT := path.NewPath("~/Downloads")
+	ROOT := grape.NewPath("~/Downloads")
 	fileName := ROOT.Find("单位银行结算账户开立、变更及撤销情况查询结果输出*.xls")
 	if fileName != "" {
 		var err error
 		reader := NewXlsReader(fileName, "PAGE1", 1)
 		reader = loader.NewConverter(reader, convRhsj)
-		info := path.NewPath(fileName).FileInfo()
+		info := grape.NewPath(fileName).FileInfo()
 		lder := loader.NewLoader(info, "rhsj", loadRhsj, reader)
 		err = lder.Load()
 		if err != nil {
@@ -86,14 +85,14 @@ func convBhsj(row []string) ([]string, error) {
 
 //LoadBhsj 导入本行数据
 func LoadBhsj() {
-	ROOT := path.NewPath("~/Downloads")
+	ROOT := grape.NewPath("~/Downloads")
 	fileName := ROOT.Find("开户销户登记簿对公账户信息*.xls")
 	if fileName != "" {
 		var err error
 		log.Printf("导入文件：%s", fileName)
 		reader := NewXlsReader(fileName, "Sheet1", 1)
 		reader = loader.NewConverter(reader, convBhsj)
-		info := path.NewPath(fileName).FileInfo()
+		info := grape.NewPath(fileName).FileInfo()
 		lder := loader.NewLoader(info, "bhsj", loadBhsj, reader)
 		lder.Clear = false
 		err = lder.Load()

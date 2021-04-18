@@ -2,7 +2,7 @@ package loader
 
 import (
 	"fmt"
-	"grape/util"
+	"grape"
 	"io"
 	"os"
 	"strings"
@@ -39,7 +39,7 @@ func (r *xlsxReader) Read() (result []string, err error) {
 func (f *xlsxFile) Read(sheet int, skip int, converters ...ConvertFunc) Reader {
 	sheetname := f.book.GetSheetName(sheet)
 	rows, err := f.book.Rows(sheetname)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	for i := 0; (i < skip) && rows.Next(); i++ {
 		rows.Columns()
 	}

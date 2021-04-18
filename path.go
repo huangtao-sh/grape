@@ -1,9 +1,8 @@
-package path
+package grape
 
 import (
 	"fmt"
 	"grape/date"
-	"grape/util"
 	"io"
 	"log"
 	"os"
@@ -135,14 +134,14 @@ func (p *Path) Clean() string {
 // Glob 查找文件
 func (p *Path) Glob(pattern string) (matches []string) {
 	matches, err := filepath.Glob(filepath.Join(p.path, pattern))
-	util.CheckFatal(err)
+	CheckFatal(err)
 	return
 }
 
 // Match 判断是否匹配
 func (p *Path) Match(pattern string) (matched bool) {
 	matched, err := filepath.Match(pattern, p.path)
-	util.CheckFatal(err)
+	CheckFatal(err)
 	return
 }
 
@@ -158,7 +157,7 @@ func (p *Path) Find(pattern string) (path string) {
 // FileInfo 获取文件信息
 func (p *Path) FileInfo() (info os.FileInfo) {
 	info, err := os.Stat(p.String())
-	util.CheckFatal(err)
+	CheckFatal(err)
 	return
 }
 
@@ -182,6 +181,6 @@ func InitLog() {
 	dir.Ensure() // 建立目录
 	filename := dir.Join(name).WithExt(".log")
 	r, err := os.OpenFile(filename.String(), os.O_CREATE|os.O_APPEND, os.ModePerm)
-	util.CheckFatal(err)
+	CheckFatal(err)
 	log.SetOutput(r)
 }

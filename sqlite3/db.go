@@ -4,8 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"grape/path"
-	"grape/util"
+	"grape"
 	"strings"
 
 	// 引用 go-sqlite3 进行初始化
@@ -20,8 +19,8 @@ var (
 // parsePath 数据库配置处理函数
 func parsePath(pathName string) string {
 	// path 如果不是 :memory:，无目录的指定默认目录
-	if (pathName != ":memory:") && (path.NewPath(pathName).Dir() == ".") {
-		dataHome := path.Home.Join(".data")
+	if (pathName != ":memory:") && (grape.NewPath(pathName).Dir() == ".") {
+		dataHome := grape.Home.Join(".data")
 		dataHome.Ensure() // 目录不存在则自动创建
 		pathName = (dataHome.Join(pathName).WithExt(".db")).String()
 	}
@@ -40,7 +39,7 @@ func NewDB() *sql.DB {
 	if db == nil {
 		var err error
 		db, err = sql.Open("sqlite3", dataSourceName)
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 	}
 	return db
 }
@@ -48,13 +47,13 @@ func NewDB() *sql.DB {
 // Attach 附加数据库
 func Attach(path string, name string) {
 	_, err := NewDB().Exec(fmt.Sprintf("attach database '%s' as '%s'", parsePath(path), name))
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 }
 
 // Detach 分离数据库
 func Detach(name string) {
 	_, err := NewDB().Exec(fmt.Sprintf("detach database '%s'", name))
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 }
 
 // Close 关闭数据库
@@ -68,7 +67,7 @@ func Close() {
 // ExecScript 执行脚本，支持多条语句，用于执行 DDL 语句
 func ExecScript(sql string) {
 	_, err := NewDB().Exec(sql)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 }
 
 // LoadSQL 生成导入 SQL 语句
@@ -85,8 +84,8 @@ func LoadSQL(method string, table string, columns interface{}) string {
 		colCount = len(cols)
 		table = fmt.Sprintf("%s(%s)", table, strings.Join(cols, ","))
 	default:
-		util.CheckFatal(errors.New("columns must be string,int or []stirng"))
+		grape.CheckFatal(errors.New("columns must be string,int or []stirng"))
 	}
 	s := fmt.Sprintf("%%s into %%s %%%dV", colCount)
-	return util.Sprintf(s, method, table)
+	return grape.Sprintf(s, method, table)
 }

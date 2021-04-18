@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"compress/gzip"
 	"grape/gbk"
-	"grape/util"
+	"grape"
 	"io"
 	"os"
 	"strings"
@@ -30,7 +30,7 @@ func Decode(r io.Reader, isGz bool, isGbk bool) io.Reader {
 	var err error
 	if isGz {
 		r, err = gzip.NewReader(r)
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 	}
 	if isGbk {
 		r = gbk.NewReader(r)

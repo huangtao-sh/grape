@@ -3,7 +3,7 @@ package sqlite3
 import (
 	"database/sql"
 	"fmt"
-	"grape/util"
+	"grape"
 	"reflect"
 	"strings"
 )
@@ -28,9 +28,9 @@ type querier interface {
 // fetch 执行查询，并返回查询结果
 func fetch(db querier, sql string, args ...interface{}) (reader *RowReader) {
 	rows, err := db.Query(sql, args...)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	columns, err := rows.Columns()
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	count := len(columns)
 	values := make([]interface{}, count)
 	addrs := make([]interface{}, count)
@@ -45,7 +45,7 @@ func fetch(db querier, sql string, args ...interface{}) (reader *RowReader) {
 func fetchValue(db querier, query string, args ...interface{}) (value interface{}) {
 	row := db.QueryRow(query, args...)
 	err := row.Scan(&value)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	return
 }
 
@@ -74,7 +74,7 @@ func PrintRow(header string, query string, args ...interface{}) (err error) {
 	addrs := make([]interface{}, count)
 	for i := range headers {
 		addrs[i] = &values[i]
-		if l := util.Wlen(headers[i]); l > width {
+		if l := grape.Wlen(headers[i]); l > width {
 			width = l
 		}
 	}
@@ -84,7 +84,7 @@ func PrintRow(header string, query string, args ...interface{}) (err error) {
 		return
 	}
 	for i, header := range headers {
-		fmt.Println(util.Sprintf(format, header, fmt.Sprint(values[i])))
+		fmt.Println(grape.Sprintf(format, header, fmt.Sprint(values[i])))
 	}
 	return
 }
@@ -102,7 +102,7 @@ func Printf(format string, sql string, args ...interface{}) {
 	rows := Fetch(sql, args...)
 	for rows.Next() {
 		//fmt.Printf(format, rows.Read()...)
-		fmt.Print(util.Sprintf(format, rows.Read()...))
+		fmt.Print(grape.Sprintf(format, rows.Read()...))
 	}
 }
 

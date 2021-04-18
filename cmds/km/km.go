@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"grape/params"
 	"grape/sqlite3"
-	"grape/util"
+	"grape"
 	"strings"
 )
 
@@ -55,10 +55,10 @@ func main() {
 	flag.Parse()
 	params.PrintVer("nbzhmb") // 打印参数版本
 	for _, ac := range flag.Args() {
-		if util.FullMatch(`\d{6}-\d{1,3}`, ac) {
+		if grape.FullMatch(`\d{6}-\d{1,3}`, ac) {
 			kk := strings.Split(ac, "-")
 			km, xh = kk[0], kk[1]
-		} else if util.FullMatch(`\d{6}`, ac) {
+		} else if grape.FullMatch(`\d{6}`, ac) {
 			kmcs(ac)
 			showKaihu(ac)
 			minAvaible(ac)
@@ -67,7 +67,7 @@ func main() {
 			sqlite3.Printf("%-10s  %4s  %6s  %03d  %4s  %19,.2f  %4s  %4s  %s\n",
 				"select whrq,jglx,km,xh,bz,tzed,cszt,jxbz,hm from nbzhmb where km=? order by km,xh,jglx,bz", ac)
 			continue
-		} else if util.FullMatch(`\d{9}`, ac) {
+		} else if grape.FullMatch(`\d{9}`, ac) {
 			km, xh = ac[:6], ac[6:]
 		} else {
 			k := []rune(ac)
@@ -76,7 +76,7 @@ func main() {
 				ac = fmt.Sprintf("%%%s%%", ac)
 				sqlite3.Printf("%-6s  %-50s\n", `select km,kmmc from kmzd where kmmc like ?`, ac)
 				continue
-			} else if util.FullMatch(`\d{2,5}`, ac) {
+			} else if grape.FullMatch(`\d{2,5}`, ac) {
 				ac = ac + "%"
 				sqlite3.Printf("%-6s  %-50s\n", `select km,kmmc from kmzd where km like ?`, ac)
 				continue

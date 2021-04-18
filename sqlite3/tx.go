@@ -3,7 +3,7 @@ package sqlite3
 import (
 	"database/sql"
 	"errors"
-	"grape/util"
+	"grape"
 )
 
 // Tx 数据库事务
@@ -14,7 +14,7 @@ type Tx struct {
 // NewTx 新建事务
 func NewTx() *Tx {
 	tx, err := NewDB().Begin()
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	return &Tx{tx}
 }
 
@@ -38,7 +38,7 @@ type DataCh interface {
 func (tx *Tx) ExecCh(sql string, data DataCh) (err error) {
 	defer data.Done()
 	stmt, err := tx.Prepare(sql)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	defer stmt.Close()
 	for row := range data.ReadCh() {
 		_, err = stmt.Exec(row...)

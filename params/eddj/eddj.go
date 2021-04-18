@@ -5,7 +5,7 @@ import (
 	"grape/data/xls"
 	"grape/params/load"
 	"grape/sqlite3"
-	"grape/util"
+	"grape"
 	"io"
 	"os"
 	"strings"
@@ -23,7 +23,7 @@ const (
 
 // conv 转换函数
 func conv(row []string) (result []string) {
-	if len(row) > 15 && util.FullMatch(`\d{2}`, row[0]) {
+	if len(row) > 15 && grape.FullMatch(`\d{2}`, row[0]) {
 		result = make([]string, 4)
 		copy(result[:2], row[:2])
 		result[2] = strings.Join(row[2:15], "|")

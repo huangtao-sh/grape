@@ -1,9 +1,9 @@
-package rhzh
+package main
 
 import (
 	"fmt"
+	"grape"
 	"grape/data/xls"
-	"grape/path"
 	"grape/sqlite3"
 )
 
@@ -77,7 +77,7 @@ func Query(exportall bool) {
 	sheet.Write("A1", cwsjHeader, cwsjWidth, sqlite3.Fetch(fmt.Sprintf(cwsjSQL, condition)))
 	sheet = book.GetSheet("多次报送统计")
 	sheet.Write("A1", tjHeader, tjWidth, sqlite3.Fetch(fmt.Sprintf(tjSQL, condition)))
-	file := path.NewPath("~/Downloads/账户报送数据比对.xlsx")
+	file := grape.NewPath("~/Downloads/账户报送数据比对.xlsx")
 	book.SaveAs(file)
 	fmt.Printf("导出报送成功\n")
 }

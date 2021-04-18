@@ -1,4 +1,4 @@
-package rhzh
+package main
 
 import (
 	"grape/loader"

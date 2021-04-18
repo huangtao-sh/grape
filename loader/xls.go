@@ -1,7 +1,7 @@
 package loader
 
 import (
-	"grape/util"
+	"grape"
 	"io"
 	"os"
 	"path/filepath"
@@ -85,7 +85,7 @@ func (s *XlsReader) Read() (res []string, err error) {
 // NewXlsReader 读取 Excel 文件
 func NewXlsReader(filename string, sheet int, skip int) Reader {
 	book, err := xls.Open(filename, "utf-8")
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	st := book.GetSheet(sheet)
 	return &XlsReader{st, skip}
 }

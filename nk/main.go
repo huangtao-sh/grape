@@ -10,10 +10,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"grape"
 	"grape/loader"
-	"grape/path"
 	"grape/sqlite3"
-	"grape/util"
 	"log"
 	"strings"
 )
@@ -29,11 +28,11 @@ func conv(row []string) ([]string, error) {
 
 // Load 读取数据
 func Load() {
-	file := path.NewPath("~/Downloads").Find("resultReg*.xls")
+	file := grape.NewPath("~/Downloads").Find("resultReg*.xls")
 	if file == "" {
 		fmt.Println("未在 ~/Downloads 目录下找到 resultReg.xls 文件")
 	} else {
-		p := path.NewPath(file)
+		p := grape.NewPath(file)
 		info := p.FileInfo()
 		d := loader.NewXlsReader(file, 0, 1)
 		dd := loader.NewConverter(d, conv)
@@ -46,11 +45,11 @@ func Load() {
 			fmt.Printf("导入文件 %s 成功\n", info.Name())
 		}
 	}
-	file = path.NewPath("~/Documents/参数备份/考核记录人").Find("考核记录人*.xls")
+	file = grape.NewPath("~/Documents/参数备份/考核记录人").Find("考核记录人*.xls")
 	if file == "" {
 		fmt.Println("未在 ~/Documents/参数备份/考核记录人 目录下找到 考核记录人.xls 文件")
 	} else {
-		info := path.NewPath(file).FileInfo()
+		info := grape.NewPath(file).FileInfo()
 		d := loader.NewXlsReader(file, 0, 1)
 		l := loader.NewLoader(info, "djr", jlrsql, d)
 		err := l.Load()
@@ -65,7 +64,7 @@ func Load() {
 // getCurMonth 获取最近的月份
 func getCurMonth() (year, month string) {
 	err := sqlite3.QueryRow("select max(substr(lrsj,1,7)) from nkwg").Scan(&month)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	log.Printf("Current month :%s", month)
 	year, month = month[:4], month[5:]
 	return
@@ -113,7 +112,7 @@ order by sl desc`
 }
 
 func main() {
-	path.InitLog()
+	grape.InitLog()
 	sqlite3.Config("nkwg")
 	log.Printf("Set Database %s", "nkwg")
 	sqlite3.ExecScript(initSQL)

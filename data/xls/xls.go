@@ -2,10 +2,10 @@ package xls
 
 import (
 	"fmt"
-	"grape/path"
+	"grape"
 	"grape/text"
-	"grape/util"
 	"strings"
+	"grape/util"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
@@ -16,10 +16,10 @@ func Cell(col interface{}, row int) (cell string) {
 	switch column := col.(type) {
 	case int:
 		cell, err = excelize.CoordinatesToCellName(column, row)
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 	case string:
 		cell, err = excelize.JoinCellName(column, row)
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 	}
 	return
 }
@@ -27,7 +27,7 @@ func Cell(col interface{}, row int) (cell string) {
 // Write 向 Excel 写入数据 Deprecated
 func Write(book *excelize.File, sheet string, axis string, data util.Dater) {
 	col, row, err := excelize.CellNameToCoordinates(axis)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	for ; data.Next(); row++ {
 		rowdata := data.Read()
 		book.SetSheetRow(sheet, Cell(col, row), &rowdata)
@@ -43,9 +43,9 @@ func WriteData(book *excelize.File, sheet string, axis string, data util.Dater, 
 		SetWidth(book, sheet, widthes) // 设置宽度
 	}
 	col, row, err := excelize.CellNameToCoordinates(axis) // 读取初始
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	writer, err := book.NewStreamWriter(sheet)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	if header != "" {
 		headers := text.Slice(strings.Split(header, "|"))
 		writer.SetRow(Cell(col, row), headers)
@@ -122,9 +122,9 @@ func (f *File) WriteData(sheet string, axis string, header interface{}, data uti
 		f.NewSheet(sheet) // 工作表不存在时自动创建
 	}
 	col, row, err := excelize.CellNameToCoordinates(axis) // 读取初始
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	writer, err := f.NewStreamWriter(sheet)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	if header != nil {
 		var headers []string
 		switch head := header.(type) {
@@ -150,11 +150,11 @@ func (f *File) WriteData(sheet string, axis string, header interface{}, data uti
 
 // SaveAs 保存文件
 func (f *File) SaveAs(p interface{}) {
-	var filepath *path.Path
+	var filepath *grape.Path
 	switch file := p.(type) {
 	case string:
-		filepath = path.NewPath(file)
-	case *path.Path:
+		filepath = grape.NewPath(file)
+	case *grape.Path:
 		filepath = file
 	default:
 		panic(fmt.Sprintf("%v不是有效的文件名", f))

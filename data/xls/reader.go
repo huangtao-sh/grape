@@ -3,7 +3,7 @@ package xls
 import (
 	"fmt"
 	"grape/text"
-	"grape/util"
+	"grape"
 	"io"
 	"strings"
 
@@ -28,7 +28,7 @@ type Reader struct {
 // NewRowReader 工作表构造函数
 func NewRowReader(xls *excelize.File, sheet string, skip int, converters ...text.ConvertFunc) *Reader {
 	rows, err := xls.Rows(sheet)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	for i := 0; i < skip; i++ {
 		rows.Next()
 		rows.Columns()
@@ -39,7 +39,7 @@ func NewRowReader(xls *excelize.File, sheet string, skip int, converters ...text
 // NewXlsReader Excel Reader 构造函数
 func NewXlsReader(r io.Reader, sheet string, skip int, converters ...text.ConvertFunc) *Reader {
 	xls, err := excelize.OpenReader(r)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	return NewRowReader(xls, sheet, skip, converters...)
 }
 
@@ -51,7 +51,7 @@ func (r *Reader) ReadAll(d text.Data) {
 	Row := r.Rows
 	for Row.Next() {
 		row, err = Row.Columns()
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 		for _, convert := range r.converters {
 			row = convert(row)
 			if row == nil {

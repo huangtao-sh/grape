@@ -1,7 +1,7 @@
 package lzbg
 
 import (
-	"grape/path"
+	"grape"
 	"grape/sqlite3"
 	"log"
 )
@@ -58,7 +58,7 @@ select distinct bgr,ygh,bglx,jg,substr(bgrq,1,7)as bgq from lzbg
 func Load() {
 	sqlite3.ExecScript(InitSQL)
 	log.Println("初始化数据库")
-	var Root = path.NewPath("~/Downloads")
+	var Root = grape.NewPath("~/Downloads")
 	file := Root.Find("会计履职报告*.xls")
 	if file == "" {
 		log.Println("未在下载目录找到 会计履职报告 文件")
@@ -77,7 +77,7 @@ func Load() {
 
 // Main 履职报告主程序
 func Main() {
-	path.InitLog()
+	grape.InitLog()
 	sqlite3.Config("lzbg")
 	log.Printf("设置数据库为：%s\n", "lzbg")
 	defer sqlite3.Close()
