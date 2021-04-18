@@ -31,11 +31,3 @@ func (c *Converter) Read() (rows []string, err error) {
 	return
 }
 
-// Slice 把 []string 转换成 []interface{}
-func Slice(row []string) (col []interface{}) {
-	col = make([]interface{}, len(row))
-	for i, v := range row {
-		col[i] = v
-	}
-	return
-}

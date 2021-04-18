@@ -2,8 +2,8 @@ package loader
 
 import (
 	"fmt"
-	"grape/sqlite3"
 	"grape"
+	"grape/sqlite3"
 	"io"
 	"log"
 	"os"
@@ -66,7 +66,7 @@ func (l *Loader) Test() {
 	)
 	for i := 0; i < 10 && err == nil; columns, err = l.data.Read() {
 		if columns != nil {
-			fmt.Println(Slice(columns)...)
+			fmt.Println(grape.Slice(columns)...)
 			i++
 		}
 	}
@@ -86,7 +86,7 @@ func (l *Loader) Exec(tx *sqlite3.Tx) (err error) {
 	defer stmt.Close()
 	for ; err == nil; columns, err = l.data.Read() {
 		if columns != nil {
-			_, err = stmt.Exec(Slice(columns)...)
+			_, err = stmt.Exec(grape.Slice(columns)...)
 			if err != nil {
 				return
 			}

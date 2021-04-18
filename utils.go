@@ -149,3 +149,12 @@ func ExtractPos(pattern, s string, pos int) string {
 	m := r.FindAllStringSubmatch(s, -1)
 	return m[0][pos]
 }
+
+// Slice 把 []string 转换成 []interface{}
+func Slice(row []string) (col []interface{}) {
+	col = make([]interface{}, len(row))
+	for i, v := range row {
+		col[i] = v
+	}
+	return
+}
