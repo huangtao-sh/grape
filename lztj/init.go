@@ -49,7 +49,6 @@ create table if not exists lzbg (
 	nr			text,	-- 具体内容
 	primary key(ygh,bgrq)
 );
-drop view if exists lz;
 create view if not exists lz as 
 select distinct bgr,ygh,bglx,jg,substr(bgrq,1,7)as bgq from lzbg
 `
