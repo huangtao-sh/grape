@@ -3,6 +3,7 @@ package loadall
 import (
 	"archive/zip"
 	"fmt"
+	"grape"
 	"grape/gbk"
 	"grape/params/eddj"
 	"grape/params/ggjgm"
@@ -12,18 +13,16 @@ import (
 	"grape/params/lzbg"
 	"grape/params/teller"
 	"grape/params/xxbm"
-	"grape/path"
-	"grape/util"
 	"io"
 	"os"
 	"regexp"
 )
 
 // ROOT 参数根目录
-var ROOT *path.Path
+var ROOT *grape.Path
 
 func init() {
-	ROOT = path.NewPath("~/Documents/参数备份")
+	ROOT = grape.NewPath("~/Documents/参数备份")
 }
 
 // LoadFunc 导入函数类型
@@ -44,17 +43,17 @@ func Load() {
 	fileList[ROOT.Find("额度登记配置/额度登记配置-*.xlsx")] = eddj.Load   // 额度登记
 	zipfile := ROOT.Find("运营参数*.zip")
 	if zipfile != "" {
-		LoadZip(path.NewPath(zipfile))
+		LoadZip(grape.NewPath(zipfile))
 	}
 	for file, f := range fileList {
 		if file != "" {
 			func(file string, f LoadFunc) {
-				defer util.Recover()
-				p := path.NewPath(file)
+				defer grape.Recover()
+				p := grape.NewPath(file)
 				info := p.FileInfo()
 				ver := Ver.FindString(info.Name())
 				r, err := p.Open()
-				util.CheckFatal(err)
+				grape.CheckFatal(err)
 				defer r.Close()
 				loader := f(info, r, ver)
 				loader.Load()
@@ -84,11 +83,11 @@ var fileList = map[string]LoadFunc{
 }
 
 // LoadZip 导入 zip 压缩包
-func LoadZip(file *path.Path) {
+func LoadZip(file *grape.Path) {
 	ver := file.Base()[12:19]
 	fmt.Printf("导入 %s ，版本号：%s\n", file, ver)
 	f, err := zip.OpenReader(file.String())
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	defer f.Close()
 	for _, file := range f.File {
 		info := file.FileInfo()
@@ -96,9 +95,9 @@ func LoadZip(file *path.Path) {
 		if ok {
 			func(file *zip.File, ver string) {
 				var k io.Reader
-				defer util.Recover()
+				defer grape.Recover()
 				r, err := file.Open()
-				util.CheckFatal(err)
+				grape.CheckFatal(err)
 				defer r.Close()
 				if info.Name() == "transactions_output.csv" || info.Name() == "users_output.csv" {
 					k = r

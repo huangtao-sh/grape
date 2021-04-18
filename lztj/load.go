@@ -1,4 +1,4 @@
-package lzbg
+package main
 
 import (
 	"fmt"

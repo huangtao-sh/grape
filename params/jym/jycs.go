@@ -2,15 +2,13 @@ package jym
 
 import (
 	"fmt"
+	"grape"
 	"grape/data/xls"
-	"grape/date"
 	"grape/loader"
-	"grape/path"
 	"grape/sqlite3"
 	"grape/text"
-	"grape/util"
-	"strings"
 	"os"
+	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 )
@@ -45,14 +43,14 @@ var (
 		"AE":    0,
 	}
 	// ROOT 交易码参数工作目录
-	ROOT *path.Path
+	ROOT *grape.Path
 	// Today 当前日期
 	Today string
 )
 
 func init() {
-	ROOT = path.NewPath("~/Documents/参数备份/交易码参数")
-	Today = fmt.Sprint(date.Today())
+	ROOT = grape.NewPath("~/Documents/参数备份/交易码参数")
+	Today = fmt.Sprint(grape.Today())
 }
 
 /*
@@ -92,13 +90,13 @@ func newJycsReader(r io.Reader) loader.Reader {
 // LoadJycs 导入交易码参数
 func LoadJycs() {
 	file := ROOT.Find("交易码参数备份-????-??-??.*")
-	ver := util.Extract(`\d{6,8}`, file)
+	ver := grape.Extract(`\d{6,8}`, file)
 	fmt.Printf("导入文件:%s\n文件版本：%s\n", file, ver)
-	loadJycsSQL := util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
+	loadJycsSQL := grape.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,   --中心授权机构
 			zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq) %30V`)
 	//lder := loader.NewLoader("jymcs", ver, loadJycsSQL, path.NewPath(file), newJycsReader)
 	rder := loader.NewXlsReader(file, 0, 1)
-	lder := loader.NewLoader(path.NewPath(file).FileInfo(), "jymcs", loadJycsSQL, rder)
+	lder := loader.NewLoader(grape.NewPath(file).FileInfo(), "jymcs", loadJycsSQL, rder)
 	lder.Test()
 }
 
@@ -131,7 +129,7 @@ TransIn：转账收、TransOut：转账付（现转账收与转账付相同）
 2-非实时监督||补扫的限时时间(分钟)||是否需要审查（用于调用审查规则的服务）：0－不需要，1－需要||是否允许抹账：0-不允许，1-允许||是否允许超额授权：TRUE－允许，FALSE－不允许||辅助交易组（需与主交易组不一致，以“|”分隔，例：TG001P|TG002P）可为空||是否需要事后补扫TRUE - 需要, FALSE - 不需要||磁道校验信息TRUE - 需要, FALSE - 不需要`
 	)
 	var tcrq string
-	today := date.Today().Format("%F")
+	today := grape.Today().Format("%F")
 	fmt.Println(today)
 	err := sqlite3.QueryRow("select distinct tcrq from jymcs where tcrq>=? and tcrq <>'' order by tcrq limit 1", today).Scan(&tcrq)
 	if err != nil {
@@ -196,7 +194,7 @@ func UpdateJycs() {
 	if p.IsExist() {
 		info = p.FileInfo()
 		err := tx.QueryRow(checkSQL, "jymcs", info.Name(), info.ModTime()).Scan(&count)
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 		if count > 0 {
 			fmt.Printf("文件 %s 已导入，忽略\n", info.Name())
 			return
@@ -222,19 +220,19 @@ func upJycs(file string, tx *sqlite3.Tx) {
 	var (
 		row       []string
 		deleteSQL string = "delete from jymcs where rowid=?"
-		insertSQL string = util.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid) %31V`)
+		insertSQL string = grape.Sprintf(`insert or replace into jymcs(jymc,jym,jyz,jyzm,yxj,wdsqjb,zxsqjb,wdsq,zxsqjg,zxsq,jnjb,xzbz,wb,dets,dzdk,sxf,htjc,szjd,bssx,sc,mz,cesq,fjjyz,shbs,cdjy,yjcd,ejcd,bz,cjrq,tcrq,rowid) %31V`)
 	)
 	book, err := excelize.OpenFile(file)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	rows, err := book.Rows("交易码参数")
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	for i := 0; i < 1; i++ {
 		rows.Next()
 		rows.Columns()
 	}
 	for rows.Next() {
 		row, err = rows.Columns()
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 		if len(row) > 28 && row[0] != "" {
 			for len(row) < 31 {
 				row = append(row, "")
@@ -247,11 +245,11 @@ func upJycs(file string, tx *sqlite3.Tx) {
 			}
 			if len(row) == 31 && row[29] == "删除" && row[30] != "" {
 				_, err = tx.Exec(deleteSQL, row[30])
-				util.CheckFatal(err)
+				grape.CheckFatal(err)
 				fmt.Printf("删除交易 %s:%s-%s\n", row[30], row[1], row[0])
 			} else {
 				_, err = tx.Exec(insertSQL, s...)
-				util.CheckFatal(err)
+				grape.CheckFatal(err)
 			}
 		}
 	}

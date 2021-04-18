@@ -3,11 +3,10 @@ package jym
 import (
 	"flag"
 	"fmt"
+	"grape"
 	"grape/data/xls"
 	"grape/params"
-	"grape/path"
 	"grape/sqlite3"
-	"grape/util"
 )
 
 const (
@@ -17,7 +16,7 @@ const (
 
 // Main jy 程序入口
 func Main() {
-	defer util.Recover()
+	defer grape.Recover()
 	defer sqlite3.Close()
 	var (
 		export  = flag.Bool("e", false, "导出交易参数表")
@@ -49,7 +48,7 @@ func Main() {
 		const Format = "%-50s  %4s  %6s  %-20s\n"
 		params.PrintVer("jym")
 		for _, arg := range flag.Args() {
-			if util.FullMatch(`\d{4}`, arg) {
+			if grape.FullMatch(`\d{4}`, arg) {
 				if *check {
 					fmt.Println("检查交易码占用情况")
 					sqlite3.Printf("生产参数：%4s  %-40s\n", "select jym,jymc from jym where jym=?", arg)
@@ -61,7 +60,7 @@ func Main() {
 						fmt.Printf("错误：交易码 %s 不存在\n", arg)
 					}
 				}
-			} else if util.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
+			} else if grape.FullMatch(`[A-Z]{2}\d{3}[A-Z]{1}`, arg) {
 				sqlite3.Printf(Format, "select jymc,jym,jyz,jyzm from jycs where jyz=? order by jym", arg)
 			} else {
 				sqlite3.Printf(Format, "select jymc,jym,jyz,jyzm from jycs where jymc like ? order by jym", fmt.Sprintf(`%%%s%%`, arg))
@@ -105,7 +104,7 @@ func exportToXlsx() {
 	sheet.Write("A1", header, jymbWidth, sqlite3.Fetch(queryJycs))
 	sheet = book.GetSheet(csSheet)
 	sheet.Write("A1", header2, jycsWidth, sqlite3.Fetch(queryJymb))
-	file := path.Home.Join("Documents", fmt.Sprintf("交易码参数表（%s）.xlsx", params.GetVer("jym")))
+	file := grape.Home.Join("Documents", fmt.Sprintf("交易码参数表（%s）.xlsx", params.GetVer("jym")))
 	book.SaveAs(file)
 	fmt.Printf("导出参数成功")
 }

@@ -5,7 +5,7 @@ import (
 	"grape/data"
 	"grape/sqlite3"
 	"grape/text"
-	"grape/util"
+	"grape"
 	"os"
 	"sync"
 )
@@ -30,7 +30,7 @@ func loadCheck(name string, info os.FileInfo, ver string) sqlite3.ExecFunc {
 	mtime := info.ModTime()
 	return func(tx *sqlite3.Tx) (err error) {
 		err = tx.QueryRow("select count(name) from LoadFile where name=? and path=? and mtime>=datetime(?)", name, filename, mtime).Scan(&count)
-		util.CheckFatal(err)
+		grape.CheckFatal(err)
 		if count > 0 {
 			return fmt.Errorf("文件 %s 已导入", filename)
 		}

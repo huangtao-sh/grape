@@ -3,7 +3,7 @@ package params
 import (
 	"fmt"
 	"grape/sqlite3"
-	"grape/util"
+	"grape"
 )
 
 func init() {
@@ -13,7 +13,7 @@ func init() {
 // GetVer 获取数据版本
 func GetVer(name string) (ver string) {
 	err := sqlite3.QueryRow("select ver from loadfile where name=?", name).Scan(&ver)
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	return
 }
 

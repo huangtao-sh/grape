@@ -1,4 +1,4 @@
-package lzbg
+package main
 
 import (
 	"grape"
@@ -76,7 +76,7 @@ func Load() {
 }
 
 // Main 履职报告主程序
-func Main() {
+func main() {
 	grape.InitLog()
 	sqlite3.Config("lzbg")
 	log.Printf("设置数据库为：%s\n", "lzbg")

@@ -2,8 +2,8 @@ package data
 
 import (
 	"fmt"
+	"grape"
 	"grape/sqlite3"
-	"grape/util"
 	"sync"
 )
 
@@ -51,7 +51,7 @@ func (d *Data) Println() {
 func (d *Data) Printf(format string) {
 	defer d.Done()
 	for row := range d.ch {
-		fmt.Print(util.Sprintf(format, row...))
+		fmt.Print(grape.Sprintf(format, row...))
 	}
 }
 

@@ -3,14 +3,13 @@ package lzbg
 import (
 	"flag"
 	"fmt"
+	"grape"
 	"grape/data/xls"
 	"grape/loader"
 	"grape/params"
 	"grape/params/load"
-	"grape/path"
 	"grape/sqlite3"
 	"grape/text"
-	"grape/util"
 	"io"
 	"os"
 	"strings"
@@ -44,11 +43,11 @@ func conv(row []string) ([]string, error) {
 // LoadZg 导入营业主管信息
 func LoadZg(file string) {
 	sqlite3.ExecScript(initSQL)
-	info := path.NewPath(file).FileInfo()
+	info := grape.NewPath(file).FileInfo()
 	reader := loader.NewXlsReader(file, 0, 1)
 	reader = loader.NewConverter(reader, loader.Include(2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 11), conv)
 	lder := loader.NewLoader(info, "yyzg", loadSQL, reader)
-	lder.Ver = util.Extract(`\d+`, info.Name())
+	lder.Ver = grape.Extract(`\d+`, info.Name())
 	lder.Clear = true
 	lder.Check = true
 	lder.Load()
@@ -83,7 +82,7 @@ func YyzgMain() {
 	params.PrintVer("yyzg")
 	fmt.Println("工号   姓名       角色            联系电话           手机         机构")
 	for _, arg := range flag.Args() {
-		if util.FullMatch(`\d{4,9}`, arg) {
+		if grape.FullMatch(`\d{4,9}`, arg) {
 			arg = fmt.Sprintf("%s%%", arg)
 			sqlite3.Printf("%-6s %-10s %-15s %-15s %11s %-30s\n",
 				"select ygh,xm,js,lxdh,mobile,jgmc from yyzg where jg like ? "+t, arg)

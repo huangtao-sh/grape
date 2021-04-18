@@ -2,7 +2,6 @@ package grape
 
 import (
 	"fmt"
-	"grape/date"
 	"io"
 	"log"
 	"os"
@@ -177,7 +176,7 @@ func (p *Path) WithExt(ext string) *Path {
 // 放在 $HOME/.logs/date 目录下，并且用命令作为文件名
 func InitLog() {
 	_, name := NewPath(os.Args[0]).Split() // 获取命令行
-	dir := NewPath("~/.logs").Join(date.Today().Format("%F"))
+	dir := NewPath("~/.logs").Join(Today().Format("%F"))
 	dir.Ensure() // 建立目录
 	filename := dir.Join(name).WithExt(".log")
 	r, err := os.OpenFile(filename.String(), os.O_CREATE|os.O_APPEND, os.ModePerm)

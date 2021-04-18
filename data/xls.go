@@ -1,7 +1,7 @@
 package data
 
 import (
-	"grape/util"
+	"grape"
 
 	"github.com/huangtao-sh/xls"
 )
@@ -30,7 +30,7 @@ func (s *XlsReader) Read() (res []string) {
 // NewXlsReader 读取 Excel 文件
 func NewXlsReader(filename string, sheet int, skip int) Reader {
 	book, err := xls.Open(filename, "utf-8")
-	util.CheckFatal(err)
+	grape.CheckFatal(err)
 	st := book.GetSheet(sheet)
 	return &XlsReader{st, uint16(skip)}
 }
