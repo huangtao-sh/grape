@@ -2,7 +2,7 @@ package km
 
 import (
 	"bufio"
-	"grape/gbk"
+	"grape"
 	"grape/params/load"
 	"grape/text"
 	"io"
@@ -55,6 +55,6 @@ func (r *KemuReader) ReadAll(d text.Data) {
 
 // LoadKemu 导入科目
 func LoadKemu(info os.FileInfo, r io.Reader, ver string) *load.Loader {
-	reader := &KemuReader{bufio.NewScanner(gbk.NewReader(r))}
+	reader := &KemuReader{bufio.NewScanner(grape.NewGBKReader(r))}
 	return load.NewLoader("kemu", info, ver, reader, initKemuSQL, loadKemuSQL)
 }

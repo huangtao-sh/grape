@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"fmt"
 	"grape"
-	"grape/gbk"
 	"grape/sqlite3"
 	"grape/text"
 	"io"
@@ -64,7 +63,7 @@ func NewScanner(p *grape.Path) *bufio.Scanner {
 		r, err = gzip.NewReader(r)
 		grape.CheckFatal(err)
 	}
-	r = gbk.NewReader(r)
+	r = grape.NewGBKReader(r)
 	return bufio.NewScanner(r)
 }
 

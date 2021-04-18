@@ -39,7 +39,7 @@ create table if not exists bhsj(
 `
 
 func init() {
-	grape.InitLog()               // 初始化日志
+	grape.InitLog()               //初始化日志
 	sqlite3.Config("rhzh")        //设置数据库
-	sqlite3.ExecScript(createSQL) // 创建数据库
+	sqlite3.ExecScript(createSQL) //创建数据库
 }

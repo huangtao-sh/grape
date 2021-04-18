@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"fmt"
 	"grape"
-	"grape/gbk"
 	"grape/params/eddj"
 	"grape/params/ggjgm"
 	"grape/params/jym"
@@ -102,7 +101,7 @@ func LoadZip(file *grape.Path) {
 				if info.Name() == "transactions_output.csv" || info.Name() == "users_output.csv" {
 					k = r
 				} else {
-					k = gbk.NewReader(r)
+					k = grape.NewGBKReader(r)
 				}
 				loader := loadfunc(file.FileInfo(), k, ver)
 				loader.Load()

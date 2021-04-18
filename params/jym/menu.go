@@ -3,17 +3,17 @@ package jym
 import (
 	"encoding/xml"
 	"errors"
-	"grape/gbk"
 	"grape/params/load"
 	"grape/text"
 	"io"
+	"grape"
 	"os"
 )
 
 func read(charset string, r io.Reader) (result io.Reader, err error) {
 	switch charset {
 	case "GBK":
-		result = gbk.NewReader(r)
+		result = grape.NewGBKReader(r)
 	case "UTF8":
 		result = r
 	default:
@@ -49,7 +49,7 @@ func (l *MenuReader) ReadAll(dt text.Data) {
 	defer dt.Close()
 	d := xml.NewDecoder(l.r)
 	d.CharsetReader = read
-	submenu := make([]string,  2)
+	submenu := make([]string, 2)
 	i := -1
 	for t, err := d.Token(); err == nil; t, err = d.Token() {
 		switch token := t.(type) {

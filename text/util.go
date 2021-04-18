@@ -3,7 +3,6 @@ package text
 import (
 	"bufio"
 	"compress/gzip"
-	"grape/gbk"
 	"grape"
 	"io"
 	"os"
@@ -33,7 +32,7 @@ func Decode(r io.Reader, isGz bool, isGbk bool) io.Reader {
 		grape.CheckFatal(err)
 	}
 	if isGbk {
-		r = gbk.NewReader(r)
+		r = grape.NewGBKReader(r)
 	}
 	return r
 }
