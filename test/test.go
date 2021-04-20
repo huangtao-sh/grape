@@ -4,6 +4,7 @@ import (
 	"errors"
 	//"grape/params/lzbg"
 	"fmt"
+	"grape"
 )
 
 func getPrimes(num int) (primes []int, err error) {
@@ -26,6 +27,7 @@ func getPrimes(num int) (primes []int, err error) {
 func main() {
 	//rhzh.LoadRhsj()
 	//rhzh.LoadBhsj()
-	fmt.Println("This is a test.")
+	s := grape.ExtractPos(`(结算账户|电子结算户)\((.*?)\)`,"结算账户()", 2)
+	fmt.Println(s)
 
 }

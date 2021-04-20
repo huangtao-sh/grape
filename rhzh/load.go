@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	acType   map[string]string //本行账户类型转换
+	//acType   map[string]string //本行账户类型转换
 	acStatus map[string]string //本行账户状态转换
 	acTypeRh map[string]string //人行账户类型转换
 	loadRhsj string            //导入人行数据 SQL
@@ -18,13 +18,7 @@ var (
 )
 
 func init() {
-	//本行账户种类转换字典
-	acType = map[string]string{
-		"结算账户(基本户)":  "基本户",
-		"结算账户(一般户)":  "一般户",
-		"结算账户(专用户)":  "专用户",
-		"电子结算户(一般户)": "一般户",
-		"结算账户()":     "结算账户"}
+
 	//人行账户种类转换字典
 	acTypeRh = map[string]string{
 		"基本存款账户":      "基本户",
@@ -77,8 +71,12 @@ func LoadRhsj() {
 func convBhsj(row []string) ([]string, error) {
 	row = row[:8]
 	row[3] = strings.TrimSpace(strings.ToUpper(row[3]))
-	row[4] = acType[row[4]]
-	row[7] = acStatus[row[7]]
+	if zhlx := grape.ExtractPos(`(结算账户|电子结算户)\((.*?)\)`, row[4], 2); zhlx != "" {
+		row[4] = zhlx
+	}
+	if zt := acStatus[row[7]]; zt != "" {
+		row[7] = zt
+	}
 	row = append(row, FullChar(row[3]))
 	return row, nil
 }
