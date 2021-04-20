@@ -147,7 +147,10 @@ func Extract(pattern, s string) string {
 func ExtractPos(pattern, s string, pos int) string {
 	r := regexp.MustCompile(pattern)
 	m := r.FindAllStringSubmatch(s, -1)
-	return m[0][pos]
+	if m != nil {
+		return m[0][pos]
+	} 
+	return ""
 }
 
 // Slice 把 []string 转换成 []interface{}

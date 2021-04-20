@@ -29,6 +29,8 @@ func init() {
 	//本行账户状态
 	acStatus = map[string]string{
 		"开户":  "正常",
+		"变更":  "正常",
+		"启用":  "正常",
 		"销户":  "撤销",
 		"不动户": "久悬",
 		"待启用": "正常",
@@ -76,6 +78,12 @@ func convBhsj(row []string) ([]string, error) {
 	}
 	if zt := acStatus[row[7]]; zt != "" {
 		row[7] = zt
+	}
+	if len(row[5]) > 10 {
+		row[5] = row[5][:10]
+	}
+	if row[6] == "1899-12-31" {
+		row[6] = ""
 	}
 	row = append(row, FullChar(row[3]))
 	return row, nil
