@@ -1,6 +1,7 @@
 package teller
 
 import (
+	"fmt"
 	"grape/params/load"
 	"grape/text"
 	"io"
@@ -54,6 +55,12 @@ func convert(s []string) (d []string) {
 	copy(d[9:12], s[length-24:length-21])
 	copy(d[12:19], s[length-11:length-4])
 	copy(d[19:], s[length-3:])
+	if len(d[15]) == 8  {
+		d[15] = fmt.Sprintf("%s-%s-%s", d[15][:4], d[15][4:6], d[15][6:])
+	}
+    if len(d[16]) == 8  {
+		d[16] = fmt.Sprintf("%s-%s-%s", d[16][:4], d[16][4:6], d[16][6:])
+	}
 	return
 }
 
