@@ -19,10 +19,10 @@ create table if not exists ggjgm (
     hzjgm text 				--17 汇总机构码
 );
 
-create view if not exists brorder as
-select mc,case when substr(jgm,1,2) in ("33","34") then "9"||substr(jgm,2,8)  -- 浙江省机构排最后
+create view if not exists branch as
+select jgm,mc,case when substr(jgm,1,2) in ("33","34") then "9"||substr(jgm,2,8)  -- 浙江省机构排最后
 when jgm="653000000" then "650000000"                       -- 重庆分行提前
-else jgm end as br_order 
+else jgm end as brorder 
 from ggjgm where jgm like "%000" and jglx="10" and jgm not in("998930000"); -- 剔除香港分行
 `
 const loadSQL = "insert or replace into ggjgm values(?,?,?,?,?,date(?),?)"
